@@ -1,0 +1,12 @@
+# base
+.DS_Store
+.idea/
+.vscode/
+.vs/
+__pycache__
+
+# develop deps
+node_modules/
+
+# Xcode
+xcuserdata
