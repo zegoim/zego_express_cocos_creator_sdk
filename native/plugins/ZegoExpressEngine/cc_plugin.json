@@ -1,0 +1,17 @@
+{
+    "name": "ZegoExpressEngine",
+    "version": "2.22.0",
+    "author": "ZEGO",
+    "engine-version": ">=3.6.0",
+    "modules": [
+        {
+            "target": "ZegoExpressEngine"
+        }
+    ],
+    "platforms": [
+        "android",
+        "ios",
+        "mac",
+        "windows"
+    ]
+}

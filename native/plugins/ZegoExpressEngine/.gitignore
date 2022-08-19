@@ -1,0 +1,13 @@
+.DS_Store
+
+android/libs/*
+!android/libs/.gitkeep
+
+ios/libs/*
+!ios/libs/.gitkeep
+
+mac/libs/*
+!mac/libs/.gitkeep
+
+windows/libs/*
+!windows/libs/.gitkeep

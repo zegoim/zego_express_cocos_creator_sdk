@@ -1,0 +1,8 @@
+Please put the SDK under this folder.
+
+```tree
+libs
+└── x64
+    ├── ZegoExpressEngine.dll
+    └── ZegoExpressEngine.lib
+```
