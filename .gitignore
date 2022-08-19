@@ -20,6 +20,8 @@ windows/libs/*
 
 # develop deps
 node_modules/
+package-lock.json
+yarn.lock
 
 # Xcode
 xcuserdata

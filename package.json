@@ -1,0 +1,13 @@
+{
+    "name": "zego-express-cocos-creator-sdk",
+    "version": "2.22.0",
+    "description": "ZEGO RTC SDK for Cocos Creator.",
+    "devDependencies": {
+        "@commitlint/cli": "17.0.3",
+        "@commitlint/config-conventional": "17.0.3",
+        "husky": "8.0.1"
+    },
+    "scripts": {
+        "postinstall": "husky install"
+    }
+}
