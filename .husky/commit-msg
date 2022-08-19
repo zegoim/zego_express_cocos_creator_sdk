@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo '🤡 We use `gitmoji` to standardize the commit message, see ./README.md !'
+
+npx --no-install commitlint --edit ""
