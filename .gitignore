@@ -5,6 +5,19 @@
 .vs/
 __pycache__
 
+# native deps
+android/libs/*
+!android/libs/.gitkeep
+
+ios/libs/*
+!ios/libs/.gitkeep
+
+mac/libs/*
+!mac/libs/.gitkeep
+
+windows/libs/*
+!windows/libs/.gitkeep
+
 # develop deps
 node_modules/
 
