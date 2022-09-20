@@ -6,22 +6,25 @@
 __pycache__
 
 # native deps
-android/libs/*
-!android/libs/.gitkeep
+native/android/libs/*
+!native/android/libs/.gitkeep
 
-ios/libs/*
-!ios/libs/.gitkeep
+native/ios/libs/*
+!native/ios/libs/.gitkeep
 
-mac/libs/*
-!mac/libs/.gitkeep
+native/mac/libs/*
+!native/mac/libs/.gitkeep
 
-windows/libs/*
-!windows/libs/.gitkeep
+native/windows/libs/*
+!native/windows/libs/.gitkeep
 
 # develop deps
 node_modules/
 package-lock.json
 yarn.lock
+
+# outputs
+_out/
 
 # Xcode
 xcuserdata
