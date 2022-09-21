@@ -30,4 +30,4 @@ void load_zego_express_engine_plugin() {
  * first  param: should match the name in cc_plugin.json
  * second param: callback when engine initialized
  */
-CC_PLUGIN_ENTRY(ZegoExpressEngine, load_zego_express_engine_plugin);
+CC_PLUGIN_ENTRY(zego_express_engine_plugin, load_zego_express_engine_plugin);

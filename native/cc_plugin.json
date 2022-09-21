@@ -1,11 +1,11 @@
 {
-    "name": "ZegoExpressEngine",
+    "name": "zego_express_engine_plugin",
     "version": "2.22.0",
     "author": "ZEGO",
     "engine-version": ">=3.6.0",
     "modules": [
         {
-            "target": "ZegoExpressEngine"
+            "target": "zego_express_engine_plugin"
         }
     ],
     "platforms": [
