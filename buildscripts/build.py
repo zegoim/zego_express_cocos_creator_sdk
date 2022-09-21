@@ -41,7 +41,7 @@ def main(argv):
         shutil.rmtree(out_dir)
     os.makedirs(out_dir)
 
-    zip_name = 'ZegoExpressCocosCreatorPlugin.zip'
+    zip_name = 'zego_express_cocos_creator_sdk.zip'
     ziputil.zip_folder_list([os.path.join(PROJ_ROOT, x) for x in DIST], out_dir, zip_name)
 
 if __name__ == '__main__':
