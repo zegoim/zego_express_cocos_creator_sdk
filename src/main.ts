@@ -4,26 +4,24 @@ import { join } from 'path';
 export const methods: { [key: string]: (...any: any) => any } = {};
 
 export function load() {
-    console.log('[ZEGO] Extension load')
+    console.log('[ZEGO][RTC] Extension load')
     removeScripts()
     let src = join(__dirname, '..', 'scripts')
     let dst = join(Editor.Project.path, 'assets', 'zego_express_engine')
-    console.log('[ZEGO] Copy scripts from', src, 'to', dst)
+    console.log('[ZEGO][RTC] Copy scripts from', src, 'to', dst)
     copyDirectory(src, dst)
 }
 
 export function unload() {
-    console.log('[ZEGO] Extension unload')
+    console.log('[ZEGO][RTC] Extension unload')
     removeScripts()
 }
 
 function removeScripts() {
-    let dstScriptsPath = join(Editor.Project.path, 'assets', 'zego_express_engine')
-    if (fs.existsSync(dstScriptsPath)) {
-        console.log('[ZEGO] Remove scripts directory:', dstScriptsPath)
-        fs.rmdirSync(dstScriptsPath)
-    } else {
-        console.log('[ZEGO] No need to remove scripts directory:', dstScriptsPath)
+    let dst = join(Editor.Project.path, 'assets', 'zego_express_engine')
+    if (fs.existsSync(dst)) {
+        console.log('[ZEGO][RTC] Remove scripts directory:', dst)
+        fs.rmSync(dst, { force: true, maxRetries: 3, recursive: true })
     }
 }
 

@@ -8,27 +8,24 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = require("path");
 exports.methods = {};
 function load() {
-    console.log('[ZEGO] Extension load');
+    console.log('[ZEGO][RTC] Extension load');
     removeScripts();
     let src = (0, path_1.join)(__dirname, '..', 'scripts');
     let dst = (0, path_1.join)(Editor.Project.path, 'assets', 'zego_express_engine');
-    console.log('[ZEGO] Copy scripts from', src, 'to', dst);
+    console.log('[ZEGO][RTC] Copy scripts from', src, 'to', dst);
     copyDirectory(src, dst);
 }
 exports.load = load;
 function unload() {
-    console.log('[ZEGO] Extension unload');
+    console.log('[ZEGO][RTC] Extension unload');
     removeScripts();
 }
 exports.unload = unload;
 function removeScripts() {
-    let dstScriptsPath = (0, path_1.join)(Editor.Project.path, 'assets', 'zego_express_engine');
-    if (fs_1.default.existsSync(dstScriptsPath)) {
-        console.log('[ZEGO] Remove scripts directory:', dstScriptsPath);
-        fs_1.default.rmdirSync(dstScriptsPath);
-    }
-    else {
-        console.log('[ZEGO] No need to remove scripts directory:', dstScriptsPath);
+    let dst = (0, path_1.join)(Editor.Project.path, 'assets', 'zego_express_engine');
+    if (fs_1.default.existsSync(dst)) {
+        console.log('[ZEGO][RTC] Remove scripts directory:', dst);
+        fs_1.default.rmSync(dst, { force: true, maxRetries: 3, recursive: true });
     }
 }
 function copyDirectory(src, dst) {
