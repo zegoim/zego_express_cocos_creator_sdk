@@ -25,6 +25,7 @@ yarn.lock
 
 # outputs
 _out/
+/VERSION.txt
 
 # Xcode
 xcuserdata
