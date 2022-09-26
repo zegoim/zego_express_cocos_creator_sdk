@@ -12,19 +12,13 @@ using namespace ZEGO::EXPRESS;
 namespace zego {
 namespace cocos {
 
-//class ZegoExpressEventHandler: public IZegoEventHandler {
-//
-//};
-
 class ZegoExpressBridge: public std::enable_shared_from_this<ZegoExpressBridge>, public IZegoEventHandler, public IZegoCustomVideoRenderHandler {
 
 public:
     ZegoExpressBridge() {
-//        event_handler_ = std::make_shared<ZegoExpressEventHandler>();
     }
     
     ~ZegoExpressBridge() {
-//        event_handler_.reset();
     }
     
 public:
@@ -36,7 +30,7 @@ public:
     void createEngine(ZegoEngineProfile profile) {
         printf("appID: %d, appSign:%s, scenario: %d\n", profile.appID, profile.appSign.c_str(), profile.scenario);
         native_engine_ = ZegoExpressSDK::createEngine(profile, shared_from_this());
-        
+
         ZegoCustomVideoRenderConfig render_config;
         render_config.bufferType = ZEGO_VIDEO_BUFFER_TYPE_RAW_DATA;
         render_config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
@@ -143,8 +137,6 @@ public:
 private:
     IZegoExpressEngine *native_engine_ = nullptr;
     std::shared_ptr<se::Value> event_handler_;
-//    cosnt se::Value &event_handler_ = nullptr;
-//    std::shared_ptr<ZegoExpressEventHandler> event_handler_;
 };
 
 
@@ -214,4 +206,4 @@ void load_zego_express_engine_plugin() {
  * first  param: should match the name in cc_plugin.json
  * second param: callback when engine initialized
  */
-CC_PLUGIN_ENTRY(ZegoExpressEngine, load_zego_express_engine_plugin);
+CC_PLUGIN_ENTRY(zego_express_engine_plugin, load_zego_express_engine_plugin);
