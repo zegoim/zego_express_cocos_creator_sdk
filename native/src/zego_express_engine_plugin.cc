@@ -3,6 +3,10 @@
 #include "plugins/Plugins.h"
 #include "plugins/bus/EventBus.h"
 
+#if defined(ANDROID)
+#include "platform/java/jni/JniHelper.h"
+#endif
+
 #include <memory>
 
 #include "ZegoExpressSDK.h"
@@ -16,6 +20,9 @@ class ZegoExpressBridge: public std::enable_shared_from_this<ZegoExpressBridge>,
 
 public:
     ZegoExpressBridge() {
+#if defined(ANDROID)
+        ZegoExpressSDK::setAndroidEnv(cc::JniHelper::getJavaVM(), cc::JniHelper::getActivity());
+#endif
     }
     
     ~ZegoExpressBridge() {
