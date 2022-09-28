@@ -6,6 +6,7 @@ import argparse
 import os
 import shutil
 import sys
+import utils
 import ziputil
 from downloader import Downloader
 
@@ -28,6 +29,8 @@ def __parse_args(args):
 
 def main(argv):
     args = __parse_args(argv)
+
+    utils.run_clang_format()
 
     if not args.no_download_deps:
         downloader = Downloader()
