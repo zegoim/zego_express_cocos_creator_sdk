@@ -31,6 +31,7 @@ def main(argv):
     args = __parse_args(argv)
 
     utils.run_clang_format()
+    utils.run_prettier()
 
     if not args.no_download_deps:
         downloader = Downloader()
