@@ -34,8 +34,6 @@ function copyDirectory(src, dst) {
     for (let entry of entries) {
         let srcPath = (0, path_1.join)(src, entry.name);
         let dstPath = (0, path_1.join)(dst, entry.name);
-        entry.isDirectory() ?
-            copyDirectory(srcPath, dstPath) :
-            fs_1.default.copyFileSync(srcPath, dstPath);
+        entry.isDirectory() ? copyDirectory(srcPath, dstPath) : fs_1.default.copyFileSync(srcPath, dstPath);
     }
 }

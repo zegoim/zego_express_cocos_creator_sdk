@@ -1,24 +1,24 @@
 // Native JSB
 
 declare class ZegoExpressBridge {
-    static getVersion(): string;
+  static getVersion(): string
 
-    createEngine(profile: ZegoEngineProfile): void;
-    destroyEngine(): void;
+  createEngine(profile: ZegoEngineProfile): void
+  destroyEngine(): void
 
-    setEventHandler(handler: ZegoExpressEventHandler): void
+  setEventHandler(handler: ZegoExpressEventHandler): void
 
-    loginRoom(roomID: string, user: ZegoUser): void;
-    logoutRoom(roomID: string): void;
-    logoutRoom(): void;
+  loginRoom(roomID: string, user: ZegoUser): void
+  logoutRoom(roomID: string): void
+  logoutRoom(): void
 
-    startPreview(): void;
-    startPreview(channel: ZegoPublishChannel): void;
+  startPreview(): void
+  startPreview(channel: ZegoPublishChannel): void
 
-    stopPreview(): void;
-    stopPreview(channel: ZegoPublishChannel): void;
+  stopPreview(): void
+  stopPreview(channel: ZegoPublishChannel): void
 
-    // Callbacks
+  // Callbacks
 
-    // onRoomStateUpdate: Function
+  // onRoomStateUpdate: Function
 }
