@@ -1,8 +1,12 @@
+//
+//  zego_express_bridge.cc
+//  zego_express_engine_plugin
+//
+//  Created by Patrick Fu on 2022/9/30.
+//
+
 #include "zego_express_bridge.h"
-#include "bindings/manual/jsb_conversions.h"
-#include "bindings/sebind/sebind.h"
-#include "plugins/Plugins.h"
-#include "plugins/bus/EventBus.h"
+#include "zego_texture_renderer_controller.h"
 
 JSB_REGISTER_OBJECT_TYPE(ZegoEngineProfile);
 JSB_REGISTER_OBJECT_TYPE(ZegoUser);
@@ -92,6 +96,24 @@ void ZegoExpressBridge::stopPreview(ZegoPublishChannel channel) {
     }
     native_engine_->stopPreview(channel);
 }
+
+#pragma mark - TextureRenderer
+
+int64_t ZegoExpressBridge::createTextureRenderer() {
+    auto controller = ZegoTextureRendererController::GetInstance();
+    return controller->CreateTextureRenderer();
+}
+
+void ZegoExpressBridge::destroyTextureRenderer(int64_t textureId) {
+    auto controller = ZegoTextureRendererController::GetInstance();
+    controller->DestroyTextureRenderer(textureId);
+}
+
+void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) {
+    auto controller = ZegoTextureRendererController::GetInstance();
+    controller->SetJsController(js_controller);
+}
+
 
 #pragma mark - Callback
 

@@ -1,12 +1,22 @@
+//
+//  zego_express_bridge.h
+//  zego_express_engine_plugin
+//
+//  Created by Patrick Fu on 2022/9/30.
+//
+
 #pragma once
 
-#include "ZegoExpressSDK.h"
+#include "bindings/sebind/sebind.h"
+#include "plugins/Plugins.h"
 #include <memory>
 #include <unordered_map>
 
 #if defined(ANDROID)
 #include "platform/java/jni/JniHelper.h"
 #endif
+
+#include "ZegoExpressSDK.h"
 
 using namespace ZEGO::EXPRESS;
 
@@ -43,6 +53,11 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     void stopPreview();
 
     void stopPreview(ZegoPublishChannel channel);
+                              
+  public:
+      int64_t createTextureRenderer();
+      void destroyTextureRenderer(int64_t textureId);
+      void setJsTextureRendererController(const se::Value &controller);
 
   public:
     void onDebugError(int errorCode, const std::string &funcName, const std::string &info) override;

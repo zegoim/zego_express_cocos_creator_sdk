@@ -1,5 +1,7 @@
 // Native JSB
 
+import { ZegoTextureRendererController } from "./ZegoTextureRendererController";
+
 declare class ZegoExpressBridge {
   static getVersion(): string
 
@@ -18,7 +20,10 @@ declare class ZegoExpressBridge {
   stopPreview(): void
   stopPreview(channel: ZegoPublishChannel): void
 
-  // Callbacks
 
-  // onRoomStateUpdate: Function
+  // Private: Render methods
+
+  createTextureRenderer(): number
+  destroyTextureRenderer(textureId: number): void
+  setJsTextureRendererController(controller: ZegoTextureRendererController): void
 }
