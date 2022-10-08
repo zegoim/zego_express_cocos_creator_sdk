@@ -1,5 +1,5 @@
 import { JSB } from 'cc/env'
-import { ZegoExpressBridge } from './native/ZegoExpressBridge'
+import { ZegoPublishChannel } from './native/ZegoExpressEnums'
 import { ZegoTextureRendererController } from './native/ZegoTextureRendererController'
 import { ZegoTextureRenderer } from './ZegoTextureRenderer'
 
@@ -67,12 +67,13 @@ export class ZegoExpressEngine {
     }
   }
 
-  startPreview(channel?: ZegoPublishChannel): void {
+  startPreview(channel?: ZegoPublishChannel, canvas?: ZegoCanvas): void {
     if (JSB) {
       if (!this._bridge) {
         return
       }
-      this._bridge.startPreview(channel)
+      console.log('[startPreview] channel:', channel, ' canvas:', canvas)
+      this._bridge.startPreview(channel ?? ZegoPublishChannel.Main, canvas ? canvas.view : -1)
     } else {
       // TODO: Web
     }
@@ -83,7 +84,56 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.stopPreview(channel)
+      this._bridge.stopPreview(channel ?? ZegoPublishChannel.Main)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startPublishingStream(
+    streamID: string,
+    config?: ZegoPublisherConfig,
+    channel?: ZegoPublishChannel
+  ) {
+    if (JSB) {
+      if (!this._bridge) {
+        return
+      }
+      console.log('[startPublishingStream] streamID:', streamID, ' channel:', channel)
+      this._bridge.startPublishingStream(streamID, config ?? {}, channel ?? ZegoPublishChannel.Main)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopPublishingStream(channel?: ZegoPublishChannel) {
+    if (JSB) {
+      if (!this._bridge) {
+        return
+      }
+      this._bridge.stopPublishingStream(channel ?? ZegoPublishChannel.Main)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startPlayingStream(streamID: string, canvas?: ZegoCanvas) {
+    if (JSB) {
+      if (!this._bridge) {
+        return
+      }
+      this._bridge.startPlayingStream(streamID, canvas ? canvas.view : -1)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopPlayingStream(streamID: string) {
+    if (JSB) {
+      if (!this._bridge) {
+        return
+      }
+      this._bridge.stopPlayingStream(streamID)
     } else {
       // TODO: Web
     }
@@ -95,6 +145,7 @@ export class ZegoExpressEngine {
         return
       }
       let textureId = this._bridge.createTextureRenderer()
+      console.log('[createTextureRenderer] texture id:', textureId)
       let renderer = this._rendererController.createTextureRenderer(textureId)
       return renderer
     } else {
@@ -108,6 +159,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
+      console.log('[destroyTextureRenderer] texture id:', textureId)
       this._bridge.destroyTextureRenderer(textureId)
       this._rendererController.destroyTextureRenderer(textureId)
     } else {

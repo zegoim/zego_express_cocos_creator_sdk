@@ -10,6 +10,7 @@
 
 JSB_REGISTER_OBJECT_TYPE(ZegoEngineProfile);
 JSB_REGISTER_OBJECT_TYPE(ZegoUser);
+JSB_REGISTER_OBJECT_TYPE(ZegoPublisherConfig);
 
 namespace zego::cocos {
 
@@ -69,32 +70,92 @@ void ZegoExpressBridge::logoutRoom() {
     native_engine_->logoutRoom();
 }
 
-void ZegoExpressBridge::startPreview() {
+//void ZegoExpressBridge::startPreview() {
+//    if (!native_engine_) {
+//        return;
+//    }
+//    native_engine_->startPreview();
+//}
+
+void ZegoExpressBridge::startPreview(ZegoPublishChannel channel, int viewID) {
     if (!native_engine_) {
         return;
     }
-    native_engine_->startPreview();
+
+    if (viewID < 0) {
+        // Preview audio only
+        native_engine_->startPreview(nullptr, channel);
+    } else {
+        auto controller = ZegoTextureRendererController::GetInstance();
+        if (!controller->BindCapturedChannel(channel, viewID)) {
+            // Preview video without creating TextureRenderer in advance
+            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+            // TODO: Print error message
+            return;
+        }
+
+        native_engine_->startPreview(nullptr, channel);
+    }
 }
 
-void ZegoExpressBridge::startPreview(ZegoPublishChannel channel) {
-    if (!native_engine_) {
-        return;
-    }
-    native_engine_->startPreview(nullptr, channel);
-}
-
-void ZegoExpressBridge::stopPreview() {
-    if (!native_engine_) {
-        return;
-    }
-    native_engine_->stopPreview();
-}
+//void ZegoExpressBridge::stopPreview() {
+//    if (!native_engine_) {
+//        return;
+//    }
+//    native_engine_->stopPreview();
+//}
 
 void ZegoExpressBridge::stopPreview(ZegoPublishChannel channel) {
     if (!native_engine_) {
         return;
     }
     native_engine_->stopPreview(channel);
+}
+
+void ZegoExpressBridge::startPublishingStream(const std::string &streamID,
+                                              ZegoPublisherConfig config,
+                                              ZegoPublishChannel channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startPublishingStream(streamID, config, channel);
+}
+
+void ZegoExpressBridge::stopPublishingStream(ZegoPublishChannel channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopPublishingStream(channel);
+}
+
+void ZegoExpressBridge::startPlayingStream(const std::string &streamID, int viewID) {
+    if (!native_engine_) {
+        return;
+    }
+
+    if (viewID < 0) {
+        // Play audio only
+        native_engine_->startPlayingStream(streamID);
+    } else {
+        auto controller = ZegoTextureRendererController::GetInstance();
+        if (!controller->BindRemoteStreamId(streamID, viewID)) {
+            // Play video without creating TextureRenderer in advance
+            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+            // TODO: Print error message
+            return;
+        }
+
+        native_engine_->startPlayingStream(streamID);
+    }
+
+    native_engine_->startPlayingStream(streamID);
+}
+
+void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopPlayingStream(streamID);
 }
 
 #pragma mark - TextureRenderer
@@ -113,7 +174,6 @@ void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_contr
     auto controller = ZegoTextureRendererController::GetInstance();
     controller->SetJsController(js_controller);
 }
-
 
 #pragma mark - Callback
 
@@ -186,6 +246,16 @@ bool RegisterExpressBridge(se::Object *ns) {
     user_class.property("userName", &ZegoUser::userName);
     user_class.install(ns);
 
+    sebind::class_<ZegoPublisherConfig> publisher_config_class("ZegoPublisherConfig");
+    publisher_config_class.constructor<>();
+    //    publisher_config_class.constructor<std::string, int, ZegoStreamCensorshipMode>();
+    publisher_config_class.property("roomID", &ZegoPublisherConfig::roomID);
+    publisher_config_class.property("forceSynchronousNetworkTime",
+                                    &ZegoPublisherConfig::forceSynchronousNetworkTime);
+    publisher_config_class.property("streamCensorshipMode",
+                                    &ZegoPublisherConfig::streamCensorshipMode);
+    publisher_config_class.install(ns);
+
     sebind::class_<ZegoExpressBridge> bridge("ZegoExpressBridge");
 
     bridge.constructor<>();
@@ -204,14 +274,27 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("logoutRoom", static_cast<void (ZegoExpressBridge::*)(const std::string &)>(
                                       &ZegoExpressBridge::logoutRoom));
 
-    bridge.function("startPreview",
-                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::startPreview));
-    bridge.function("startPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
-                                        &ZegoExpressBridge::startPreview));
-    bridge.function("stopPreview",
-                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::stopPreview));
-    bridge.function("stopPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
-                                       &ZegoExpressBridge::stopPreview));
+    //    bridge.function("startPreview",
+    //                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::startPreview));
+    //    bridge.function("startPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
+    //                                        &ZegoExpressBridge::startPreview));
+    bridge.function("startPreview", &ZegoExpressBridge::startPreview);
+    //    bridge.function("stopPreview",
+    //                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::stopPreview));
+    //    bridge.function("stopPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
+    //                                       &ZegoExpressBridge::stopPreview));
+    bridge.function("stopPreview", &ZegoExpressBridge::stopPreview);
+
+    bridge.function("startPublishingStream", &ZegoExpressBridge::startPublishingStream);
+    bridge.function("stopPublishingStream", &ZegoExpressBridge::stopPublishingStream);
+
+    bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
+    bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
+
+    bridge.function("createTextureRenderer", &ZegoExpressBridge::createTextureRenderer);
+    bridge.function("destroyTextureRenderer", &ZegoExpressBridge::destroyTextureRenderer);
+    bridge.function("setJsTextureRendererController",
+                    &ZegoExpressBridge::setJsTextureRendererController);
 
     bridge.install(ns);
     return true;

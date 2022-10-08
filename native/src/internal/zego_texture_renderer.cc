@@ -10,9 +10,22 @@
 
 namespace zego::cocos {
 
-ZegoTextureRenderer::ZegoTextureRenderer() { textureId_ = GetNextSequence(); }
+ZegoTextureRenderer::ZegoTextureRenderer() { texture_id_ = GetNextSequence(); }
 
-int64_t ZegoTextureRenderer::TextureId() { return textureId_; }
+void ZegoTextureRenderer::SetJsController(const se::Value &controller) {
+    const std::lock_guard<std::mutex> lock(mutex_);
+    js_controller_ = std::make_shared<se::Value>(controller);
+}
+
+int64_t ZegoTextureRenderer::TextureId() { return texture_id_; }
+
+uint32_t ZegoTextureRenderer::Width() { return width_; }
+
+uint32_t ZegoTextureRenderer::Height() { return height_; }
+
+uint32_t ZegoTextureRenderer::Rotation() { return rotation_; }
+
+ZegoVideoFlipMode ZegoTextureRenderer::FlipMode() { return flip_mode_; }
 
 void ZegoTextureRenderer::UpdateFrameBuffer(uint8_t *data, uint32_t data_length,
                                             ZEGO::EXPRESS::ZegoVideoFrameParam param,
@@ -26,6 +39,31 @@ void ZegoTextureRenderer::UpdateFrameBuffer(uint8_t *data, uint32_t data_length,
     rotation_ = param.rotation;
     flip_mode_ = flip_mode;
     std::copy(data, data + data_length, buffer_.data());
+
+    if (js_controller_) {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (js_controller_->toObject()->getProperty("updateRendererFrameBuffer", &method)) {
+            if (!method.isObject()) {
+                return;
+            }
+            auto func = method.toObject();
+            if (!func->isFunction()) {
+                return;
+            }
+
+            se::Value js_texture_id;
+            nativevalue_to_se(texture_id_, js_texture_id, nullptr);
+            se::Value js_data;
+            nativevalue_to_se(buffer_, js_data, nullptr);
+
+            se::ValueArray args;
+            args.push_back(js_texture_id);
+            args.push_back(js_data);
+
+            func->call(args, js_controller_->toObject());
+        }
+    }
 }
 
 uint8_t *ZegoTextureRenderer::GetFrameBuffer() {

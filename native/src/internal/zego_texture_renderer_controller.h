@@ -26,7 +26,7 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
     int64_t CreateTextureRenderer();
 
     bool DestroyTextureRenderer(int64_t textureId);
-    
+
     void SetJsController(const se::Value &controller);
 
   public:
@@ -34,16 +34,16 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
     void UnbindCapturedChannel(ZegoPublishChannel channel);
 
-    void BindRemoteStreamId(std::string streamId, int64_t textureId);
+    bool BindRemoteStreamId(std::string streamId, int64_t textureId);
 
     void UnbindRemoteStreamId(std::string streamId);
 
-    void BindMediaPlayerIndex(int32_t index, int64_t textureId);
+    bool BindMediaPlayerIndex(int32_t index, int64_t textureId);
 
     void UnbindMediaPlayerIndex(int32_t index);
 
-  public:
-    uint8_t *GetFrameBuffer();
+    //  public:
+    //    uint8_t *GetFrameBuffer();
 
   private:
     void UpdateRendererFrameBuffer(ZegoTextureRenderer *renderer, unsigned char **data,
@@ -67,7 +67,7 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
     std::mutex renderersMutex_;
 
     std::atomic_bool isInit = false;
-    
+
     std::shared_ptr<se::Value> js_controller_;
 };
 

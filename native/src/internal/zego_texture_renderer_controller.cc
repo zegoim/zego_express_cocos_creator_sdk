@@ -61,7 +61,7 @@ void ZegoTextureRendererController::UnbindCapturedChannel(ZegoPublishChannel cha
     capturedTextureIdMap_.erase(channel);
 }
 
-void ZegoTextureRendererController::BindRemoteStreamId(std::string streamId, int64_t textureId) {
+bool ZegoTextureRendererController::BindRemoteStreamId(std::string streamId, int64_t textureId) {
     const std::lock_guard<std::mutex> lock(renderersMutex_);
     auto renderer = renderers_.find(textureId);
     if (renderer == renderers_.end()) {
@@ -79,7 +79,7 @@ void ZegoTextureRendererController::UnbindRemoteStreamId(std::string streamId) {
     remoteTextureIdMap_.erase(streamId);
 }
 
-void ZegoTextureRendererController::BindMediaPlayerIndex(int32_t index, int64_t textureId) {
+bool ZegoTextureRendererController::BindMediaPlayerIndex(int32_t index, int64_t textureId) {
     const std::lock_guard<std::mutex> lock(renderersMutex_);
     auto renderer = renderers_.find(textureId);
     if (renderer == renderers_.end()) {
@@ -97,10 +97,10 @@ void ZegoTextureRendererController::UnbindMediaPlayerIndex(int32_t index) {
     mediaPlayerTextureIdMap_.erase(index);
 }
 
-uint8_t *ZegoTextureRendererController::GetFrameBuffer() {
-    return 0;
-#warning todo
-}
+//uint8_t *ZegoTextureRendererController::GetFrameBuffer() {
+//
+//    return 0;
+//}
 
 void ZegoTextureRendererController::UpdateRendererFrameBuffer(ZegoTextureRenderer *renderer,
                                                               unsigned char **data,
@@ -138,6 +138,8 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             return;
         }
     }
+
+    this->UpdateRendererFrameBuffer(renderer, data, dataLength, param, flipMode);
 }
 
 void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **data,
@@ -146,6 +148,23 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
                                                               const std::string &streamID) {
     printf("[onRemoteVideoFrameRawData] streamID:%s, data:%p, length:%u, w:%d, h:%d, format:%d\n",
            streamID.c_str(), data[0], dataLength[0], param.width, param.height, param.format);
+
+    int64_t textureId;
+    ZegoTextureRenderer *renderer;
+
+    {
+        const std::lock_guard<std::mutex> lock(renderersMutex_);
+        auto textureId = remoteTextureIdMap_.find(streamID);
+        if (textureId == remoteTextureIdMap_.end()) {
+            return;
+        }
+        auto renderer = renderers_.find(textureId->second);
+        if (renderer == renderers_.end()) {
+            return;
+        }
+    }
+
+    this->UpdateRendererFrameBuffer(renderer, data, dataLength, param, ZEGO_VIDEO_FLIP_MODE_NONE);
 }
 
 } // namespace zego::cocos

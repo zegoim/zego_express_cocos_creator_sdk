@@ -1,6 +1,8 @@
 // Native JSB
 
-import { ZegoTextureRendererController } from "./ZegoTextureRendererController";
+import { ZegoPublishChannel } from './ZegoExpressEnums'
+import { ZegoExpressEventHandler } from './ZegoExpressEventHandler'
+import { ZegoTextureRendererController } from './ZegoTextureRendererController'
 
 declare class ZegoExpressBridge {
   static getVersion(): string
@@ -15,11 +17,25 @@ declare class ZegoExpressBridge {
   logoutRoom(): void
 
   startPreview(): void
-  startPreview(channel: ZegoPublishChannel): void
+  startPreview(channel: ZegoPublishChannel, viewID: number): void
 
   stopPreview(): void
   stopPreview(channel: ZegoPublishChannel): void
 
+  // startPublishingStream(streamID: string): void
+  startPublishingStream(
+    streamID: string,
+    config: ZegoPublisherConfig,
+    channel: ZegoPublishChannel
+  ): void
+
+  // stopPublishingStream(): void
+  stopPublishingStream(channel: ZegoPublishChannel): void
+
+  // startPlayingStream(streamID: string): void
+  startPlayingStream(streamID: string, viewID: number): void
+
+  stopPlayingStream(streamID: string): void
 
   // Private: Render methods
 

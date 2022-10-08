@@ -1,34 +1,41 @@
-import { _decorator, Sprite, SpriteFrame, Texture2D, __private } from 'cc'
+import { _decorator, Sprite, SpriteFrame, Texture2D, gfx } from 'cc'
 
 const { ccclass } = _decorator
 
 @ccclass('ZegoTextureRenderer')
-export class ZegoTextureRenderer extends Sprite {
-
+export class ZegoTextureRenderer {
   private _textureId: number
-  private texture: Texture2D = null
+  private _texture: Texture2D = null
+  private _sprite: Sprite = null
 
   constructor(textureId: number) {
-    super()
     this._textureId = textureId
-    this.texture = new Texture2D()
-    this.spriteFrame = new SpriteFrame()
-    this.spriteFrame.texture = this.texture
+    this._texture = new Texture2D()
+    this._texture.setFilters(Texture2D.Filter.LINEAR, Texture2D.Filter.LINEAR)
+    this._texture.setMipFilter(Texture2D.Filter.LINEAR)
+    this._texture.setWrapMode(Texture2D.WrapMode.CLAMP_TO_EDGE, Texture2D.WrapMode.CLAMP_TO_EDGE)
+    this.updateSize(0, 0)
   }
 
-  textureId(): number {
+  set sprite(value: Sprite) {
+    this._sprite = value
+    this._sprite.spriteFrame = new SpriteFrame()
+    this._sprite.spriteFrame.texture = this._texture
+  }
+
+  get textureId(): number {
     return this._textureId
   }
 
   updateSize(width: number, height: number) {
-    this.texture.reset({
+    this._texture.reset({
       width: width,
       height: height,
-      format: __private._cocos_core_assets_asset_enum__PixelFormat.RGBA8888
+      format: gfx.Format.RGBA8,
     })
   }
 
   updateFrameBuffer(data: Uint8Array) {
-    this.texture.uploadData(data)
+    this._texture.uploadData(data)
   }
 }

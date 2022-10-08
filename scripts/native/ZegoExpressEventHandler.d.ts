@@ -1,3 +1,10 @@
+import {
+  ZegoEngineState,
+  ZegoRoomState,
+  ZegoRoomStateChangedReason,
+  ZegoUpdateType,
+} from './ZegoExpressEnums'
+
 declare interface ZegoExpressEventHandler {
   onDebugError?(errorCode: number, funcName: string, info: string): void
 

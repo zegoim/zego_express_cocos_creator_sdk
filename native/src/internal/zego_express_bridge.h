@@ -46,18 +46,27 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
 
     void logoutRoom();
 
-    void startPreview();
+    //    void startPreview();
 
-    void startPreview(ZegoPublishChannel channel);
+    void startPreview(ZegoPublishChannel channel, int viewID);
 
-    void stopPreview();
+    //    void stopPreview();
 
     void stopPreview(ZegoPublishChannel channel);
-                              
+
+    void startPublishingStream(const std::string &streamID, ZegoPublisherConfig config,
+                               ZegoPublishChannel channel);
+
+    void stopPublishingStream(ZegoPublishChannel channel);
+
+    void startPlayingStream(const std::string &streamID, int viewID);
+
+    void stopPlayingStream(const std::string &streamID);
+
   public:
-      int64_t createTextureRenderer();
-      void destroyTextureRenderer(int64_t textureId);
-      void setJsTextureRendererController(const se::Value &controller);
+    int64_t createTextureRenderer();
+    void destroyTextureRenderer(int64_t textureId);
+    void setJsTextureRendererController(const se::Value &controller);
 
   public:
     void onDebugError(int errorCode, const std::string &funcName, const std::string &info) override;

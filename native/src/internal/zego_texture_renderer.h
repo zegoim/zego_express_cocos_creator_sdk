@@ -9,6 +9,9 @@
 
 #include "ZegoExpressSDK.h"
 
+#include "bindings/sebind/sebind.h"
+#include "plugins/Plugins.h"
+
 using namespace ZEGO::EXPRESS;
 
 namespace zego::cocos {
@@ -16,6 +19,8 @@ namespace zego::cocos {
 class ZegoTextureRenderer {
   public:
     ZegoTextureRenderer();
+
+    void SetJsController(const se::Value &controller);
 
     void UpdateFrameBuffer(uint8_t *data, uint32_t data_length,
                            ZEGO::EXPRESS::ZegoVideoFrameParam param, ZegoVideoFlipMode flip_mode);
@@ -30,7 +35,7 @@ class ZegoTextureRenderer {
     ZegoVideoFlipMode FlipMode();
 
   private:
-    int64_t textureId_ = -1;
+    int64_t texture_id_ = -1;
     uint32_t width_ = 0;
     uint32_t height_ = 0;
     uint32_t rotation_ = 0;
@@ -39,6 +44,8 @@ class ZegoTextureRenderer {
   private:
     std::mutex mutex_;
     std::vector<uint8_t> buffer_;
+
+    std::shared_ptr<se::Value> js_controller_;
 };
 
 } // namespace zego::cocos
