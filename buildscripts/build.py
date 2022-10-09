@@ -5,6 +5,7 @@
 import argparse
 import os
 import shutil
+import subprocess
 import sys
 import utils
 import ziputil
@@ -27,6 +28,17 @@ def __parse_args(args):
     parser.add_argument('-n', '--no-download-deps', default=False, action='store_true', help='Whether not to download native dependencies.')
     return parser.parse_args(args[1:])
 
+def updateMainScript(restore=False):
+    main_script = os.path.join(PROJ_ROOT, 'dist', 'main.js')
+    key = 'let DEVELOPMENT_MODE = '
+    with open(main_script, 'r') as fr:
+        content = fr.readlines()
+    with open(main_script, 'w') as fw:
+        for line in content:
+            if key in line:
+                line = key + ('true' if restore else 'false') + ';\n'
+            fw.write(line)
+
 def main(argv):
     args = __parse_args(argv)
 
@@ -45,8 +57,17 @@ def main(argv):
         shutil.rmtree(out_dir)
     os.makedirs(out_dir)
 
+    # Update the main script
+    subprocess.check_call(['npm', 'run', 'build'])
+
+    # Make a release script
+    updateMainScript() 
+
     zip_name = 'zego_express_cocos_creator_sdk.zip'
     ziputil.zip_folder_list([os.path.join(PROJ_ROOT, x) for x in DIST], out_dir, zip_name)
+
+    # Restore the script
+    updateMainScript(True)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

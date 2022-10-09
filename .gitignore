@@ -22,6 +22,7 @@ native/windows/libs/*
 node_modules/
 package-lock.json
 yarn.lock
+*.meta
 
 # outputs
 _out/
