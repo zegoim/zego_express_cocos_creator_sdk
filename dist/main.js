@@ -7,6 +7,15 @@ exports.unload = exports.load = exports.methods = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 let DEVELOPMENT_MODE = true;
+let PROJ_ASSETS_PATH = path_1.default.join(Editor.Project.path, 'assets');
+let PROJ_PLUGINS_PATH = path_1.default.join(Editor.Project.path, 'native', 'plugins');
+let SRC_SCRIPTS_PATH = path_1.default.join(__dirname, '..', 'scripts');
+let DST_SCRIPTS_PATH = path_1.default.join(PROJ_ASSETS_PATH, 'zego_express_engine');
+let SRC_NATIVE_PATH = path_1.default.join(__dirname, '..', 'native');
+let DST_NATIVE_PATH = path_1.default.join(PROJ_PLUGINS_PATH, 'zego_express_engine');
+//////////////////
+// Entry Points //
+//////////////////
 exports.methods = {};
 function load() {
     console.log('[ZEGO][RTC] Extension load');
@@ -20,72 +29,54 @@ function unload() {
     uninstallNativePlugins();
 }
 exports.unload = unload;
+///////////////////////
+// Scripts Operation //
+///////////////////////
 function installScripts() {
     uninstallScripts(); // Uninstall old scripts if needed
-    let assetsDir = path_1.default.join(Editor.Project.path, 'assets');
-    if (!fs_1.default.existsSync(assetsDir)) {
-        fs_1.default.mkdirSync(assetsDir);
-    }
-    let src = path_1.default.join(__dirname, '..', 'scripts');
-    let dst = path_1.default.join(Editor.Project.path, 'assets', 'zego_express_engine');
-    if (DEVELOPMENT_MODE) {
-        console.log('[ZEGO][RTC][DevelopmentMode] Symlink scripts from', src, 'to', dst);
-        fs_1.default.symlinkSync(src, dst);
-    }
-    else {
-        console.log('[ZEGO][RTC] Copy scripts from', src, 'to', dst);
-        copyDirectory(src, dst);
-    }
+    _makeSureDirectoryExists(PROJ_ASSETS_PATH);
+    _copyDirectory(SRC_SCRIPTS_PATH, DST_SCRIPTS_PATH);
 }
 function uninstallScripts() {
-    let dst = path_1.default.join(Editor.Project.path, 'assets', 'zego_express_engine');
-    if (fs_1.default.existsSync(dst)) {
-        if (DEVELOPMENT_MODE) {
-            console.log('[ZEGO][RTC][DevelopmentMode] Unlink scripts directory:', dst);
-            fs_1.default.unlinkSync(dst);
-        }
-        else {
-            console.log('[ZEGO][RTC] Remove scripts directory:', dst);
-            fs_1.default.rmSync(dst, { force: true, maxRetries: 3, recursive: true });
-        }
+    if (!fs_1.default.existsSync(DST_SCRIPTS_PATH)) {
+        return;
     }
-}
-function installNativePlugins() {
-    uninstallNativePlugins(); // Uninstall old plugins if needed
-    let pluginsDir = path_1.default.join(Editor.Project.path, 'native', 'plugins');
-    if (!fs_1.default.existsSync(pluginsDir)) {
-        console.log('[ZEGO][RTC][DevelopmentMode] mkdir pluginsDir');
-        fs_1.default.mkdirSync(pluginsDir);
-    }
-    let src = path_1.default.join(__dirname, '..', 'native');
-    let dst = path_1.default.join(pluginsDir, 'zego_express_engine');
     if (DEVELOPMENT_MODE) {
-        console.log('[ZEGO][RTC][DevelopmentMode] Symlink native plugins from', src, 'to', dst);
-        fs_1.default.symlinkSync(src, dst);
+        // Copy back the modified scripts
+        _removeDirectory(SRC_SCRIPTS_PATH);
+        _copyDirectory(DST_SCRIPTS_PATH, SRC_SCRIPTS_PATH);
     }
-    else {
-        console.log('[ZEGO][RTC] Copy native plugins from', src, 'to', dst);
-        copyDirectory(src, dst);
-        // To avoid double import, rename the source json
-        updatePluginJson();
+    _removeDirectory(DST_SCRIPTS_PATH);
+}
+//////////////////////////////
+// Native Plugins Operation //
+//////////////////////////////
+function installNativePlugins() {
+    uninstallNativePlugins(); // Uninstall old native plugins if needed
+    _makeSureDirectoryExists(PROJ_PLUGINS_PATH);
+    _copyDirectory(SRC_NATIVE_PATH, DST_NATIVE_PATH);
+    if (!DEVELOPMENT_MODE) {
+        _updateSourcePluginJson(); // To avoid double import
     }
 }
 function uninstallNativePlugins() {
-    let dst = path_1.default.join(Editor.Project.path, 'native', 'plugins', 'zego_express_engine');
-    if (fs_1.default.existsSync(dst)) {
-        if (DEVELOPMENT_MODE) {
-            console.log('[ZEGO][RTC][DevelopmentMode] Unlink native plugins directory:', dst);
-            fs_1.default.unlinkSync(dst);
-        }
-        else {
-            console.log('[ZEGO][RTC] Remove native plugins directory:', dst);
-            fs_1.default.rmSync(dst, { force: true, maxRetries: 3, recursive: true });
-            // Restore the source json
-            updatePluginJson(true);
-        }
+    if (!fs_1.default.existsSync(DST_NATIVE_PATH)) {
+        return;
+    }
+    if (DEVELOPMENT_MODE) {
+        // Copy back the modified native plugins
+        _removeDirectory(SRC_NATIVE_PATH);
+        _copyDirectory(DST_NATIVE_PATH, SRC_NATIVE_PATH);
+    }
+    _removeDirectory(DST_NATIVE_PATH);
+    if (!DEVELOPMENT_MODE) {
+        _updateSourcePluginJson(true); // Restore the source json
     }
 }
-function updatePluginJson(restore = false) {
+//////////////////////
+// Helper Functions //
+//////////////////////
+function _updateSourcePluginJson(restore = false) {
     let src = path_1.default.join(__dirname, '..', 'native');
     let origin_json = path_1.default.join(src, 'cc_plugin.json');
     let backup_json = path_1.default.join(src, 'cc_plugin.bak.json');
@@ -100,7 +91,20 @@ function updatePluginJson(restore = false) {
         }
     }
 }
-function copyDirectory(src, dst) {
+function _makeSureDirectoryExists(dir) {
+    if (!fs_1.default.existsSync(dir)) {
+        console.log('[ZEGO][RTC] Make:', dir);
+        fs_1.default.mkdirSync(dir);
+    }
+}
+function _removeDirectory(dir) {
+    console.log('[ZEGO][RTC] Remove:', dir);
+    fs_1.default.rmSync(dir, { force: true, maxRetries: 3, recursive: true });
+}
+function _copyDirectory(src, dst, log = true) {
+    if (log) {
+        console.log('[ZEGO][RTC] Copy directory from', src, 'to', dst);
+    }
     fs_1.default.mkdirSync(dst, { recursive: true });
     let entries = fs_1.default.readdirSync(src, { withFileTypes: true });
     for (let entry of entries) {
@@ -110,7 +114,7 @@ function copyDirectory(src, dst) {
             fs_1.default.symlinkSync(fs_1.default.readlinkSync(srcPath), dstPath);
         }
         else if (entry.isDirectory()) {
-            copyDirectory(srcPath, dstPath);
+            _copyDirectory(srcPath, dstPath, false);
         }
         else {
             fs_1.default.copyFileSync(srcPath, dstPath);

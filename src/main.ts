@@ -3,6 +3,19 @@ import path from 'path'
 
 let DEVELOPMENT_MODE = true
 
+let PROJ_ASSETS_PATH = path.join(Editor.Project.path, 'assets')
+let PROJ_PLUGINS_PATH = path.join(Editor.Project.path, 'native', 'plugins')
+
+let SRC_SCRIPTS_PATH = path.join(__dirname, '..', 'scripts')
+let DST_SCRIPTS_PATH = path.join(PROJ_ASSETS_PATH, 'zego_express_engine')
+
+let SRC_NATIVE_PATH = path.join(__dirname, '..', 'native')
+let DST_NATIVE_PATH = path.join(PROJ_PLUGINS_PATH, 'zego_express_engine')
+
+//////////////////
+// Entry Points //
+//////////////////
+
 export const methods: { [key: string]: (...any: any) => any } = {}
 
 export function load() {
@@ -17,72 +30,67 @@ export function unload() {
   uninstallNativePlugins()
 }
 
+///////////////////////
+// Scripts Operation //
+///////////////////////
+
 function installScripts() {
   uninstallScripts() // Uninstall old scripts if needed
-  let assetsDir = path.join(Editor.Project.path, 'assets')
-  if (!fs.existsSync(assetsDir)) {
-    fs.mkdirSync(assetsDir)
-  }
-  let src = path.join(__dirname, '..', 'scripts')
-  let dst = path.join(Editor.Project.path, 'assets', 'zego_express_engine')
-  if (DEVELOPMENT_MODE) {
-    console.log('[ZEGO][RTC][DevelopmentMode] Symlink scripts from', src, 'to', dst)
-    fs.symlinkSync(src, dst)
-  } else {
-    console.log('[ZEGO][RTC] Copy scripts from', src, 'to', dst)
-    copyDirectory(src, dst)
-  }
+  _makeSureDirectoryExists(PROJ_ASSETS_PATH)
+  _copyDirectory(SRC_SCRIPTS_PATH, DST_SCRIPTS_PATH)
 }
 
 function uninstallScripts() {
-  let dst = path.join(Editor.Project.path, 'assets', 'zego_express_engine')
-  if (fs.existsSync(dst)) {
-    if (DEVELOPMENT_MODE) {
-      console.log('[ZEGO][RTC][DevelopmentMode] Unlink scripts directory:', dst)
-      fs.unlinkSync(dst)
-    } else {
-      console.log('[ZEGO][RTC] Remove scripts directory:', dst)
-      fs.rmSync(dst, { force: true, maxRetries: 3, recursive: true })
-    }
+  if (!fs.existsSync(DST_SCRIPTS_PATH)) {
+    return
   }
+
+  if (DEVELOPMENT_MODE) {
+    // Copy back the modified scripts
+    _removeDirectory(SRC_SCRIPTS_PATH)
+    _copyDirectory(DST_SCRIPTS_PATH, SRC_SCRIPTS_PATH)
+  }
+
+  _removeDirectory(DST_SCRIPTS_PATH)
 }
 
+//////////////////////////////
+// Native Plugins Operation //
+//////////////////////////////
+
 function installNativePlugins() {
-  uninstallNativePlugins() // Uninstall old plugins if needed
-  let pluginsDir = path.join(Editor.Project.path, 'native', 'plugins')
-  if (!fs.existsSync(pluginsDir)) {
-    console.log('[ZEGO][RTC][DevelopmentMode] mkdir pluginsDir')
-    fs.mkdirSync(pluginsDir)
-  }
-  let src = path.join(__dirname, '..', 'native')
-  let dst = path.join(pluginsDir, 'zego_express_engine')
-  if (DEVELOPMENT_MODE) {
-    console.log('[ZEGO][RTC][DevelopmentMode] Symlink native plugins from', src, 'to', dst)
-    fs.symlinkSync(src, dst)
-  } else {
-    console.log('[ZEGO][RTC] Copy native plugins from', src, 'to', dst)
-    copyDirectory(src, dst)
-    // To avoid double import, rename the source json
-    updatePluginJson()
+  uninstallNativePlugins() // Uninstall old native plugins if needed
+  _makeSureDirectoryExists(PROJ_PLUGINS_PATH)
+  _copyDirectory(SRC_NATIVE_PATH, DST_NATIVE_PATH)
+
+  if (!DEVELOPMENT_MODE) {
+    _updateSourcePluginJson() // To avoid double import
   }
 }
 
 function uninstallNativePlugins() {
-  let dst = path.join(Editor.Project.path, 'native', 'plugins', 'zego_express_engine')
-  if (fs.existsSync(dst)) {
-    if (DEVELOPMENT_MODE) {
-      console.log('[ZEGO][RTC][DevelopmentMode] Unlink native plugins directory:', dst)
-      fs.unlinkSync(dst)
-    } else {
-      console.log('[ZEGO][RTC] Remove native plugins directory:', dst)
-      fs.rmSync(dst, { force: true, maxRetries: 3, recursive: true })
-      // Restore the source json
-      updatePluginJson(true)
-    }
+  if (!fs.existsSync(DST_NATIVE_PATH)) {
+    return
+  }
+
+  if (DEVELOPMENT_MODE) {
+    // Copy back the modified native plugins
+    _removeDirectory(SRC_NATIVE_PATH)
+    _copyDirectory(DST_NATIVE_PATH, SRC_NATIVE_PATH)
+  }
+
+  _removeDirectory(DST_NATIVE_PATH)
+
+  if (!DEVELOPMENT_MODE) {
+    _updateSourcePluginJson(true) // Restore the source json
   }
 }
 
-function updatePluginJson(restore: boolean = false) {
+//////////////////////
+// Helper Functions //
+//////////////////////
+
+function _updateSourcePluginJson(restore: boolean = false) {
   let src = path.join(__dirname, '..', 'native')
   let origin_json = path.join(src, 'cc_plugin.json')
   let backup_json = path.join(src, 'cc_plugin.bak.json')
@@ -97,7 +105,22 @@ function updatePluginJson(restore: boolean = false) {
   }
 }
 
-function copyDirectory(src: string, dst: string) {
+function _makeSureDirectoryExists(dir: string) {
+  if (!fs.existsSync(dir)) {
+    console.log('[ZEGO][RTC] Make:', dir)
+    fs.mkdirSync(dir)
+  }
+}
+
+function _removeDirectory(dir: string) {
+  console.log('[ZEGO][RTC] Remove:', dir)
+  fs.rmSync(dir, { force: true, maxRetries: 3, recursive: true })
+}
+
+function _copyDirectory(src: string, dst: string, log: boolean = true) {
+  if (log) {
+    console.log('[ZEGO][RTC] Copy directory from', src, 'to', dst)
+  }
   fs.mkdirSync(dst, { recursive: true })
   let entries = fs.readdirSync(src, { withFileTypes: true })
 
@@ -107,7 +130,7 @@ function copyDirectory(src: string, dst: string) {
     if (entry.isSymbolicLink()) {
       fs.symlinkSync(fs.readlinkSync(srcPath), dstPath)
     } else if (entry.isDirectory()) {
-      copyDirectory(srcPath, dstPath)
+      _copyDirectory(srcPath, dstPath, false)
     } else {
       fs.copyFileSync(srcPath, dstPath)
     }
