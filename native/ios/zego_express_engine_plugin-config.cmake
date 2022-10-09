@@ -20,7 +20,7 @@ file(GLOB_RECURSE SRC_LIST ${SRC_DIR}/*.h ${SRC_DIR}/*.cc)
 source_group(TREE ${SRC_DIR} PREFIX "src" FILES ${SRC_LIST})
 add_library(zego_express_engine_plugin ${SRC_LIST})
 
-target_include_directories(zego_express_engine_plugin PRIVATE "${ZEGO_EXPRESS_LIBRARY_PATH}/Headers")
+target_include_directories(zego_express_engine_plugin PRIVATE "${ZEGO_EXPRESS_LIBRARY_PATH}/Headers/cpp")
 
 target_link_libraries(zego_express_engine_plugin
     "${ZEGO_EXPRESS_LIBRARY_PATH}/ZegoExpressEngine"
