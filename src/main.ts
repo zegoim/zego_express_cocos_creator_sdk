@@ -108,7 +108,7 @@ function _updateSourcePluginJson(restore: boolean = false) {
 function _makeSureDirectoryExists(dir: string) {
   if (!fs.existsSync(dir)) {
     console.log('[ZEGO][RTC] Make:', dir)
-    fs.mkdirSync(dir)
+    fs.mkdirSync(dir, { recursive: true })
   }
 }
 

@@ -94,7 +94,7 @@ function _updateSourcePluginJson(restore = false) {
 function _makeSureDirectoryExists(dir) {
     if (!fs_1.default.existsSync(dir)) {
         console.log('[ZEGO][RTC] Make:', dir);
-        fs_1.default.mkdirSync(dir);
+        fs_1.default.mkdirSync(dir, { recursive: true });
     }
 }
 function _removeDirectory(dir) {
