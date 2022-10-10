@@ -3,9 +3,10 @@ import {
   ZegoRoomState,
   ZegoRoomStateChangedReason,
   ZegoUpdateType,
-} from './ZegoExpressEnums'
+  ZegoUser,
+} from './ZegoExpressDefines'
 
-declare interface ZegoExpressEventHandler {
+export interface ZegoExpressEventHandler {
   onDebugError?(errorCode: number, funcName: string, info: string): void
 
   onEngineStateUpdate?(state: ZegoEngineState): void

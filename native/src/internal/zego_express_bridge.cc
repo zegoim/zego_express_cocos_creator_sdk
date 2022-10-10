@@ -24,16 +24,19 @@ ZegoExpressBridge::ZegoExpressBridge() {
 
 std::string ZegoExpressBridge::getVersion() { return ZegoExpressSDK::getVersion(); }
 
-void ZegoExpressBridge::createEngine(ZegoEngineProfile profile) {
-    printf("appID: %d, appSign:%s, scenario: %d\n", profile.appID, profile.appSign.c_str(),
-           profile.scenario);
+void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appSign, int scenario) {
+    printf("appID: %d, appSign:%s, scenario: %d\n", appID, appSign.c_str(), scenario);
+    auto profile = ZegoEngineProfile{};
+    profile.appID = appID;
+    profile.appSign = appSign;
+    profile.scenario = ZegoScenario(scenario);
     native_engine_ = ZegoExpressSDK::createEngine(profile, shared_from_this());
 
     ZegoCustomVideoRenderConfig render_config;
     render_config.bufferType = ZEGO_VIDEO_BUFFER_TYPE_RAW_DATA;
     render_config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
     native_engine_->enableCustomVideoRender(true, &render_config);
-    native_engine_->setCustomVideoRenderHandler(shared_from_this());
+    native_engine_->setCustomVideoRenderHandler(ZegoTextureRendererController::GetInstance());
 }
 
 void ZegoExpressBridge::destroyEngine() {
@@ -48,84 +51,74 @@ void ZegoExpressBridge::setEventHandler(const se::Value &handler) {
     event_handler_ = std::make_shared<se::Value>(handler);
 }
 
-void ZegoExpressBridge::loginRoom(const std::string &roomID, ZegoUser user) {
+void ZegoExpressBridge::loginRoom(const std::string &roomID, const std::string &userID,
+                                  const std::string &userName) {
+    // TODO: Callback
     if (!native_engine_) {
         return;
     }
-    printf("roomID: %s\n", roomID.c_str());
-    native_engine_->loginRoom(roomID, user);
+    native_engine_->loginRoom(roomID, ZegoUser(userID, userName));
 }
 
 void ZegoExpressBridge::logoutRoom(const std::string &roomID) {
+    // TODO: Callback
     if (!native_engine_) {
         return;
     }
-    native_engine_->logoutRoom(roomID);
-}
-
-void ZegoExpressBridge::logoutRoom() {
-    if (!native_engine_) {
-        return;
+    if (roomID.empty()) {
+        native_engine_->logoutRoom();
+    } else {
+        native_engine_->logoutRoom(roomID);
     }
-    native_engine_->logoutRoom();
 }
 
-//void ZegoExpressBridge::startPreview() {
-//    if (!native_engine_) {
-//        return;
-//    }
-//    native_engine_->startPreview();
-//}
-
-void ZegoExpressBridge::startPreview(ZegoPublishChannel channel, int viewID) {
+void ZegoExpressBridge::startPreview(int channel, int viewID) {
     if (!native_engine_) {
         return;
     }
 
     if (viewID < 0) {
         // Preview audio only
-        native_engine_->startPreview(nullptr, channel);
+        native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
     } else {
         auto controller = ZegoTextureRendererController::GetInstance();
-        if (!controller->BindCapturedChannel(channel, viewID)) {
+        if (!controller->BindCapturedChannel(ZegoPublishChannel(channel), viewID)) {
             // Preview video without creating TextureRenderer in advance
             // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
             // TODO: Print error message
             return;
         }
 
-        native_engine_->startPreview(nullptr, channel);
+        native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
     }
 }
 
-//void ZegoExpressBridge::stopPreview() {
-//    if (!native_engine_) {
-//        return;
-//    }
-//    native_engine_->stopPreview();
-//}
-
-void ZegoExpressBridge::stopPreview(ZegoPublishChannel channel) {
+void ZegoExpressBridge::stopPreview(int channel) {
     if (!native_engine_) {
         return;
     }
-    native_engine_->stopPreview(channel);
+    native_engine_->stopPreview(ZegoPublishChannel(channel));
 }
 
 void ZegoExpressBridge::startPublishingStream(const std::string &streamID,
-                                              ZegoPublisherConfig config,
-                                              ZegoPublishChannel channel) {
+                                              const std::string &roomID,
+                                              int forceSynchronousNetworkTime,
+                                              int streamCensorshipMode, int channel) {
     if (!native_engine_) {
         return;
     }
-    native_engine_->startPublishingStream(streamID, config, channel);
+    auto config = ZegoPublisherConfig{};
+    config.roomID = roomID;
+    config.forceSynchronousNetworkTime = forceSynchronousNetworkTime;
+    config.streamCensorshipMode = ZegoStreamCensorshipMode(streamCensorshipMode);
+    native_engine_->startPublishingStream(streamID, config, ZegoPublishChannel(channel));
 }
 
-void ZegoExpressBridge::stopPublishingStream(ZegoPublishChannel channel) {
+void ZegoExpressBridge::stopPublishingStream(int channel) {
     if (!native_engine_) {
         return;
     }
-    native_engine_->stopPublishingStream(channel);
+    native_engine_->stopPublishingStream(ZegoPublishChannel(channel));
 }
 
 void ZegoExpressBridge::startPlayingStream(const std::string &streamID, int viewID) {
@@ -269,20 +262,9 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("setEventHandler", &ZegoExpressBridge::setEventHandler);
 
     bridge.function("loginRoom", &ZegoExpressBridge::loginRoom);
-    bridge.function("logoutRoom",
-                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::logoutRoom));
-    bridge.function("logoutRoom", static_cast<void (ZegoExpressBridge::*)(const std::string &)>(
-                                      &ZegoExpressBridge::logoutRoom));
+    bridge.function("logoutRoom", &ZegoExpressBridge::logoutRoom);
 
-    //    bridge.function("startPreview",
-    //                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::startPreview));
-    //    bridge.function("startPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
-    //                                        &ZegoExpressBridge::startPreview));
     bridge.function("startPreview", &ZegoExpressBridge::startPreview);
-    //    bridge.function("stopPreview",
-    //                    static_cast<void (ZegoExpressBridge::*)()>(&ZegoExpressBridge::stopPreview));
-    //    bridge.function("stopPreview", static_cast<void (ZegoExpressBridge::*)(ZegoPublishChannel)>(
-    //                                       &ZegoExpressBridge::stopPreview));
     bridge.function("stopPreview", &ZegoExpressBridge::stopPreview);
 
     bridge.function("startPublishingStream", &ZegoExpressBridge::startPublishingStream);

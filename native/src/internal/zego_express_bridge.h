@@ -34,30 +34,26 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     static std::string getVersion();
 
   public:
-    void createEngine(ZegoEngineProfile profile);
+    void createEngine(unsigned int appID, const std::string &appSign, int scenario);
 
     void destroyEngine();
 
     void setEventHandler(const se::Value &handler);
 
-    void loginRoom(const std::string &roomID, ZegoUser user);
+    void loginRoom(const std::string &roomID, const std::string &userID,
+                   const std::string &userName);
 
     void logoutRoom(const std::string &roomID);
 
-    void logoutRoom();
+    void startPreview(int channel, int viewID);
 
-    //    void startPreview();
+    void stopPreview(int channel);
 
-    void startPreview(ZegoPublishChannel channel, int viewID);
+    void startPublishingStream(const std::string &streamID, const std::string &roomID,
+                               int forceSynchronousNetworkTime, int streamCensorshipMode,
+                               int channel);
 
-    //    void stopPreview();
-
-    void stopPreview(ZegoPublishChannel channel);
-
-    void startPublishingStream(const std::string &streamID, ZegoPublisherConfig config,
-                               ZegoPublishChannel channel);
-
-    void stopPublishingStream(ZegoPublishChannel channel);
+    void stopPublishingStream(int channel);
 
     void startPlayingStream(const std::string &streamID, int viewID);
 

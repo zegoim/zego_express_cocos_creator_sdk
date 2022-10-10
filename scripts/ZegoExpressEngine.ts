@@ -1,5 +1,12 @@
 import { JSB } from 'cc/env'
-import { ZegoPublishChannel } from './native/ZegoExpressEnums'
+import {
+  ZegoEngineProfile,
+  ZegoUser,
+  ZegoPublishChannel,
+  ZegoCanvas,
+  ZegoPublisherConfig,
+} from './native/ZegoExpressDefines'
+import { ZegoExpressEventHandler } from './native/ZegoExpressEventHandler'
 import { ZegoTextureRendererController } from './native/ZegoTextureRendererController'
 import { ZegoTextureRenderer } from './ZegoTextureRenderer'
 
@@ -16,7 +23,7 @@ export class ZegoExpressEngine {
   createEngine(profile: ZegoEngineProfile): void {
     if (JSB) {
       console.log('[ZegoExpressEngine] create engine', this._bridge)
-      this._bridge.createEngine(profile)
+      this._bridge.createEngine(profile.appID, profile.appSign, profile.scenario ?? 0)
       console.log('[ZegoExpressEngine] bridge:', this._bridge)
     } else {
       // TODO: Web
@@ -50,7 +57,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.loginRoom(roomID, user)
+      this._bridge.loginRoom(roomID, user.userID, user.userName)
     } else {
       // TODO: Web
     }
@@ -61,7 +68,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.logoutRoom(roomID)
+      this._bridge.logoutRoom(roomID ?? '')
     } else {
       // TODO: Web
     }
@@ -73,7 +80,7 @@ export class ZegoExpressEngine {
         return
       }
       console.log('[startPreview] channel:', channel, ' canvas:', canvas)
-      this._bridge.startPreview(channel ?? ZegoPublishChannel.Main, canvas ? canvas.view : -1)
+      this._bridge.startPreview(channel ?? 0, canvas ? canvas.view : -1)
     } else {
       // TODO: Web
     }
@@ -84,7 +91,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.stopPreview(channel ?? ZegoPublishChannel.Main)
+      this._bridge.stopPreview(channel ?? 0)
     } else {
       // TODO: Web
     }
@@ -100,7 +107,13 @@ export class ZegoExpressEngine {
         return
       }
       console.log('[startPublishingStream] streamID:', streamID, ' channel:', channel)
-      this._bridge.startPublishingStream(streamID, config ?? {}, channel ?? ZegoPublishChannel.Main)
+      this._bridge.startPublishingStream(
+        streamID,
+        config.roomID ?? '',
+        config.forceSynchronousNetworkTime ?? 0,
+        config.streamCensorshipMode ?? 0,
+        channel ?? 0
+      )
     } else {
       // TODO: Web
     }
@@ -111,7 +124,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.stopPublishingStream(channel ?? ZegoPublishChannel.Main)
+      this._bridge.stopPublishingStream(channel ?? 0)
     } else {
       // TODO: Web
     }
