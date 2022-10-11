@@ -109,9 +109,9 @@ export class ZegoExpressEngine {
       console.log('[startPublishingStream] streamID:', streamID, ' channel:', channel)
       this._bridge.startPublishingStream(
         streamID,
-        config.roomID ?? '',
-        config.forceSynchronousNetworkTime ?? 0,
-        config.streamCensorshipMode ?? 0,
+        config ? config.roomID ?? '' : '',
+        config ? config.forceSynchronousNetworkTime ?? 0 : 0,
+        config ? config.streamCensorshipMode ?? 0 : 0,
         channel ?? 0
       )
     } else {
