@@ -8,10 +8,6 @@
 #include "zego_express_bridge.h"
 #include "zego_texture_renderer_controller.h"
 
-JSB_REGISTER_OBJECT_TYPE(ZegoEngineProfile);
-JSB_REGISTER_OBJECT_TYPE(ZegoUser);
-JSB_REGISTER_OBJECT_TYPE(ZegoPublisherConfig);
-
 namespace zego::cocos {
 
 #pragma mark - API
