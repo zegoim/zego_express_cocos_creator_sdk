@@ -7,8 +7,12 @@
 
 #pragma once
 
+#include <functional>
+
 namespace zego::cocos {
 
 uint32_t GetNextSequence();
+
+void RunOnCocosThread(const std::function<void()> &func);
 
 }

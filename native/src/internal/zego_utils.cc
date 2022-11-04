@@ -6,6 +6,7 @@
 //
 
 #include <atomic>
+#include "application/ApplicationManager.h"
 
 namespace zego::cocos {
 
@@ -15,6 +16,10 @@ uint32_t GetNextSequence() {
         ++global_sequence;
     }
     return global_sequence;
+}
+
+void RunOnCocosThread(const std::function<void()> &func) {
+    CC_CURRENT_ENGINE()->getScheduler()->performFunctionInCocosThread(func);
 }
 
 } // namespace zego::cocos
