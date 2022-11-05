@@ -20,7 +20,12 @@ export class ZegoTextureRenderer {
   set sprite(value: Sprite) {
     this._sprite = value
     this._sprite.spriteFrame = new SpriteFrame()
+    console.log('spriteFrame:', this._sprite.spriteFrame)
     this._sprite.spriteFrame.texture = this._texture
+  }
+
+  get sprite() {
+    return this._sprite
   }
 
   get textureId(): number {
@@ -37,5 +42,6 @@ export class ZegoTextureRenderer {
 
   updateFrameBuffer(data: Uint8Array) {
     this._texture.uploadData(data)
+    console.log('updateFrameBuffer:', data.length)
   }
 }

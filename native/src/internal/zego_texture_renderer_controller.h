@@ -18,6 +18,8 @@ using namespace ZEGO::EXPRESS;
 
 namespace zego::cocos {
 
+using ZegoCocosVideoFrameQueue = std::queue<std::shared_ptr<ZegoCocosVideoFrame>>;
+
 class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
   public:
@@ -46,9 +48,9 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
     //    uint8_t *GetFrameBuffer();
 
   private:
-    void UpdateRendererFrameBuffer(ZegoTextureRenderer *renderer, unsigned char **data,
-                                   unsigned int *dataLength, ZegoVideoFrameParam param,
-                                   ZegoVideoFlipMode flipMode);
+//    void UpdateRendererFrameBuffer(std::shared_ptr<ZegoTextureRenderer> renderer, unsigned char **data,
+//                                   unsigned int *dataLength, ZegoVideoFrameParam param,
+//                                   ZegoVideoFlipMode flipMode);
 
   private:
     void onCapturedVideoFrameRawData(unsigned char **data, unsigned int *dataLength,
@@ -69,6 +71,15 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
     std::atomic_bool isInit = false;
 
     std::shared_ptr<se::Value> js_controller_;
+    
+    
+private:
+    std::mutex captured_video_frame_mutex_;
+    std::map<ZegoPublishChannel, ZegoCocosVideoFrameQueue> captured_video_frames_;
+
+    std::mutex remote_video_frame_mutex_;
+    std::map<std::string, ZegoCocosVideoFrameQueue> remote_video_frames_;
+
 };
 
 } // namespace zego::cocos

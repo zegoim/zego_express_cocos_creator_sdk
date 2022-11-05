@@ -1,3 +1,4 @@
+import { SpriteFrame } from 'cc'
 import { JSB } from 'cc/env'
 import {
   ZegoEngineProfile,
@@ -80,7 +81,12 @@ export class ZegoExpressEngine {
         return
       }
       console.log('[startPreview] channel:', channel, ' canvas:', canvas)
-      this._bridge.startPreview(channel ?? 0, canvas ? canvas.view : -1)
+      this._bridge.startPreview(channel ?? 0, 1)
+      if (canvas) {
+        // canvas.view.spriteFrame = new SpriteFrame()
+        this._rendererController.localViews.set(channel, canvas.view)
+      }
+      
     } else {
       // TODO: Web
     }
@@ -135,7 +141,12 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.startPlayingStream(streamID, canvas ? canvas.view : -1)
+      this._bridge.startPlayingStream(streamID, -1)
+
+      if (canvas) {
+        // canvas.view.spriteFrame = new SpriteFrame()
+        this._rendererController.remoteViews.set(streamID, canvas.view)
+      }
     } else {
       // TODO: Web
     }

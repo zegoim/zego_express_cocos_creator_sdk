@@ -1,3 +1,5 @@
+import { Sprite } from "cc"
+
 /// Application scenario.
 export enum ZegoScenario {
   /// General scenario
@@ -148,7 +150,7 @@ export class ZegoUser {
 /// Configure view object, view Mode, background color
 export class ZegoCanvas {
   /// The TextureID returned by calling [createTextureRenderer]
-  view: number
+  view: Sprite
 
   /// View mode, default is ZegoViewModeAspectFit
   viewMode?: ZegoViewMode

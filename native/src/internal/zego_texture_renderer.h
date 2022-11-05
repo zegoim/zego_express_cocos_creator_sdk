@@ -16,6 +16,13 @@ using namespace ZEGO::EXPRESS;
 
 namespace zego::cocos {
 
+struct ZegoCocosVideoFrame {
+    std::unique_ptr<uint8_t[]> data;
+    uint32_t data_length = 0;
+    ZegoVideoFrameParam param;
+    ZegoVideoFlipMode flip_mode = ZEGO_VIDEO_FLIP_MODE_NONE;
+};
+
 class ZegoTextureRenderer {
   public:
     ZegoTextureRenderer();
@@ -25,7 +32,7 @@ class ZegoTextureRenderer {
     void UpdateFrameBuffer(uint8_t *data, uint32_t data_length,
                            ZEGO::EXPRESS::ZegoVideoFrameParam param, ZegoVideoFlipMode flip_mode);
 
-    uint8_t *GetFrameBuffer();
+//    uint8_t *GetFrameBuffer();
 
   public:
     int64_t TextureId();
@@ -43,7 +50,7 @@ class ZegoTextureRenderer {
 
   private:
     std::mutex mutex_;
-    std::vector<uint8_t> buffer_;
+//    uint8_t *buffer_ = nullptr;
 
     std::shared_ptr<se::Value> js_controller_;
 };
