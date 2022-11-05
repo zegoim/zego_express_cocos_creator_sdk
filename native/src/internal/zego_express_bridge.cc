@@ -77,13 +77,13 @@ void ZegoExpressBridge::startPreview(int channel, int viewID) {
         // Preview audio only
         native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
     } else {
-        auto controller = ZegoTextureRendererController::GetInstance();
-        if (!controller->BindCapturedChannel(ZegoPublishChannel(channel), viewID)) {
-            // Preview video without creating TextureRenderer in advance
-            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-            // TODO: Print error message
-            return;
-        }
+//        auto controller = ZegoTextureRendererController::GetInstance();
+//        if (!controller->BindCapturedChannel(ZegoPublishChannel(channel), viewID)) {
+//            // Preview video without creating TextureRenderer in advance
+//            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+//            // TODO: Print error message
+//            return;
+//        }
 
         native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
     }
