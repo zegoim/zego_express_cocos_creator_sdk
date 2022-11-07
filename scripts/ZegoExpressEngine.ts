@@ -1,4 +1,3 @@
-import { SpriteFrame } from 'cc'
 import { JSB } from 'cc/env'
 import {
   ZegoEngineProfile,
@@ -9,7 +8,6 @@ import {
 } from './native/ZegoExpressDefines'
 import { ZegoExpressEventHandler } from './native/ZegoExpressEventHandler'
 import { ZegoTextureRendererController } from './native/ZegoTextureRendererController'
-import { ZegoTextureRenderer } from './ZegoTextureRenderer'
 
 export class ZegoExpressEngine {
   private _bridge: ZegoExpressBridge
@@ -83,7 +81,6 @@ export class ZegoExpressEngine {
       console.log('[startPreview] channel:', channel, ' canvas:', canvas)
       this._bridge.startPreview(channel ?? 0, 1)
       if (canvas) {
-        // canvas.view.spriteFrame = new SpriteFrame()
         this._rendererController.localViews.set(channel, canvas.view)
       }
       
@@ -144,7 +141,6 @@ export class ZegoExpressEngine {
       this._bridge.startPlayingStream(streamID, -1)
 
       if (canvas) {
-        // canvas.view.spriteFrame = new SpriteFrame()
         this._rendererController.remoteViews.set(streamID, canvas.view)
       }
     } else {
@@ -158,34 +154,6 @@ export class ZegoExpressEngine {
         return
       }
       this._bridge.stopPlayingStream(streamID)
-    } else {
-      // TODO: Web
-    }
-  }
-
-  createTextureRenderer(): ZegoTextureRenderer {
-    if (JSB) {
-      if (!this._bridge) {
-        return
-      }
-      let textureId = this._bridge.createTextureRenderer()
-      console.log('[createTextureRenderer] texture id:', textureId)
-      let renderer = this._rendererController.createTextureRenderer(textureId)
-      return renderer
-    } else {
-      // TODO: Web
-      return null
-    }
-  }
-
-  destroyTextureRenderer(textureId: number): void {
-    if (JSB) {
-      if (!this._bridge) {
-        return
-      }
-      console.log('[destroyTextureRenderer] texture id:', textureId)
-      this._bridge.destroyTextureRenderer(textureId)
-      this._rendererController.destroyTextureRenderer(textureId)
     } else {
       // TODO: Web
     }

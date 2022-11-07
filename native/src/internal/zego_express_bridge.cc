@@ -22,6 +22,11 @@ std::string ZegoExpressBridge::getVersion() { return ZegoExpressSDK::getVersion(
 
 void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appSign, int scenario) {
     printf("appID: %d, appSign:%s, scenario: %d\n", appID, appSign.c_str(), scenario);
+    
+    auto engine_config = ZegoEngineConfig{};
+    engine_config.advancedConfig = {{"video_data_image_colorspace", "rgba"}};
+    ZegoExpressSDK::setEngineConfig(engine_config);
+    
     auto profile = ZegoEngineProfile{};
     profile.appID = appID;
     profile.appSign = appSign;
@@ -33,6 +38,10 @@ void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appS
     render_config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
     native_engine_->enableCustomVideoRender(true, &render_config);
     native_engine_->setCustomVideoRenderHandler(ZegoTextureRendererController::GetInstance());
+    
+//    auto video_config = native_engine_->getVideoConfig();
+//    video_config.fps = 30;
+//    native_engine_->setVideoConfig(video_config);
 }
 
 void ZegoExpressBridge::destroyEngine() {
@@ -126,13 +135,13 @@ void ZegoExpressBridge::startPlayingStream(const std::string &streamID, int view
         // Play audio only
         native_engine_->startPlayingStream(streamID);
     } else {
-        auto controller = ZegoTextureRendererController::GetInstance();
-        if (!controller->BindRemoteStreamId(streamID, viewID)) {
-            // Play video without creating TextureRenderer in advance
-            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-            // TODO: Print error message
-            return;
-        }
+//        auto controller = ZegoTextureRendererController::GetInstance();
+//        if (!controller->BindRemoteStreamId(streamID, viewID)) {
+//            // Play video without creating TextureRenderer in advance
+//            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+//            // TODO: Print error message
+//            return;
+//        }
 
         native_engine_->startPlayingStream(streamID);
     }
@@ -148,16 +157,6 @@ void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
 }
 
 #pragma mark - TextureRenderer
-
-int64_t ZegoExpressBridge::createTextureRenderer() {
-    auto controller = ZegoTextureRendererController::GetInstance();
-    return controller->CreateTextureRenderer();
-}
-
-void ZegoExpressBridge::destroyTextureRenderer(int64_t textureId) {
-    auto controller = ZegoTextureRendererController::GetInstance();
-    controller->DestroyTextureRenderer(textureId);
-}
 
 void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) {
     auto controller = ZegoTextureRendererController::GetInstance();
@@ -269,8 +268,6 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
     bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
 
-    bridge.function("createTextureRenderer", &ZegoExpressBridge::createTextureRenderer);
-    bridge.function("destroyTextureRenderer", &ZegoExpressBridge::destroyTextureRenderer);
     bridge.function("setJsTextureRendererController",
                     &ZegoExpressBridge::setJsTextureRendererController);
 

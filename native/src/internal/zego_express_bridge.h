@@ -60,8 +60,6 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     void stopPlayingStream(const std::string &streamID);
 
   public:
-    int64_t createTextureRenderer();
-    void destroyTextureRenderer(int64_t textureId);
     void setJsTextureRendererController(const se::Value &controller);
 
   public:

@@ -28,8 +28,5 @@ declare class ZegoExpressBridge {
   stopPlayingStream(streamID: string): void
 
   // Private: Render methods
-
-  createTextureRenderer(): number
-  destroyTextureRenderer(textureId: number): void
   setJsTextureRendererController(controller: Object): void
 }

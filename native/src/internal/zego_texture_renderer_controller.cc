@@ -16,98 +16,18 @@ std::shared_ptr<ZegoTextureRendererController> ZegoTextureRendererController::Ge
     return instance_;
 }
 
-int64_t ZegoTextureRendererController::CreateTextureRenderer() {
-    auto renderer = std::make_shared<ZegoTextureRenderer>();
-    int64_t textureId = renderer->TextureId();
-    renderer->SetJsController(*js_controller_.get());
-    {
-        const std::lock_guard<std::mutex> lock(renderersMutex_);
-        renderers_[textureId] = renderer;
-    }
-
-    return textureId;
-}
-
 void ZegoTextureRendererController::SetJsController(const se::Value &controller) {
     js_controller_ = std::make_shared<se::Value>(controller);
 }
-
-bool ZegoTextureRendererController::DestroyTextureRenderer(int64_t textureId) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    auto renderer = renderers_.find(textureId);
-    if (renderer == renderers_.end()) {
-        // TODO: Add some log
-        return false;
-    }
-    renderer->second.reset();
-    renderers_.erase(textureId);
-    return true;
-}
-
-bool ZegoTextureRendererController::BindCapturedChannel(ZegoPublishChannel channel,
-                                                        int64_t textureId) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    auto renderer = renderers_.find(textureId);
-    if (renderer == renderers_.end()) {
-        // TODO: Add some log
-        return false;
-    }
-
-    capturedTextureIdMap_[channel] = textureId;
-
-    return true;
-}
-
-void ZegoTextureRendererController::UnbindCapturedChannel(ZegoPublishChannel channel) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    capturedTextureIdMap_.erase(channel);
-}
-
-bool ZegoTextureRendererController::BindRemoteStreamId(std::string streamId, int64_t textureId) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    auto renderer = renderers_.find(textureId);
-    if (renderer == renderers_.end()) {
-        // TODO: Add some log
-        return false;
-    }
-
-    remoteTextureIdMap_[streamId] = textureId;
-
-    return true;
-}
-
-void ZegoTextureRendererController::UnbindRemoteStreamId(std::string streamId) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    remoteTextureIdMap_.erase(streamId);
-}
-
-bool ZegoTextureRendererController::BindMediaPlayerIndex(int32_t index, int64_t textureId) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    auto renderer = renderers_.find(textureId);
-    if (renderer == renderers_.end()) {
-        // TODO: Add some log
-        return false;
-    }
-
-    mediaPlayerTextureIdMap_[index] = textureId;
-
-    return true;
-}
-
-void ZegoTextureRendererController::UnbindMediaPlayerIndex(int32_t index) {
-    const std::lock_guard<std::mutex> lock(renderersMutex_);
-    mediaPlayerTextureIdMap_.erase(index);
-}
-
 
 void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **data,
                                                                 unsigned int *dataLength,
                                                                 ZegoVideoFrameParam param,
                                                                 ZegoVideoFlipMode flipMode,
                                                                 ZegoPublishChannel channel) {
-    printf("[onCapturedVideoFrameRawData] data:%p, length:%u, w:%d, h:%d, format:%d, flip:%d, "
-           "channel:%d\n",
-           data[0], dataLength[0], param.width, param.height, param.format, flipMode, channel);
+//    printf("[onCapturedVideoFrameRawData] data:%p, length:%u, w:%d, h:%d, format:%d, flip:%d, "
+//           "channel:%d\n",
+//           data[0], dataLength[0], param.width, param.height, param.format, flipMode, channel);
     
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
     video_frame->data = std::make_unique<uint8_t[]>(dataLength[0]);
@@ -119,25 +39,30 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
     {
         // Cache video frame into buffer queue
         std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
-        if (captured_video_frames_.count(channel) <= 0) {
-            captured_video_frames_[channel] = ZegoCocosVideoFrameQueue();
-        }
-        auto &queue = captured_video_frames_[channel];
-        queue.push(video_frame);
-        if (queue.size() > 1) {
-            queue.pop();
-        }
+        captured_video_frames_[channel] = video_frame;
+//        if (captured_video_frames_.count(channel) <= 0) {
+//            captured_video_frames_[channel] = ZegoCocosVideoFrameQueue();
+//        }
+//        auto &queue = captured_video_frames_[channel];
+//        queue.push(video_frame);
+//        if (queue.size() > 1) {
+//            queue.pop();
+//        }
     }
     
     auto job = [=]() {
-        std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
-        auto &queue = captured_video_frames_[channel];
-        if (queue.size() <= 0) {
-            return;
+        {
+            std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
+            auto video_frame = captured_video_frames_[channel];
         }
         
-        auto video_frame = queue.front();
-        queue.pop();
+//        auto &queue = captured_video_frames_[channel];
+//        if (queue.size() <= 0) {
+//            return;
+//        }
+//
+//        auto video_frame = queue.front();
+//        queue.pop();
         
         se::ScriptEngine::getInstance()->clearException();
         se::AutoHandleScope hs;
@@ -190,8 +115,8 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
                                                               ZegoVideoFrameParam param,
                                                               const std::string &streamID) {
     // RunOnCocosThread([=] {
-    printf("[onRemoteVideoFrameRawData] streamID:%s, data:%p, length:%u, w:%d, h:%d, format:%d\n",
-           streamID.c_str(), data[0], dataLength[0], param.width, param.height, param.format);
+//    printf("[onRemoteVideoFrameRawData] streamID:%s, data:%p, length:%u, w:%d, h:%d, format:%d\n",
+//           streamID.c_str(), data[0], dataLength[0], param.width, param.height, param.format);
 
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
     video_frame->data = std::make_unique<uint8_t[]>(dataLength[0]);
@@ -203,25 +128,33 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
         // Cache video frame into buffer queue
         std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
         
-        if (remote_video_frames_.count(streamID) <= 0) {
-            remote_video_frames_[streamID] = ZegoCocosVideoFrameQueue();
-        }
-        auto &queue = remote_video_frames_[streamID];
-        queue.push(video_frame);
-        if (queue.size() > 1) {
-            queue.pop();
-        }
+        remote_video_frames_[streamID] = video_frame;
+        
+//        if (remote_video_frames_.count(streamID) <= 0) {
+//            remote_video_frames_[streamID] = ZegoCocosVideoFrameQueue();
+//        }
+//        auto &queue = remote_video_frames_[streamID];
+//        queue.push(video_frame);
+//        if (queue.size() > 1) {
+//            queue.pop();
+//        }
     }
     
     auto job = [=]() {
-        std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
-        auto &queue = remote_video_frames_[streamID];
-        if (queue.size() <= 0) {
-            return;
+        {
+            std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
+            auto video_frame = remote_video_frames_[streamID];
         }
         
-        auto video_frame = queue.front();
-        queue.pop();
+//        auto &queue = remote_video_frames_[streamID];
+//        if (queue.size() <= 0) {
+//            return;
+//        }
+        
+//        auto video_frame = queue.front();
+//        queue.pop();
+        
+        
         
         se::ScriptEngine::getInstance()->clearException();
         se::AutoHandleScope hs;
