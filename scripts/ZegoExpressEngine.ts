@@ -79,11 +79,10 @@ export class ZegoExpressEngine {
         return
       }
       console.log('[startPreview] channel:', channel, ' canvas:', canvas)
-      this._bridge.startPreview(channel ?? 0, 1)
+      this._bridge.startPreview(channel ?? 0)
       if (canvas) {
         this._rendererController.localViews.set(channel, canvas.view)
       }
-      
     } else {
       // TODO: Web
     }
@@ -138,7 +137,7 @@ export class ZegoExpressEngine {
       if (!this._bridge) {
         return
       }
-      this._bridge.startPlayingStream(streamID, -1)
+      this._bridge.startPlayingStream(streamID)
 
       if (canvas) {
         this._rendererController.remoteViews.set(streamID, canvas.view)

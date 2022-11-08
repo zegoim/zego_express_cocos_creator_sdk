@@ -38,21 +38,21 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
     void onRemoteVideoFrameRawData(unsigned char **data, unsigned int *dataLength,
                                    ZegoVideoFrameParam param, const std::string &streamID) override;
-    
-private:
+
+  private:
     /// Convert BGRA to RGBA, and cut the stride padding
-    void CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer, ZegoVideoFrameParam param);
+    void CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer,
+                                        ZegoVideoFrameParam param);
 
   private:
     std::shared_ptr<se::Value> js_controller_;
-    
-private:
+
+  private:
     std::mutex captured_video_frame_mutex_;
     std::map<ZegoPublishChannel, std::shared_ptr<ZegoCocosVideoFrame>> captured_video_frames_;
 
     std::mutex remote_video_frame_mutex_;
     std::map<std::string, std::shared_ptr<ZegoCocosVideoFrame>> remote_video_frames_;
-
 };
 
 } // namespace zego::cocos

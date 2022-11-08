@@ -2,7 +2,15 @@ import { gfx, Sprite, SpriteFrame, Texture2D } from 'cc'
 import { ZegoPublishChannel } from './ZegoExpressDefines'
 
 export class ZegoTextureRendererController {
-  onCapturedVideoFrameRawData(channel: ZegoPublishChannel, data: Uint8Array, dataLength: number, width: number, height: number, rotation: number, flipMode: number) {
+  onCapturedVideoFrameRawData(
+    channel: ZegoPublishChannel,
+    data: Uint8Array,
+    dataLength: number,
+    width: number,
+    height: number,
+    rotation: number,
+    flipMode: number
+  ) {
     // console.log("js onCapturedVideoFrameRawData!!! dataLength:", dataLength, "w:", width, "h:", height)
 
     let sprite = this.localViews.get(channel)
@@ -17,7 +25,14 @@ export class ZegoTextureRendererController {
     sprite.spriteFrame.texture = texture
   }
 
-  onRemoteVideoFrameRawData(streamID: String, data: Uint8Array, dataLength: number, width: number, height: number, rotation: number) {
+  onRemoteVideoFrameRawData(
+    streamID: String,
+    data: Uint8Array,
+    dataLength: number,
+    width: number,
+    height: number,
+    rotation: number
+  ) {
     // console.log("js onRemoteVideoFrameRawData!!! dataLength:", dataLength, "w:", width, "h:", height)
 
     let sprite = this.remoteViews.get(streamID)

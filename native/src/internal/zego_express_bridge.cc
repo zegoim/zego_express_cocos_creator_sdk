@@ -18,15 +18,14 @@ ZegoExpressBridge::ZegoExpressBridge() {
 #endif
 }
 
+void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) {
+    auto controller = ZegoTextureRendererController::GetInstance();
+    controller->SetJsController(js_controller);
+}
+
 std::string ZegoExpressBridge::getVersion() { return ZegoExpressSDK::getVersion(); }
 
 void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appSign, int scenario) {
-    printf("appID: %d, appSign:%s, scenario: %d\n", appID, appSign.c_str(), scenario);
-    
-    auto engine_config = ZegoEngineConfig{};
-    engine_config.advancedConfig = {{"video_data_image_colorspace", "rgba"}};
-    ZegoExpressSDK::setEngineConfig(engine_config);
-    
     auto profile = ZegoEngineProfile{};
     profile.appID = appID;
     profile.appSign = appSign;
@@ -38,10 +37,6 @@ void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appS
     render_config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
     native_engine_->enableCustomVideoRender(true, &render_config);
     native_engine_->setCustomVideoRenderHandler(ZegoTextureRendererController::GetInstance());
-    
-//    auto video_config = native_engine_->getVideoConfig();
-//    video_config.fps = 30;
-//    native_engine_->setVideoConfig(video_config);
 }
 
 void ZegoExpressBridge::destroyEngine() {
@@ -77,25 +72,11 @@ void ZegoExpressBridge::logoutRoom(const std::string &roomID) {
     }
 }
 
-void ZegoExpressBridge::startPreview(int channel, int viewID) {
+void ZegoExpressBridge::startPreview(int channel) {
     if (!native_engine_) {
         return;
     }
-
-    if (viewID < 0) {
-        // Preview audio only
-        native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
-    } else {
-//        auto controller = ZegoTextureRendererController::GetInstance();
-//        if (!controller->BindCapturedChannel(ZegoPublishChannel(channel), viewID)) {
-//            // Preview video without creating TextureRenderer in advance
-//            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-//            // TODO: Print error message
-//            return;
-//        }
-
-        native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
-    }
+    native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
 }
 
 void ZegoExpressBridge::stopPreview(int channel) {
@@ -126,26 +107,10 @@ void ZegoExpressBridge::stopPublishingStream(int channel) {
     native_engine_->stopPublishingStream(ZegoPublishChannel(channel));
 }
 
-void ZegoExpressBridge::startPlayingStream(const std::string &streamID, int viewID) {
+void ZegoExpressBridge::startPlayingStream(const std::string &streamID) {
     if (!native_engine_) {
         return;
     }
-
-    if (viewID < 0) {
-        // Play audio only
-        native_engine_->startPlayingStream(streamID);
-    } else {
-//        auto controller = ZegoTextureRendererController::GetInstance();
-//        if (!controller->BindRemoteStreamId(streamID, viewID)) {
-//            // Play video without creating TextureRenderer in advance
-//            // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-//            // TODO: Print error message
-//            return;
-//        }
-
-        native_engine_->startPlayingStream(streamID);
-    }
-
     native_engine_->startPlayingStream(streamID);
 }
 
@@ -154,13 +119,6 @@ void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
         return;
     }
     native_engine_->stopPlayingStream(streamID);
-}
-
-#pragma mark - TextureRenderer
-
-void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) {
-    auto controller = ZegoTextureRendererController::GetInstance();
-    controller->SetJsController(js_controller);
 }
 
 #pragma mark - Callback
@@ -211,68 +169,6 @@ void ZegoExpressBridge::onRoomStateChanged(const std::string &roomID,
                                            const std::string &extendedData) {
     printf("[onRoomStateChanged] roomID:%s, reason:%d, code:%d\n", roomID.c_str(), reason,
            errorCode);
-}
-} // namespace zego::cocos
-
-namespace zego::cocos {
-
-bool RegisterExpressBridge(se::Object *ns) {
-
-    using namespace zego::cocos;
-
-    sebind::class_<ZegoEngineProfile> engine_profile_class("ZegoEngineProfile");
-    //    engine_profile_class.constructor<>();
-    engine_profile_class.property("appID", &ZegoEngineProfile::appID);
-    engine_profile_class.property("appSign", &ZegoEngineProfile::appSign);
-    engine_profile_class.property("scenario", &ZegoEngineProfile::scenario);
-    engine_profile_class.install(ns);
-
-    sebind::class_<ZegoUser> user_class("ZegoUser");
-    user_class.constructor<>();
-    user_class.constructor<std::string, std::string>();
-    user_class.property("userID", &ZegoUser::userID);
-    user_class.property("userName", &ZegoUser::userName);
-    user_class.install(ns);
-
-    sebind::class_<ZegoPublisherConfig> publisher_config_class("ZegoPublisherConfig");
-    publisher_config_class.constructor<>();
-    //    publisher_config_class.constructor<std::string, int, ZegoStreamCensorshipMode>();
-    publisher_config_class.property("roomID", &ZegoPublisherConfig::roomID);
-    publisher_config_class.property("forceSynchronousNetworkTime",
-                                    &ZegoPublisherConfig::forceSynchronousNetworkTime);
-    publisher_config_class.property("streamCensorshipMode",
-                                    &ZegoPublisherConfig::streamCensorshipMode);
-    publisher_config_class.install(ns);
-
-    sebind::class_<ZegoExpressBridge> bridge("ZegoExpressBridge");
-
-    bridge.constructor<>();
-
-    bridge.finalizer(
-        [](ZegoExpressBridge *bridge) { printf("[ZegoExpressBridge] finalizer:%p\n", bridge); });
-
-    bridge.staticFunction("getVersion", &ZegoExpressBridge::getVersion);
-    bridge.function("createEngine", &ZegoExpressBridge::createEngine);
-    bridge.function("destroyEngine", &ZegoExpressBridge::destroyEngine);
-    bridge.function("setEventHandler", &ZegoExpressBridge::setEventHandler);
-
-    bridge.function("loginRoom", &ZegoExpressBridge::loginRoom);
-    bridge.function("logoutRoom", &ZegoExpressBridge::logoutRoom);
-
-    bridge.function("startPreview", &ZegoExpressBridge::startPreview);
-    bridge.function("stopPreview", &ZegoExpressBridge::stopPreview);
-
-    bridge.function("startPublishingStream", &ZegoExpressBridge::startPublishingStream);
-    bridge.function("stopPublishingStream", &ZegoExpressBridge::stopPublishingStream);
-
-    bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
-    bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
-
-    bridge.function("setJsTextureRendererController",
-                    &ZegoExpressBridge::setJsTextureRendererController);
-
-    bridge.install(ns);
-    return true;
 }
 
 } // namespace zego::cocos

@@ -5,8 +5,8 @@
 //  Created by Patrick Fu on 2022/9/30.
 //
 
-#include <atomic>
 #include "application/ApplicationManager.h"
+#include <atomic>
 
 namespace zego::cocos {
 

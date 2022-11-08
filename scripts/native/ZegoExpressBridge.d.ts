@@ -1,7 +1,10 @@
 // Native JSB
 
 declare class ZegoExpressBridge {
-  static getVersion(): string
+  // Private: Render methods
+  setJsTextureRendererController(controller: Object): void
+
+  getVersion(): string
 
   createEngine(appID: number, appSign: string, scenario: number): void
   destroyEngine(): void
@@ -11,7 +14,7 @@ declare class ZegoExpressBridge {
   loginRoom(roomID: string, userID: string, userName: string): void
   logoutRoom(roomID: string): void
 
-  startPreview(channel: number, viewID: number): void
+  startPreview(channel: number): void
   stopPreview(channel: number): void
 
   startPublishingStream(
@@ -24,9 +27,6 @@ declare class ZegoExpressBridge {
 
   stopPublishingStream(channel: number): void
 
-  startPlayingStream(streamID: string, viewID: number): void
+  startPlayingStream(streamID: string): void
   stopPlayingStream(streamID: string): void
-
-  // Private: Render methods
-  setJsTextureRendererController(controller: Object): void
 }

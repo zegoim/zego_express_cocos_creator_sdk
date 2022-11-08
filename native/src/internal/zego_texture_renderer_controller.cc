@@ -25,24 +25,24 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
                                                                 ZegoVideoFrameParam param,
                                                                 ZegoVideoFlipMode flipMode,
                                                                 ZegoPublishChannel channel) {
-    
+
     uint32_t fixed_data_length = param.width * param.height * 4;
-    
+
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
     video_frame->data = std::make_unique<uint8_t[]>(fixed_data_length);
     video_frame->data_length = fixed_data_length;
     video_frame->param = param;
     video_frame->flip_mode = flipMode;
-    
+
     // Convert BGRA to RGBA, and cut the stride padding
     CopyAndProcessVideoFrameBuffer(data[0], video_frame->data.get(), param);
-    
+
     {
         // Cache video frame
         std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
         captured_video_frames_[channel] = video_frame;
     }
-    
+
     auto job = [=]() {
         std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
@@ -65,16 +65,17 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             if (!func->isFunction()) {
                 return;
             }
-            
+
             se::Value js_channel;
             nativevalue_to_se(channel, js_channel, nullptr);
-            
-            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
+
+            se::Object *js_data_object = se::Object::createTypedArray(
+                se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
             se::Value js_data = se::Value(js_data_object);
-            
+
             se::Value js_data_length;
             nativevalue_to_se(frame->data_length, js_data_length, nullptr);
-            
+
             se::Value js_width;
             se::Value js_height;
             se::Value js_rotation;
@@ -83,7 +84,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             nativevalue_to_se(frame->param.height, js_height, nullptr);
             nativevalue_to_se(frame->param.rotation, js_rotation, nullptr);
             nativevalue_to_se(frame->flip_mode, js_flip_mode, nullptr);
-            
+
             se::ValueArray args;
             args.push_back(js_channel);
             args.push_back(js_data);
@@ -96,7 +97,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             func->call(args, js_controller_->toObject());
         }
     };
-    
+
     RunOnCocosThread(job);
 }
 
@@ -104,25 +105,24 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
                                                               unsigned int *dataLength,
                                                               ZegoVideoFrameParam param,
                                                               const std::string &streamID) {
-    
-    
+
     uint32_t fixed_data_length = param.width * param.height * 4;
-    
+
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
     video_frame->data = std::make_unique<uint8_t[]>(fixed_data_length);
     video_frame->data_length = fixed_data_length;
     video_frame->param = param;
     video_frame->flip_mode = ZEGO_VIDEO_FLIP_MODE_NONE;
-    
+
     // Convert BGRA to RGBA, and cut the stride padding
     CopyAndProcessVideoFrameBuffer(data[0], video_frame->data.get(), param);
-    
+
     {
         // Cache video frame
         std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
         remote_video_frames_[streamID] = video_frame;
     }
-    
+
     auto job = [=]() {
         std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
@@ -133,7 +133,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
             }
             remote_video_frames_[streamID].reset();
         }
-        
+
         se::ScriptEngine::getInstance()->clearException();
         se::AutoHandleScope hs;
         se::Value method;
@@ -145,23 +145,24 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
             if (!func->isFunction()) {
                 return;
             }
-            
+
             se::Value js_stream_id;
             nativevalue_to_se(streamID, js_stream_id, nullptr);
-            
-            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
+
+            se::Object *js_data_object = se::Object::createTypedArray(
+                se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
             se::Value js_data = se::Value(js_data_object);
-            
+
             se::Value js_data_length;
             nativevalue_to_se(frame->data_length, js_data_length, nullptr);
-            
+
             se::Value js_width;
             se::Value js_height;
             se::Value js_rotation;
             nativevalue_to_se(frame->param.width, js_width, nullptr);
             nativevalue_to_se(frame->param.height, js_height, nullptr);
             nativevalue_to_se(frame->param.rotation, js_rotation, nullptr);
-            
+
             se::ValueArray args;
             args.push_back(js_stream_id);
             args.push_back(js_data);
@@ -173,11 +174,13 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
             func->call(args, js_controller_->toObject());
         }
     };
-    
+
     RunOnCocosThread(job);
 }
 
-void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer, ZegoVideoFrameParam param) {
+void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer,
+                                                                   uint8_t *dst_buffer,
+                                                                   ZegoVideoFrameParam param) {
     uint32_t fixed_stride = param.width * 4;
     uint32_t src_index = 0;
     uint32_t dst_index = 0;

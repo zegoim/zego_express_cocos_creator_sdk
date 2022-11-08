@@ -1,4 +1,4 @@
-import { Sprite } from "cc"
+import { Sprite } from 'cc'
 
 /// Application scenario.
 export enum ZegoScenario {

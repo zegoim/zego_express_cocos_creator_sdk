@@ -31,36 +31,29 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     ~ZegoExpressBridge() {}
 
   public:
-    static std::string getVersion();
+    void setJsTextureRendererController(const se::Value &controller);
 
   public:
+    std::string getVersion();
+
     void createEngine(unsigned int appID, const std::string &appSign, int scenario);
-
     void destroyEngine();
-
     void setEventHandler(const se::Value &handler);
 
     void loginRoom(const std::string &roomID, const std::string &userID,
                    const std::string &userName);
-
     void logoutRoom(const std::string &roomID);
 
-    void startPreview(int channel, int viewID);
-
+    void startPreview(int channel);
     void stopPreview(int channel);
 
     void startPublishingStream(const std::string &streamID, const std::string &roomID,
                                int forceSynchronousNetworkTime, int streamCensorshipMode,
                                int channel);
-
     void stopPublishingStream(int channel);
 
-    void startPlayingStream(const std::string &streamID, int viewID);
-
+    void startPlayingStream(const std::string &streamID);
     void stopPlayingStream(const std::string &streamID);
-
-  public:
-    void setJsTextureRendererController(const se::Value &controller);
 
   public:
     void onDebugError(int errorCode, const std::string &funcName, const std::string &info) override;
@@ -75,7 +68,5 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     IZegoExpressEngine *native_engine_ = nullptr;
     std::shared_ptr<se::Value> event_handler_;
 };
-
-bool RegisterExpressBridge(se::Object *ns);
 
 } // namespace zego::cocos

@@ -15,4 +15,4 @@ uint32_t GetNextSequence();
 
 void RunOnCocosThread(const std::function<void()> &func);
 
-}
+} // namespace zego::cocos
