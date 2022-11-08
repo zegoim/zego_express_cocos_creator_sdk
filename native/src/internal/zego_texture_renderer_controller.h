@@ -24,8 +24,6 @@ struct ZegoCocosVideoFrame {
     ZegoVideoFlipMode flip_mode = ZEGO_VIDEO_FLIP_MODE_NONE;
 };
 
-//using ZegoCocosVideoFrameQueue = std::queue<std::shared_ptr<ZegoCocosVideoFrame>>;
-
 class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
   public:
@@ -40,6 +38,10 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
     void onRemoteVideoFrameRawData(unsigned char **data, unsigned int *dataLength,
                                    ZegoVideoFrameParam param, const std::string &streamID) override;
+    
+private:
+    /// Convert BGRA to RGBA, and cut the stride padding
+    void CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer, ZegoVideoFrameParam param);
 
   private:
     std::shared_ptr<se::Value> js_controller_;

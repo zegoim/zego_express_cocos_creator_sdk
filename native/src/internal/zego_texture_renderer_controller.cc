@@ -25,45 +25,35 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
                                                                 ZegoVideoFrameParam param,
                                                                 ZegoVideoFlipMode flipMode,
                                                                 ZegoPublishChannel channel) {
-//    printf("[onCapturedVideoFrameRawData] data:%p, length:%u, w:%d, h:%d, format:%d, flip:%d, "
-//           "channel:%d\n",
-//           data[0], dataLength[0], param.width, param.height, param.format, flipMode, channel);
+    
+    uint32_t fixed_data_length = param.width * param.height * 4;
     
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
-    video_frame->data = std::make_unique<uint8_t[]>(dataLength[0]);
-    video_frame->data_length = dataLength[0];
+    video_frame->data = std::make_unique<uint8_t[]>(fixed_data_length);
+    video_frame->data_length = fixed_data_length;
     video_frame->param = param;
     video_frame->flip_mode = flipMode;
-    memcpy(video_frame->data.get(), data[0], dataLength[0]);
+    
+    // Convert BGRA to RGBA, and cut the stride padding
+    CopyAndProcessVideoFrameBuffer(data[0], video_frame->data.get(), param);
     
     {
-        // Cache video frame into buffer queue
+        // Cache video frame
         std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
         captured_video_frames_[channel] = video_frame;
-//        if (captured_video_frames_.count(channel) <= 0) {
-//            captured_video_frames_[channel] = ZegoCocosVideoFrameQueue();
-//        }
-//        auto &queue = captured_video_frames_[channel];
-//        queue.push(video_frame);
-//        if (queue.size() > 1) {
-//            queue.pop();
-//        }
     }
     
     auto job = [=]() {
+        std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
             std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
-            auto video_frame = captured_video_frames_[channel];
+            frame = captured_video_frames_[channel];
+            if (!frame) {
+                return; // Drop this frame
+            }
+            captured_video_frames_[channel].reset();
         }
-        
-//        auto &queue = captured_video_frames_[channel];
-//        if (queue.size() <= 0) {
-//            return;
-//        }
-//
-//        auto video_frame = queue.front();
-//        queue.pop();
-        
+
         se::ScriptEngine::getInstance()->clearException();
         se::AutoHandleScope hs;
         se::Value method;
@@ -79,20 +69,20 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             se::Value js_channel;
             nativevalue_to_se(channel, js_channel, nullptr);
             
-            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, video_frame->data.get(), video_frame->data_length);
+            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
             se::Value js_data = se::Value(js_data_object);
             
             se::Value js_data_length;
-            nativevalue_to_se(video_frame->data_length, js_data_length, nullptr);
+            nativevalue_to_se(frame->data_length, js_data_length, nullptr);
             
             se::Value js_width;
             se::Value js_height;
             se::Value js_rotation;
             se::Value js_flip_mode;
-            nativevalue_to_se(video_frame->param.width, js_width, nullptr);
-            nativevalue_to_se(video_frame->param.height, js_height, nullptr);
-            nativevalue_to_se(video_frame->param.rotation, js_rotation, nullptr);
-            nativevalue_to_se(video_frame->flip_mode, js_flip_mode, nullptr);
+            nativevalue_to_se(frame->param.width, js_width, nullptr);
+            nativevalue_to_se(frame->param.height, js_height, nullptr);
+            nativevalue_to_se(frame->param.rotation, js_rotation, nullptr);
+            nativevalue_to_se(frame->flip_mode, js_flip_mode, nullptr);
             
             se::ValueArray args;
             args.push_back(js_channel);
@@ -114,47 +104,35 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
                                                               unsigned int *dataLength,
                                                               ZegoVideoFrameParam param,
                                                               const std::string &streamID) {
-    // RunOnCocosThread([=] {
-//    printf("[onRemoteVideoFrameRawData] streamID:%s, data:%p, length:%u, w:%d, h:%d, format:%d\n",
-//           streamID.c_str(), data[0], dataLength[0], param.width, param.height, param.format);
-
+    
+    
+    uint32_t fixed_data_length = param.width * param.height * 4;
+    
     auto video_frame = std::make_shared<ZegoCocosVideoFrame>();
-    video_frame->data = std::make_unique<uint8_t[]>(dataLength[0]);
-    video_frame->data_length = dataLength[0];
+    video_frame->data = std::make_unique<uint8_t[]>(fixed_data_length);
+    video_frame->data_length = fixed_data_length;
     video_frame->param = param;
-    memcpy(video_frame->data.get(), data[0], dataLength[0]);
+    video_frame->flip_mode = ZEGO_VIDEO_FLIP_MODE_NONE;
+    
+    // Convert BGRA to RGBA, and cut the stride padding
+    CopyAndProcessVideoFrameBuffer(data[0], video_frame->data.get(), param);
     
     {
-        // Cache video frame into buffer queue
+        // Cache video frame
         std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
-        
         remote_video_frames_[streamID] = video_frame;
-        
-//        if (remote_video_frames_.count(streamID) <= 0) {
-//            remote_video_frames_[streamID] = ZegoCocosVideoFrameQueue();
-//        }
-//        auto &queue = remote_video_frames_[streamID];
-//        queue.push(video_frame);
-//        if (queue.size() > 1) {
-//            queue.pop();
-//        }
     }
     
     auto job = [=]() {
+        std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
-            std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
-            auto video_frame = remote_video_frames_[streamID];
+            std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
+            frame = remote_video_frames_[streamID];
+            if (!frame) {
+                return; // Drop this frame
+            }
+            remote_video_frames_[streamID].reset();
         }
-        
-//        auto &queue = remote_video_frames_[streamID];
-//        if (queue.size() <= 0) {
-//            return;
-//        }
-        
-//        auto video_frame = queue.front();
-//        queue.pop();
-        
-        
         
         se::ScriptEngine::getInstance()->clearException();
         se::AutoHandleScope hs;
@@ -171,18 +149,18 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
             se::Value js_stream_id;
             nativevalue_to_se(streamID, js_stream_id, nullptr);
             
-            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, video_frame->data.get(), video_frame->data_length);
+            se::Object *js_data_object = se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, frame->data.get(), frame->data_length);
             se::Value js_data = se::Value(js_data_object);
             
             se::Value js_data_length;
-            nativevalue_to_se(video_frame->data_length, js_data_length, nullptr);
+            nativevalue_to_se(frame->data_length, js_data_length, nullptr);
             
             se::Value js_width;
             se::Value js_height;
             se::Value js_rotation;
-            nativevalue_to_se(video_frame->param.width, js_width, nullptr);
-            nativevalue_to_se(video_frame->param.height, js_height, nullptr);
-            nativevalue_to_se(video_frame->param.rotation, js_rotation, nullptr);
+            nativevalue_to_se(frame->param.width, js_width, nullptr);
+            nativevalue_to_se(frame->param.height, js_height, nullptr);
+            nativevalue_to_se(frame->param.rotation, js_rotation, nullptr);
             
             se::ValueArray args;
             args.push_back(js_stream_id);
@@ -197,6 +175,21 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
     };
     
     RunOnCocosThread(job);
+}
+
+void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer, ZegoVideoFrameParam param) {
+    uint32_t fixed_stride = param.width * 4;
+    uint32_t src_index = 0;
+    uint32_t dst_index = 0;
+    for (uint32_t h = 0; h < param.height; h++) {
+        src_index = h * param.strides[0];
+        for (uint32_t w = 0; w < fixed_stride; w += 4) {
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 2]; // R
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 1]; // G
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 0]; // B
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 3]; // A
+        }
+    }
 }
 
 } // namespace zego::cocos
