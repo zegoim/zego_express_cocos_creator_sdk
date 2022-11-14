@@ -126,6 +126,16 @@ void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
 void ZegoExpressBridge::onDebugError(int errorCode, const std::string &funcName,
                                      const std::string &info) {
     printf("[onDebugError] code:%d, func:%s\n", errorCode, funcName.c_str());
+    if (event_handler_) {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onDebugError", &method)) {
+            if (!method.isObject()) {
+                return;
+            }
+            sebind::callFunction<void>(method, errorCode, funcName, info);
+        }
+    }
 }
 
 void ZegoExpressBridge::onRoomStateUpdate(const std::string &roomID, ZegoRoomState state,
@@ -169,6 +179,16 @@ void ZegoExpressBridge::onRoomStateChanged(const std::string &roomID,
                                            const std::string &extendedData) {
     printf("[onRoomStateChanged] roomID:%s, reason:%d, code:%d\n", roomID.c_str(), reason,
            errorCode);
+    if (event_handler_) {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomStateChanged", &method)) {
+            if (!method.isObject()) {
+                return;
+            }
+            sebind::callFunction<void>(method, roomID, reason, errorCode, extendedData);
+        }
+    }
 }
 
 } // namespace zego::cocos
