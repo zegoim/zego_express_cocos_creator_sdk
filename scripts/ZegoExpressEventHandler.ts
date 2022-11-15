@@ -1,5 +1,4 @@
-
-import * as zd from "./ZegoExpressDefines"
+import * as zd from './ZegoExpressDefines'
 
 export interface ZegoEventHandler {
   /**
@@ -62,7 +61,12 @@ export interface ZegoEventHandler {
    * @param errorCode Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
    * @param extendedData Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
    */
-  onRoomStateUpdate?(roomID: string, state: zd.ZegoRoomState, errorCode: number, extendedData: string): void
+  onRoomStateUpdate?(
+    roomID: string,
+    state: zd.ZegoRoomState,
+    errorCode: number,
+    extendedData: string
+  ): void
   /**
    * The callback triggered when the room connection state changes.
    *
@@ -79,7 +83,12 @@ export interface ZegoEventHandler {
    * @param errorCode Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
    * @param extendedData Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
    */
-  onRoomStateChanged?(roomID: string, reason: zd.ZegoRoomStateChangedReason, errorCode: number, extendedData: string): void
+  onRoomStateChanged?(
+    roomID: string,
+    reason: zd.ZegoRoomStateChangedReason,
+    errorCode: number,
+    extendedData: string
+  ): void
   /**
    * The callback triggered when the number of other users in the room increases or decreases.
    *

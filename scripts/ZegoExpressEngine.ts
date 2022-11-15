@@ -1,10 +1,8 @@
-
-import * as zd from "./ZegoExpressDefines"
+import * as zd from './ZegoExpressDefines'
 import { ZegoEventHandler } from './ZegoExpressEventHandler'
 import { ZegoExpressEngineImpl } from './impl/ZegoExpressEngineImpl'
 
 export default abstract class ZegoExpressEngine {
-
   /**
    * Create ZegoExpressEngine singleton object and initialize SDK.
    *
@@ -18,8 +16,11 @@ export default abstract class ZegoExpressEngine {
    * @param eventHandler Event notification callback. [null] means not receiving any callback notifications.It can also be managed later via [setEventHandler]. If [createEngine] is called repeatedly and the [destroyEngine] function is not called to destroy the engine before the second call, the eventHandler will not be updated.
    * @return engine singleton instance.
    */
-  static createEngine(profile: zd.ZegoEngineProfile, eventHandler?: ZegoEventHandler): ZegoExpressEngine {
-    return ZegoExpressEngineImpl.createEngine(profile, eventHandler);
+  static createEngine(
+    profile: zd.ZegoEngineProfile,
+    eventHandler?: ZegoEventHandler
+  ): ZegoExpressEngine {
+    return ZegoExpressEngineImpl.createEngine(profile, eventHandler)
   }
 
   /**
@@ -34,7 +35,7 @@ export default abstract class ZegoExpressEngine {
    * @param callback Notification callback for destroy engine completion. Developers can listen to this callback to ensure that device hardware resources are released. If the developer only uses SDK to implement audio and video functions, this parameter can be passed [null].
    */
   static destroyEngine(callback?: zd.ZegoDestroyCompletionCallback): void {
-    return ZegoExpressEngineImpl.destroyEngine(callback);
+    return ZegoExpressEngineImpl.destroyEngine(callback)
   }
 
   /**
@@ -71,7 +72,12 @@ export default abstract class ZegoExpressEngine {
    * @param config Advanced room configuration.
    * @param callback The callback of this login result, if you need detailed room status, please pay attention to the [onRoomStateChanged] callback. Required: No. Default value: null.Caution: If the connection is retried multiple times due to network problems, the retry status will not be thrown by this callback.
    */
-  abstract loginRoom(roomID: string, user: zd.ZegoUser, config?: zd.ZegoRoomConfig, callback?: zd.ZegoRoomLoginCallback): void
+  abstract loginRoom(
+    roomID: string,
+    user: zd.ZegoUser,
+    config?: zd.ZegoRoomConfig,
+    callback?: zd.ZegoRoomLoginCallback
+  ): void
 
   /**
    * Logs out of a room.
@@ -113,5 +119,4 @@ export default abstract class ZegoExpressEngine {
    * @param config Advanced room configuration.
    */
   abstract switchRoom(fromRoomID: string, toRoomID: string, config?: zd.ZegoRoomConfig): void
-
 }

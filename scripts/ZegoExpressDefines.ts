@@ -1,4 +1,3 @@
-
 /** Room scenario. */
 export enum ZegoScenario {
   /** [Deprecated] Legacy general scenario, this scenario has been deprecated since version 3.0.0, and it is not recommended to use, please migrate to other new scenario as soon as possible. */
@@ -20,7 +19,7 @@ export enum ZegoScenario {
   /** Available since: 3.0.0. Description: Live broadcast scenario, it is suitable for one-to-many live broadcast scenarios such as shows, games, e-commerce, and large educational classes. The audio and video quality, fluency, and compatibility have been optimized. Note: Even in live broadcast scenarios, the SDK has no business "roles" (such as anchors and viewers), and all users in the room can publish and play streams. */
   Broadcast = 8,
   /** Available since: 3.0.0. Description: Karaoke (KTV) scenario, it is suitable for real-time chorus and online karaoke scenarios, and has optimized delay, sound quality, ear return, echo cancellation, etc., and also ensures accurate alignment and ultra-low delay when multiple people chorus. */
-  Karaoke = 9
+  Karaoke = 9,
 }
 
 /** SDK feature type. */
@@ -72,7 +71,7 @@ export enum ZegoFeatureType {
   /** Range audio feature. */
   RangeAudio = 22,
   /** Copy righted music feature. */
-  CopyRightedMusic = 23
+  CopyRightedMusic = 23,
 }
 
 /** Room mode. */
@@ -80,7 +79,7 @@ export enum ZegoRoomMode {
   /** Single room mode. */
   SingleRoom = 0,
   /** Multiple room mode. */
-  MultiRoom = 1
+  MultiRoom = 1,
 }
 
 /** engine state. */
@@ -88,7 +87,7 @@ export enum ZegoEngineState {
   /** The engine has started */
   Start = 0,
   /** The engine has stoped */
-  Stop = 1
+  Stop = 1,
 }
 
 /** Room state. */
@@ -98,7 +97,7 @@ export enum ZegoRoomState {
   /** The state that the connection is being requested. It will enter this state after successful execution login room function. The display of the UI is usually performed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting connection status. */
   Connecting = 1,
   /** The status that is successfully connected. Entering this status indicates that the login to the room has been successful. The user can receive the callback notification of the user and the stream information in the room. */
-  Connected = 2
+  Connected = 2,
 }
 
 /** Room state change reason. */
@@ -120,7 +119,7 @@ export enum ZegoRoomStateChangedReason {
   /** Logout of the room is successful. It is in this state by default before logging into the room. When calling [logoutRoom] to log out of the room successfully or [switchRoom] to log out of the current room successfully, it will enter this state. */
   Logout = 7,
   /** Failed to log out of the room. Enter this state when calling [logoutRoom] fails to log out of the room or [switchRoom] fails to log out of the current room internally. */
-  LogoutFailed = 8
+  LogoutFailed = 8,
 }
 
 /** Publish channel. */
@@ -132,7 +131,7 @@ export enum ZegoPublishChannel {
   /** The third publish channel */
   Third = 2,
   /** The fourth publish channel */
-  Fourth = 3
+  Fourth = 3,
 }
 
 /** Publish CensorshipMode. */
@@ -144,7 +143,7 @@ export enum ZegoStreamCensorshipMode {
   /** only censorship stream video. */
   Video = 2,
   /** censorship stream audio and video. */
-  AudioAndVideo = 3
+  AudioAndVideo = 3,
 }
 
 /** Video rendering fill mode. */
@@ -154,7 +153,7 @@ export enum ZegoViewMode {
   /** The proportional zoom fills the entire View and may be partially cut */
   AspectFill = 1,
   /** Fill the entire view, the image may be stretched */
-  ScaleToFill = 2
+  ScaleToFill = 2,
 }
 
 /** Mirror mode for previewing or playing the of the stream. */
@@ -166,7 +165,7 @@ export enum ZegoVideoMirrorMode {
   /** Both the video previewed locally and the far end playing the stream will not see mirror image. */
   NoMirror = 2,
   /** The mirror image only for far end playing the stream. */
-  OnlyPublishMirror = 3
+  OnlyPublishMirror = 3,
 }
 
 /** Video codec ID. */
@@ -180,7 +179,7 @@ export enum ZegoVideoCodecID {
   /** H.265 */
   H265 = 3,
   /** Unknown Video Coding */
-  Unknown = 100
+  Unknown = 100,
 }
 
 /**
@@ -191,7 +190,6 @@ export enum ZegoVideoCodecID {
  * Caution: None.
  */
 export class ZegoLogConfig {
-
   /** The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://docs.zegocloud.com/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path. */
   logPath: string
 
@@ -199,10 +197,9 @@ export class ZegoLogConfig {
   logSize: number
 
   constructor() {
-    this.logPath = ""
+    this.logPath = ''
     this.logSize = 5 * 1024 * 1024
   }
-
 }
 
 /**
@@ -211,7 +208,6 @@ export class ZegoLogConfig {
  * Profile for create engine
  */
 export class ZegoEngineProfile {
-
   /** Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295. */
   appID: number
 
@@ -220,7 +216,6 @@ export class ZegoEngineProfile {
 
   /** The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940 */
   scenario: ZegoScenario
-
 }
 
 /**
@@ -229,7 +224,6 @@ export class ZegoEngineProfile {
  * Configure maximum number of users in the room and authentication token, etc.
  */
 export class ZegoRoomConfig {
-
   /** The maximum number of users in the room, Passing 0 means unlimited, the default is unlimited. */
   maxMemberCount: number
 
@@ -238,7 +232,6 @@ export class ZegoRoomConfig {
 
   /** The token issued by the developer's business server is used to ensure security. For the generation rules, please refer to [Using Token Authentication](https://doc-zh.zego.im/article/10360), the default is an empty string, that is, no authentication. In versions 2.17.0 and above, if appSign is not passed in when calling the [createEngine] API to create an engine, or if appSign is empty, this parameter must be set for authentication when logging in to a room. */
   token: string
-
 }
 
 /**
@@ -249,7 +242,6 @@ export class ZegoRoomConfig {
  * When using external capture, the capture and encoding resolution of RTC cannot be set to 0*0, otherwise, there will be no video data in the publishing stream in the entire engine life cycle.
  */
 export class ZegoVideoConfig {
-
   /** Capture resolution width, control the width of camera image acquisition. SDK requires this member to be set to an even number. Only the camera is not started and the custom video capture is not used, the setting is effective. For performance reasons, the SDK scales the video frame to the encoding resolution after capturing from camera and before rendering to the preview view. Therefore, the resolution of the preview image is the encoding resolution. If you need the resolution of the preview image to be this value, Please call [setCapturePipelineScaleMode] first to change the capture pipeline scale mode to [Post] */
   captureWidth: number
 
@@ -273,7 +265,6 @@ export class ZegoVideoConfig {
 
   /** Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing. */
   keyFrameInterval: number
-
 }
 
 /**
@@ -284,13 +275,11 @@ export class ZegoVideoConfig {
  * It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
  */
 export class ZegoUser {
-
   /** User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK. */
   userID: string
 
   /** User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc. */
   userName: string
-
 }
 
 /**
@@ -299,7 +288,6 @@ export class ZegoUser {
  * Identify an stream object
  */
 export class ZegoStream {
-
   /** User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc. */
   user: ZegoUser
 
@@ -308,7 +296,6 @@ export class ZegoStream {
 
   /** Stream extra info */
   extraInfo: string
-
 }
 
 /**
@@ -316,14 +303,14 @@ export class ZegoStream {
  *
  * In general, developers do not need to listen to this callback.
  */
-export type ZegoDestroyCompletionCallback = () => void;
+export type ZegoDestroyCompletionCallback = () => void
 
 /**
  * Callback for setting room extra information.
  *
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  */
-export type ZegoRoomSetRoomExtraInfoCallback = (errorCode: number) => void;
+export type ZegoRoomSetRoomExtraInfoCallback = (errorCode: number) => void
 
 /**
  * Login room result callback.
@@ -331,7 +318,7 @@ export type ZegoRoomSetRoomExtraInfoCallback = (errorCode: number) => void;
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  * @param extendedData Extended Information
  */
-export type ZegoRoomLoginCallback = (errorCode: number, extendedData: string) => void;
+export type ZegoRoomLoginCallback = (errorCode: number, extendedData: string) => void
 
 /**
  * Logout room result callback.
@@ -339,7 +326,7 @@ export type ZegoRoomLoginCallback = (errorCode: number, extendedData: string) =>
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  * @param extendedData Extended Information
  */
-export type ZegoRoomLogoutCallback = (errorCode: number, extendedData: string) => void;
+export type ZegoRoomLogoutCallback = (errorCode: number, extendedData: string) => void
 
 /**
  * Log upload result callback.
@@ -350,20 +337,18 @@ export type ZegoRoomLogoutCallback = (errorCode: number, extendedData: string) =
  *
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  */
-export type ZegoUploadLogResultCallback = (errorCode: number) => void;
+export type ZegoUploadLogResultCallback = (errorCode: number) => void
 
 /**
  * Callback for setting stream extra information.
  *
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  */
-export type ZegoPublisherSetStreamExtraInfoCallback = (errorCode: number) => void;
+export type ZegoPublisherSetStreamExtraInfoCallback = (errorCode: number) => void
 
 /**
  * Callback for add/remove CDN URL.
  *
  * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
  */
-export type ZegoPublisherUpdateCdnUrlCallback = (errorCode: number) => void;
-
-
+export type ZegoPublisherUpdateCdnUrlCallback = (errorCode: number) => void
