@@ -1071,6 +1071,112 @@ export class ZegoPlayerConfig {
 }
 
 /**
+ * Played stream quality information.
+ *
+ * Audio and video parameters and network quality, etc.
+ */
+export class ZegoPlayStreamQuality {
+  /** Video receiving frame rate. The unit of frame rate is f/s */
+  videoRecvFPS: number
+
+  /** Video dejitter frame rate. The unit of frame rate is f/s (Available since 1.17.0) */
+  videoDejitterFPS: number
+
+  /** Video decoding frame rate. The unit of frame rate is f/s */
+  videoDecodeFPS: number
+
+  /** Video rendering frame rate. The unit of frame rate is f/s */
+  videoRenderFPS: number
+
+  /** Video bit rate in kbps */
+  videoKBPS: number
+
+  /** Video break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0) */
+  videoBreakRate: number
+
+  /** Audio receiving frame rate. The unit of frame rate is f/s */
+  audioRecvFPS: number
+
+  /** Audio dejitter frame rate. The unit of frame rate is f/s (Available since 1.17.0) */
+  audioDejitterFPS: number
+
+  /** Audio decoding frame rate. The unit of frame rate is f/s */
+  audioDecodeFPS: number
+
+  /** Audio rendering frame rate. The unit of frame rate is f/s */
+  audioRenderFPS: number
+
+  /** Audio bit rate in kbps */
+  audioKBPS: number
+
+  /** Audio break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0) */
+  audioBreakRate: number
+
+  /** The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://docs.zegocloud.com/article/3720#4_4 (Available since 2.16.0) */
+  mos: number
+
+  /** Server to local delay, in milliseconds */
+  rtt: number
+
+  /** Packet loss rate, in percentage, 0.0 ~ 1.0 */
+  packetLostRate: number
+
+  /** Delay from peer to peer, in milliseconds */
+  peerToPeerDelay: number
+
+  /** Packet loss rate from peer to peer, in percentage, 0.0 ~ 1.0 */
+  peerToPeerPacketLostRate: number
+
+  /** Published stream quality level */
+  level: ZegoStreamQualityLevel
+
+  /** Delay after the data is received by the local end, in milliseconds */
+  delay: number
+
+  /** The difference between the video timestamp and the audio timestamp, used to reflect the synchronization of audio and video, in milliseconds. This value is less than 0 means the number of milliseconds that the video leads the audio, greater than 0 means the number of milliseconds that the video lags the audio, and 0 means no difference. When the absolute value is less than 200, it can basically be regarded as synchronized audio and video, when the absolute value is greater than 200 for 10 consecutive seconds, it can be regarded as abnormal (Available since 1.19.0) */
+  avTimestampDiff: number
+
+  /** Whether to enable hardware decoding */
+  isHardwareDecode: boolean
+
+  /** Video codec ID (Available since 1.17.0) */
+  videoCodecID: ZegoVideoCodecID
+
+  /** Total number of bytes received, including audio, video, SEI */
+  totalRecvBytes: number
+
+  /** Number of audio bytes received */
+  audioRecvBytes: number
+
+  /** Number of video bytes received */
+  videoRecvBytes: number
+
+  /** Accumulated audio break count (Available since 2.9.0) */
+  audioCumulativeBreakCount: number
+
+  /** Accumulated audio break time, in milliseconds (Available since 2.9.0) */
+  audioCumulativeBreakTime: number
+
+  /** Accumulated audio break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0) */
+  audioCumulativeBreakRate: number
+
+  /** Accumulated audio decode time, in milliseconds (Available since 2.9.0) */
+  audioCumulativeDecodeTime: number
+
+  /** Accumulated video break count (Available since 2.9.0) */
+  videoCumulativeBreakCount: number
+
+  /** Accumulated video break time, in milliseconds (Available since 2.9.0) */
+  videoCumulativeBreakTime: number
+
+  /** Accumulated video break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0) */
+  videoCumulativeBreakRate: number
+
+  /** Accumulated video decode time, in milliseconds (Available since 2.9.0) */
+  videoCumulativeDecodeTime: number
+}
+
+/**
  * Audio configuration.
  *
  * Configure audio bitrate, audio channel, audio encoding for publishing stream

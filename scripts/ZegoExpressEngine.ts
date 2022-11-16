@@ -1,5 +1,5 @@
 import * as zego from './ZegoExpressDefines'
-import { ZegoEventHandler } from './ZegoExpressEventHandler'
+import { ZegoEventHandler, ZegoApiCalledEventHandler } from './ZegoExpressEventHandler'
 import { ZegoExpressEngineImpl } from './impl/ZegoExpressEngineImpl'
 
 export abstract class ZegoExpressEngine {
@@ -108,7 +108,7 @@ export abstract class ZegoExpressEngine {
    *
    * @param callback Method execution result callback.
    */
-  static setApiCalledCallback(callback: zego.ZegoApiCalledEventHandler): void {
+  static setApiCalledCallback(callback: ZegoApiCalledEventHandler): void {
     return ZegoExpressEngineImpl.setApiCalledCallback(callback)
   }
 
