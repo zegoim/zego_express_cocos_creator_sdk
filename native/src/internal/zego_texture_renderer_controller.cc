@@ -43,7 +43,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
         captured_video_frames_[channel] = video_frame;
     }
 
-    auto job = [=]() {
+    RunOnCocosThread([=]() {
         std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
             std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
@@ -96,9 +96,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
 
             func->call(args, js_controller_->toObject());
         }
-    };
-
-    RunOnCocosThread(job);
+    });
 }
 
 void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **data,
@@ -123,7 +121,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
         remote_video_frames_[streamID] = video_frame;
     }
 
-    auto job = [=]() {
+    RunOnCocosThread([=] {
         std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
         {
             std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
@@ -173,9 +171,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
 
             func->call(args, js_controller_->toObject());
         }
-    };
-
-    RunOnCocosThread(job);
+    });
 }
 
 void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer,
