@@ -1,5 +1,5 @@
 import { gfx, Sprite, SpriteFrame, Texture2D } from 'cc'
-import { ZegoPublishChannel } from './ZegoExpressDefines'
+import { ZegoPublishChannel } from '../../ZegoExpressDefines'
 
 export class ZegoTextureRendererController {
   onCapturedVideoFrameRawData(
