@@ -2,7 +2,20 @@ import * as zego from './ZegoExpressDefines'
 import { ZegoEventHandler, ZegoApiCalledEventHandler } from './ZegoExpressEventHandler'
 import { ZegoExpressEngineImpl } from './impl/ZegoExpressEngineImpl'
 
-export abstract class ZegoExpressEngine {
+export class ZegoExpressEngine {
+  private constructor() {}
+  private static _instance: ZegoExpressEngine
+
+  /**
+   * Engine singleton instance
+   */
+  static get instance(): ZegoExpressEngine {
+    if (!this._instance) {
+      this._instance = new ZegoExpressEngine()
+    }
+    return this._instance
+  }
+
   /**
    * Create ZegoExpressEngine singleton object and initialize SDK.
    *
@@ -20,7 +33,8 @@ export abstract class ZegoExpressEngine {
     profile: zego.ZegoEngineProfile,
     eventHandler?: ZegoEventHandler
   ): ZegoExpressEngine {
-    return ZegoExpressEngineImpl.createEngine(profile, eventHandler)
+    ZegoExpressEngineImpl.instance.createEngine(profile, eventHandler)
+    return ZegoExpressEngine.instance
   }
 
   /**
@@ -35,7 +49,7 @@ export abstract class ZegoExpressEngine {
    * @param callback Notification callback for destroy engine completion. Developers can listen to this callback to ensure that device hardware resources are released. If the developer only uses SDK to implement audio and video functions, this parameter can be passed [null].
    */
   static destroyEngine(callback?: zego.ZegoDestroyCompletionCallback): void {
-    return ZegoExpressEngineImpl.destroyEngine(callback)
+    return ZegoExpressEngineImpl.instance.destroyEngine(callback)
   }
 
   /**
@@ -49,7 +63,7 @@ export abstract class ZegoExpressEngine {
    * @param config Advanced engine configuration
    */
   static setEngineConfig(config: zego.ZegoEngineConfig): void {
-    return ZegoExpressEngineImpl.setEngineConfig(config)
+    return ZegoExpressEngineImpl.instance.setEngineConfig(config)
   }
 
   /**
@@ -64,7 +78,7 @@ export abstract class ZegoExpressEngine {
    * @param config log configuration.
    */
   static setLogConfig(config: zego.ZegoLogConfig): void {
-    return ZegoExpressEngineImpl.setLogConfig(config)
+    return ZegoExpressEngineImpl.instance.setLogConfig(config)
   }
 
   /**
@@ -79,7 +93,7 @@ export abstract class ZegoExpressEngine {
    * @param mode Room mode. Description: Used to set the room mode. Use cases: If you need to enter multiple rooms at the same time for publish-play stream, please turn on the multi-room mode through this interface. Required: True. Default value: ZEGO_ROOM_MODE_SINGLE_ROOM.
    */
   static setRoomMode(mode: zego.ZegoRoomMode): void {
-    return ZegoExpressEngineImpl.setRoomMode(mode)
+    return ZegoExpressEngineImpl.instance.setRoomMode(mode)
   }
 
   /**
@@ -94,7 +108,7 @@ export abstract class ZegoExpressEngine {
    * @return SDK version.
    */
   static getVersion(): string {
-    return ZegoExpressEngineImpl.getVersion()
+    return ZegoExpressEngineImpl.instance.getVersion()
   }
 
   /**
@@ -109,7 +123,7 @@ export abstract class ZegoExpressEngine {
    * @param callback Method execution result callback.
    */
   static setApiCalledCallback(callback: ZegoApiCalledEventHandler): void {
-    return ZegoExpressEngineImpl.setApiCalledCallback(callback)
+    return ZegoExpressEngineImpl.instance.setApiCalledCallback(callback)
   }
 
   /**
@@ -126,7 +140,7 @@ export abstract class ZegoExpressEngine {
    * @return Whether the specified feature is supported. true: supported; false: not supported.
    */
   static isFeatureSupported(featureType: zego.ZegoFeatureType): boolean {
-    return ZegoExpressEngineImpl.isFeatureSupported(featureType)
+    return ZegoExpressEngineImpl.instance.isFeatureSupported(featureType)
   }
 
   /**
@@ -140,7 +154,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param eventHandler Event notification callback. If the eventHandler is set to [null], all the callbacks set previously will be cleared. Developers should monitor the corresponding callbacks according to their own business scenarios. The main callback functions of the SDK are here.
    */
-  abstract setEventHandler(eventHandler?: ZegoEventHandler): void
+  setEventHandler(eventHandler?: ZegoEventHandler): void {
+    return ZegoExpressEngineImpl.instance.setEventHandler(eventHandler)
+  }
 
   /**
    * Set room scenario.
@@ -158,7 +174,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param scenario Room scenario.
    */
-  abstract setRoomScenario(scenario: zego.ZegoScenario): void
+  setRoomScenario(scenario: zego.ZegoScenario): void {
+    return ZegoExpressEngineImpl.instance.setRoomScenario(scenario)
+  }
 
   /**
    * Uploads logs to the ZEGO server.
@@ -172,7 +190,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param callback Log upload result callback.
    */
-  abstract uploadLog(callback: zego.ZegoUploadLogResultCallback): void
+  uploadLog(callback?: zego.ZegoUploadLogResultCallback): void {
+    return ZegoExpressEngineImpl.instance.uploadLog(callback)
+  }
 
   /**
    * Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
@@ -187,7 +207,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param enable Whether to enable the debug assistant.
    */
-  abstract enableDebugAssistant(enable: boolean): void
+  enableDebugAssistant(enable: boolean): void {
+    return ZegoExpressEngineImpl.instance.enableDebugAssistant(enable)
+  }
 
   /**
    * Call the experimental API.
@@ -199,7 +221,9 @@ export abstract class ZegoExpressEngine {
    * @param params Parameters in the format of a JSON string, please consult ZEGO technical support for details.
    * @return Returns an argument in the format of a JSON string, please consult ZEGO technical support for details.
    */
-  abstract callExperimentalAPI(params: string): string
+  callExperimentalAPI(params: string): string {
+    return ZegoExpressEngineImpl.instance.callExperimentalAPI(params)
+  }
 
   /**
    * Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
@@ -235,12 +259,14 @@ export abstract class ZegoExpressEngine {
    * @param config Advanced room configuration.
    * @param callback The callback of this login result, if you need detailed room status, please pay attention to the [onRoomStateChanged] callback. Required: No. Default value: null.Caution: If the connection is retried multiple times due to network problems, the retry status will not be thrown by this callback.
    */
-  abstract loginRoom(
+  loginRoom(
     roomID: string,
     user: zego.ZegoUser,
     config?: zego.ZegoRoomConfig,
     callback?: zego.ZegoRoomLoginCallback
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.loginRoom(roomID, user, config, callback)
+  }
 
   /**
    * Logs out of a room.
@@ -260,7 +286,9 @@ export abstract class ZegoExpressEngine {
    *   2. If you need to communicate with the Web SDK, please do not use '%'.
    * @param callback The callback of this logout room result, if you need detailed room status, please pay attention to the [onRoomStateChanged] callback.. Required: No. Default value: null.
    */
-  abstract logoutRoom(roomID?: string, callback?: zego.ZegoRoomLogoutCallback): void
+  logoutRoom(roomID?: string, callback?: zego.ZegoRoomLogoutCallback): void {
+    return ZegoExpressEngineImpl.instance.logoutRoom(roomID, callback)
+  }
 
   /**
    * Switch the room with advanced room configurations.
@@ -281,7 +309,9 @@ export abstract class ZegoExpressEngine {
    * @param toRoomID The next roomID.
    * @param config Advanced room configuration.
    */
-  abstract switchRoom(fromRoomID: string, toRoomID: string, config?: zego.ZegoRoomConfig): void
+  switchRoom(fromRoomID: string, toRoomID: string, config?: zego.ZegoRoomConfig): void {
+    return ZegoExpressEngineImpl.instance.switchRoom(fromRoomID, toRoomID, config)
+  }
 
   /**
    * Renew token.
@@ -298,7 +328,9 @@ export abstract class ZegoExpressEngine {
    * @param roomID Room ID.
    * @param token The token that needs to be renew.
    */
-  abstract renewToken(roomID: string, token: string): void
+  renewToken(roomID: string, token: string): void {
+    return ZegoExpressEngineImpl.instance.renewToken(roomID, token)
+  }
 
   /**
    * Set room extra information.
@@ -317,12 +349,14 @@ export abstract class ZegoExpressEngine {
    * @param value value if the extra info.
    * @param callback Callback for setting room extra information.
    */
-  abstract setRoomExtraInfo(
+  setRoomExtraInfo(
     roomID: string,
     key: string,
     value: string,
-    callback: zego.ZegoRoomSetRoomExtraInfoCallback
-  ): void
+    callback?: zego.ZegoRoomSetRoomExtraInfoCallback
+  ): void {
+    return ZegoExpressEngineImpl.instance.setRoomExtraInfo(roomID, key, value, callback)
+  }
 
   /**
    * Starts publishing a stream. Support multi-room mode.
@@ -346,11 +380,13 @@ export abstract class ZegoExpressEngine {
    * @param config Advanced publish configuration.
    * @param channel Publish stream channel.
    */
-  abstract startPublishingStream(
+  startPublishingStream(
     streamID: string,
     config?: zego.ZegoPublisherConfig,
     channel?: zego.ZegoPublishChannel
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.startPublishingStream(streamID, config, channel)
+  }
 
   /**
    * Stops publishing a stream (for the specified channel).
@@ -367,7 +403,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param channel Publish stream channel.
    */
-  abstract stopPublishingStream(channel?: zego.ZegoPublishChannel): void
+  stopPublishingStream(channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.stopPublishingStream(channel)
+  }
 
   /**
    * Sets the extra information of the stream being published for the specified publish channel.
@@ -382,11 +420,13 @@ export abstract class ZegoExpressEngine {
    * @param channel Publish stream channel.
    * @param callback Set stream extra information execution result notification.
    */
-  abstract setStreamExtraInfo(
+  setStreamExtraInfo(
     extraInfo: string,
     channel?: zego.ZegoPublishChannel,
     callback?: zego.ZegoPublisherSetStreamExtraInfoCallback
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.setStreamExtraInfo(extraInfo, channel, callback)
+  }
 
   /**
    * Starts/Updates the local video preview (for the specified channel).
@@ -402,7 +442,9 @@ export abstract class ZegoExpressEngine {
    * @param canvas The view used to display the preview image. If the view is set to null, no preview will be made.
    * @param channel Publish stream channel
    */
-  abstract startPreview(canvas?: zego.ZegoCanvas, channel?: zego.ZegoPublishChannel): void
+  startPreview(canvas?: zego.ZegoCanvas, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.startPreview(canvas, channel)
+  }
 
   /**
    * Stops the local preview (for the specified channel).
@@ -414,7 +456,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param channel Publish stream channel
    */
-  abstract stopPreview(channel?: zego.ZegoPublishChannel): void
+  stopPreview(channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.stopPreview(channel)
+  }
 
   /**
    * Sets up the video configurations (for the specified channel).
@@ -430,7 +474,9 @@ export abstract class ZegoExpressEngine {
    * @param config Video configuration, the SDK provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
    * @param channel Publish stream channel.
    */
-  abstract setVideoConfig(config: zego.ZegoVideoConfig, channel?: zego.ZegoPublishChannel): void
+  setVideoConfig(config: zego.ZegoVideoConfig, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.setVideoConfig(config, channel)
+  }
 
   /**
    * Gets the current video configurations (for the specified channel).
@@ -441,7 +487,9 @@ export abstract class ZegoExpressEngine {
    * @param channel Publish stream channel
    * @return Video configuration object
    */
-  abstract getVideoConfig(channel?: zego.ZegoPublishChannel): zego.ZegoVideoConfig
+  getVideoConfig(channel?: zego.ZegoPublishChannel): zego.ZegoVideoConfig {
+    return ZegoExpressEngineImpl.instance.getVideoConfig(channel)
+  }
 
   /**
    * Sets the video mirroring mode (for the specified channel).
@@ -455,10 +503,12 @@ export abstract class ZegoExpressEngine {
    * @param mirrorMode Mirror mode for previewing or publishing the stream.
    * @param channel Publish stream channel.
    */
-  abstract setVideoMirrorMode(
+  setVideoMirrorMode(
     mirrorMode: zego.ZegoVideoMirrorMode,
     channel?: zego.ZegoPublishChannel
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.setVideoMirrorMode(mirrorMode, channel)
+  }
 
   /**
    * Sets the video orientation (for the specified channel).
@@ -473,10 +523,9 @@ export abstract class ZegoExpressEngine {
    * @param orientation Video orientation.
    * @param channel Publish stream channel.
    */
-  abstract setAppOrientation(
-    orientation: zego.ZegoOrientation,
-    channel?: zego.ZegoPublishChannel
-  ): void
+  setAppOrientation(orientation: zego.ZegoOrientation, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.setAppOrientation(orientation, channel)
+  }
 
   /**
    * Sets up the audio configurations for the specified publish channel.
@@ -491,7 +540,9 @@ export abstract class ZegoExpressEngine {
    * @param config Audio config.
    * @param channel Publish stream channel.
    */
-  abstract setAudioConfig(config: zego.ZegoAudioConfig, channel?: zego.ZegoPublishChannel): void
+  setAudioConfig(config: zego.ZegoAudioConfig, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.setAudioConfig(config, channel)
+  }
 
   /**
    * Gets the current audio configurations from the specified publish channel.
@@ -505,7 +556,9 @@ export abstract class ZegoExpressEngine {
    * @param channel Publish stream channel.
    * @return Audio config.
    */
-  abstract getAudioConfig(channel?: zego.ZegoPublishChannel): zego.ZegoAudioConfig
+  getAudioConfig(channel?: zego.ZegoPublishChannel): zego.ZegoAudioConfig {
+    return ZegoExpressEngineImpl.instance.getAudioConfig(channel)
+  }
 
   /**
    * Set encryption key for the publishing stream for the specified publish channel.
@@ -520,7 +573,9 @@ export abstract class ZegoExpressEngine {
    * @param key The encryption key, note that the key length only supports 16/24/32 bytes.
    * @param channel Publish stream channel.
    */
-  abstract setPublishStreamEncryptionKey(key: string, channel?: zego.ZegoPublishChannel): void
+  setPublishStreamEncryptionKey(key: string, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.setPublishStreamEncryptionKey(key, channel)
+  }
 
   /**
    * Stops or resumes sending the audio part of a stream for the specified channel.
@@ -535,7 +590,9 @@ export abstract class ZegoExpressEngine {
    * @param mute Whether to stop sending audio streams, true means not to send audio stream, and false means sending audio stream. The default is false.
    * @param channel Publish stream channel.
    */
-  abstract mutePublishStreamAudio(mute: boolean, channel?: zego.ZegoPublishChannel): void
+  mutePublishStreamAudio(mute: boolean, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.mutePublishStreamAudio(mute, channel)
+  }
 
   /**
    * Stops or resumes sending the video part of a stream for the specified channel.
@@ -551,7 +608,9 @@ export abstract class ZegoExpressEngine {
    * @param mute Whether to stop sending video streams, true means not to send video stream, and false means sending video stream. The default is false.
    * @param channel Publish stream channel.
    */
-  abstract mutePublishStreamVideo(mute: boolean, channel?: zego.ZegoPublishChannel): void
+  mutePublishStreamVideo(mute: boolean, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.mutePublishStreamVideo(mute, channel)
+  }
 
   /**
    * Enables or disables the traffic control for the specified publish channel.
@@ -566,11 +625,9 @@ export abstract class ZegoExpressEngine {
    * @param property Adjustable property of traffic control, bitmask format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
    * @param channel Publish stream channel.
    */
-  abstract enableTrafficControl(
-    enable: boolean,
-    property: number,
-    channel?: zego.ZegoPublishChannel
-  ): void
+  enableTrafficControl(enable: boolean, property: number, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.enableTrafficControl(enable, property, channel)
+  }
 
   /**
    * Sets the minimum video bitrate for traffic control for the specified publish channel.
@@ -587,11 +644,17 @@ export abstract class ZegoExpressEngine {
    * @param mode Video sending mode below the minimum bitrate.
    * @param channel Publish stream channel.
    */
-  abstract setMinVideoBitrateForTrafficControl(
+  setMinVideoBitrateForTrafficControl(
     bitrate: number,
     mode: zego.ZegoTrafficControlMinVideoBitrateMode,
     channel?: zego.ZegoPublishChannel
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.setMinVideoBitrateForTrafficControl(
+      bitrate,
+      mode,
+      channel
+    )
+  }
 
   /**
    * Sets the minimum video frame rate threshold for traffic control.
@@ -608,7 +671,9 @@ export abstract class ZegoExpressEngine {
    * @param fps The minimum video frame rate threshold for traffic control(fps).
    * @param channel Publish stream channel.
    */
-  abstract setMinVideoFpsForTrafficControl(fps: number, channel?: zego.ZegoPublishChannel): void
+  setMinVideoFpsForTrafficControl(fps: number, channel?: zego.ZegoPublishChannel): void {
+    return ZegoExpressEngineImpl.instance.setMinVideoFpsForTrafficControl(fps, channel)
+  }
 
   /**
    * Sets the minimum video resolution threshold for traffic control.
@@ -626,11 +691,17 @@ export abstract class ZegoExpressEngine {
    * @param height The flow controls the height of the lowest video resolution.
    * @param channel Publish stream channel.
    */
-  abstract setMinVideoResolutionForTrafficControl(
+  setMinVideoResolutionForTrafficControl(
     width: number,
     height: number,
     channel?: zego.ZegoPublishChannel
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.setMinVideoResolutionForTrafficControl(
+      width,
+      height,
+      channel
+    )
+  }
 
   /**
    * Sets the audio recording volume for stream publishing.
@@ -644,7 +715,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param volume The volume gain percentage, the range is 0 ~ 200, and the default value is 100, which means 100% of the original collection volume of the device.
    */
-  abstract setCaptureVolume(volume: number): void
+  setCaptureVolume(volume: number): void {
+    return ZegoExpressEngineImpl.instance.setCaptureVolume(volume)
+  }
 
   /**
    * Enables or disables hardware encoding.
@@ -656,7 +729,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param enable Whether to enable hardware encoding, true: enable hardware encoding, false: disable hardware encoding.
    */
-  abstract enableHardwareEncoder(enable: boolean): void
+  enableHardwareEncoder(enable: boolean): void {
+    return ZegoExpressEngineImpl.instance.enableHardwareEncoder(enable)
+  }
 
   /**
    * Sets the timing of video scaling in the video capture workflow. You can choose to do video scaling right after video capture (the default value) or before encoding.
@@ -668,7 +743,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param mode The capture scale timing mode.
    */
-  abstract setCapturePipelineScaleMode(mode: zego.ZegoCapturePipelineScaleMode): void
+  setCapturePipelineScaleMode(mode: zego.ZegoCapturePipelineScaleMode): void {
+    return ZegoExpressEngineImpl.instance.setCapturePipelineScaleMode(mode)
+  }
 
   /**
    * Whether the specified video encoding type is supported.
@@ -681,7 +758,9 @@ export abstract class ZegoExpressEngine {
    * @param codecID Video codec id. Required: Yes.
    * @return Whether the specified video encoding is supported.Value range: true means support, you can use this encoding format for publish; false means the is not supported, and the encoding format cannot be used for publish.
    */
-  abstract isVideoEncoderSupported(codecID: zego.ZegoVideoCodecID): boolean
+  isVideoEncoderSupported(codecID: zego.ZegoVideoCodecID): boolean {
+    return ZegoExpressEngineImpl.instance.isVideoEncoderSupported(codecID)
+  }
 
   /**
    * Set the orientation mode of the video.
@@ -698,7 +777,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param mode Orientation mode of the video.
    */
-  abstract setAppOrientationMode(mode: zego.ZegoOrientationMode): void
+  setAppOrientationMode(mode: zego.ZegoOrientationMode): void {
+    return ZegoExpressEngineImpl.instance.setAppOrientationMode(mode)
+  }
 
   /**
    * Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.
@@ -717,11 +798,13 @@ export abstract class ZegoExpressEngine {
    * @param canvas The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
    * @param config Advanced player configuration.
    */
-  abstract startPlayingStream(
+  startPlayingStream(
     streamID: string,
     canvas?: zego.ZegoCanvas,
     config?: zego.ZegoPlayerConfig
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.startPlayingStream(streamID, canvas, config)
+  }
 
   /**
    * Stops playing a stream.
@@ -735,7 +818,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param streamID Stream ID.
    */
-  abstract stopPlayingStream(streamID: string): void
+  stopPlayingStream(streamID: string): void {
+    return ZegoExpressEngineImpl.instance.stopPlayingStream(streamID)
+  }
 
   /**
    * Set decryption key for the playing stream.
@@ -751,7 +836,9 @@ export abstract class ZegoExpressEngine {
    * @param streamID Stream ID.
    * @param key The decryption key, note that the key length only supports 16/24/32 bytes.
    */
-  abstract setPlayStreamDecryptionKey(streamID: string, key: string): void
+  setPlayStreamDecryptionKey(streamID: string, key: string): void {
+    return ZegoExpressEngineImpl.instance.setPlayStreamDecryptionKey(streamID, key)
+  }
 
   /**
    * Sets the stream playback volume.
@@ -766,7 +853,9 @@ export abstract class ZegoExpressEngine {
    * @param streamID Stream ID.
    * @param volume Volume percentage. The value ranges from 0 to 200, and the default value is 100.
    */
-  abstract setPlayVolume(streamID: string, volume: number): void
+  setPlayVolume(streamID: string, volume: number): void {
+    return ZegoExpressEngineImpl.instance.setPlayVolume(streamID, volume)
+  }
 
   /**
    * Sets the all stream playback volume.
@@ -780,7 +869,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param volume Volume percentage. The value ranges from 0 to 200, and the default value is 100.
    */
-  abstract setAllPlayStreamVolume(volume: number): void
+  setAllPlayStreamVolume(volume: number): void {
+    return ZegoExpressEngineImpl.instance.setAllPlayStreamVolume(volume)
+  }
 
   /**
    * Set play video stream type.
@@ -795,7 +886,9 @@ export abstract class ZegoExpressEngine {
    * @param streamID Stream ID.
    * @param streamType Video stream type.
    */
-  abstract setPlayStreamVideoType(streamID: string, streamType: zego.ZegoVideoStreamType): void
+  setPlayStreamVideoType(streamID: string, streamType: zego.ZegoVideoStreamType): void {
+    return ZegoExpressEngineImpl.instance.setPlayStreamVideoType(streamID, streamType)
+  }
 
   /**
    * Set the adaptive adjustment interval range of the buffer for playing stream.
@@ -811,11 +904,17 @@ export abstract class ZegoExpressEngine {
    * @param minBufferInterval The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms.
    * @param maxBufferInterval The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms.
    */
-  abstract setPlayStreamBufferIntervalRange(
+  setPlayStreamBufferIntervalRange(
     streamID: string,
     minBufferInterval: number,
     maxBufferInterval: number
-  ): void
+  ): void {
+    return ZegoExpressEngineImpl.instance.setPlayStreamBufferIntervalRange(
+      streamID,
+      minBufferInterval,
+      maxBufferInterval
+    )
+  }
 
   /**
    * Set the weight of the pull stream priority.
@@ -829,7 +928,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param streamID Stream ID.
    */
-  abstract setPlayStreamFocusOn(streamID: string): void
+  setPlayStreamFocusOn(streamID: string): void {
+    return ZegoExpressEngineImpl.instance.setPlayStreamFocusOn(streamID)
+  }
 
   /**
    * Whether the pull stream can receive the specified audio data.
@@ -844,7 +945,9 @@ export abstract class ZegoExpressEngine {
    * @param streamID Stream ID.
    * @param mute Whether it can receive the audio data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
    */
-  abstract mutePlayStreamAudio(streamID: string, mute: boolean): void
+  mutePlayStreamAudio(streamID: string, mute: boolean): void {
+    return ZegoExpressEngineImpl.instance.mutePlayStreamAudio(streamID, mute)
+  }
 
   /**
    * Whether the pull stream can receive the specified video data.
@@ -860,7 +963,9 @@ export abstract class ZegoExpressEngine {
    * @param streamID Stream ID.
    * @param mute Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
    */
-  abstract mutePlayStreamVideo(streamID: string, mute: boolean): void
+  mutePlayStreamVideo(streamID: string, mute: boolean): void {
+    return ZegoExpressEngineImpl.instance.mutePlayStreamVideo(streamID, mute)
+  }
 
   /**
    * Can the pull stream receive all audio data.
@@ -873,7 +978,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param mute Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
    */
-  abstract muteAllPlayStreamAudio(mute: boolean): void
+  muteAllPlayStreamAudio(mute: boolean): void {
+    return ZegoExpressEngineImpl.instance.muteAllPlayStreamAudio(mute)
+  }
 
   /**
    * Can the pull stream receive all video data.
@@ -888,7 +995,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param mute Whether it is possible to receive all remote users' video data when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
    */
-  abstract muteAllPlayStreamVideo(mute: boolean): void
+  muteAllPlayStreamVideo(mute: boolean): void {
+    return ZegoExpressEngineImpl.instance.muteAllPlayStreamVideo(mute)
+  }
 
   /**
    * Enables or disables hardware decoding.
@@ -903,7 +1012,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param enable Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding.
    */
-  abstract enableHardwareDecoder(enable: boolean): void
+  enableHardwareDecoder(enable: boolean): void {
+    return ZegoExpressEngineImpl.instance.enableHardwareDecoder(enable)
+  }
 
   /**
    * Enables or disables frame order detection.
@@ -919,7 +1030,9 @@ export abstract class ZegoExpressEngine {
    *
    * @param enable Whether to turn on frame order detection, true: enable check poc, false: disable check poc.
    */
-  abstract enableCheckPoc(enable: boolean): void
+  enableCheckPoc(enable: boolean): void {
+    return ZegoExpressEngineImpl.instance.enableCheckPoc(enable)
+  }
 
   /**
    * Whether the specified video decoding format is supported.
@@ -932,5 +1045,7 @@ export abstract class ZegoExpressEngine {
    * @param codecID Video codec id.Required: Yes.
    * @return Whether the specified video decoding format is supported; true means supported, you can use this decoding format for playing stream; false means not supported, and the decoding format cannot be used for play stream.
    */
-  abstract isVideoDecoderSupported(codecID: zego.ZegoVideoCodecID): boolean
+  isVideoDecoderSupported(codecID: zego.ZegoVideoCodecID): boolean {
+    return ZegoExpressEngineImpl.instance.isVideoDecoderSupported(codecID)
+  }
 }

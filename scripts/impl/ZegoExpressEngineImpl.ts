@@ -1,23 +1,21 @@
 import { JSB } from 'cc/env'
 import * as zego from '../ZegoExpressDefines'
-import { ZegoExpressEngine } from '../ZegoExpressEngine'
 import { ZegoEventHandler, ZegoApiCalledEventHandler } from '../ZegoExpressEventHandler'
 import { ZegoTextureRendererController } from './native/ZegoTextureRendererController'
 
-export class ZegoExpressEngineImpl extends ZegoExpressEngine {
-  private static _instance: ZegoExpressEngineImpl | undefined
+export class ZegoExpressEngineImpl {
+  private static _instance: ZegoExpressEngineImpl
   private _bridge: ZegoExpressBridge | undefined
   private _rendererController: ZegoTextureRendererController | undefined
 
   static get instance(): ZegoExpressEngineImpl {
-    if (!ZegoExpressEngineImpl._instance) {
-      ZegoExpressEngineImpl._instance = new ZegoExpressEngineImpl()
+    if (!this._instance) {
+      this._instance = new ZegoExpressEngineImpl()
     }
-    return ZegoExpressEngineImpl._instance
+    return this._instance
   }
 
   constructor() {
-    super()
     if (JSB) {
       this._bridge = new ZegoExpressBridge()
       this._rendererController = new ZegoTextureRendererController()
@@ -27,75 +25,66 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
     }
   }
 
-  static createEngine(
-    profile: zego.ZegoEngineProfile,
-    eventHandler?: ZegoEventHandler
-  ): ZegoExpressEngine {
-    console.log('[ZegoExpressEngineImpl] create engine')
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.createEngine(
-        profile.appID ?? 0,
-        profile.appSign ?? '',
-        profile.scenario ?? 0
-      )
-      ZegoExpressEngineImpl.instance._bridge.setEventHandler(eventHandler)
-    } else {
-      // TODO: Web
-    }
-    return ZegoExpressEngineImpl.instance
-  }
-
-  static destroyEngine(callback?: zego.ZegoDestroyCompletionCallback): void {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.destroyEngine(callback)
+  createEngine(profile: zego.ZegoEngineProfile, eventHandler?: ZegoEventHandler): void {
+    if (this._bridge) {
+      this._bridge.createEngine(profile.appID ?? 0, profile.appSign ?? '', profile.scenario ?? 0)
+      this._bridge.setEventHandler(eventHandler)
     } else {
       // TODO: Web
     }
   }
 
-  static setEngineConfig(config: zego.ZegoEngineConfig): void {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.setEngineConfig(config.advancedConfig)
+  destroyEngine(callback?: zego.ZegoDestroyCompletionCallback): void {
+    if (this._bridge) {
+      this._bridge.destroyEngine(callback)
     } else {
       // TODO: Web
     }
   }
 
-  static setLogConfig(config: zego.ZegoLogConfig): void {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.setLogConfig(config.logPath, config.logSize)
+  setEngineConfig(config: zego.ZegoEngineConfig): void {
+    if (this._bridge) {
+      this._bridge.setEngineConfig(config?.advancedConfig ?? new Map<string, string>())
     } else {
       // TODO: Web
     }
   }
 
-  static setRoomMode(mode: zego.ZegoRoomMode): void {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.setRoomMode(mode)
+  setLogConfig(config: zego.ZegoLogConfig): void {
+    if (this._bridge) {
+      this._bridge.setLogConfig(config.logPath, config.logSize)
     } else {
       // TODO: Web
     }
   }
 
-  static getVersion(): string {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      return ZegoExpressEngineImpl.instance._bridge.getVersion()
+  setRoomMode(mode: zego.ZegoRoomMode): void {
+    if (this._bridge) {
+      this._bridge.setRoomMode(mode)
     } else {
       // TODO: Web
     }
   }
 
-  static setApiCalledCallback(callback: ZegoApiCalledEventHandler): void {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      ZegoExpressEngineImpl.instance._bridge.setApiCalledCallback(callback)
+  getVersion(): string {
+    if (this._bridge) {
+      return this._bridge.getVersion()
     } else {
       // TODO: Web
     }
   }
 
-  static isFeatureSupported(featureType: zego.ZegoFeatureType): boolean {
-    if (ZegoExpressEngineImpl.instance._bridge) {
-      return ZegoExpressEngineImpl.instance._bridge.isFeatureSupported(featureType)
+  setApiCalledCallback(callback: ZegoApiCalledEventHandler): void {
+    if (this._bridge) {
+      this._bridge.setApiCalledCallback(callback)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  isFeatureSupported(featureType: zego.ZegoFeatureType): boolean {
+    if (this._bridge) {
+      return this._bridge.isFeatureSupported(featureType)
     } else {
       // TODO: Web
     }
@@ -116,13 +105,15 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
       // TODO: Web
     }
   }
-  uploadLog(callback: zego.ZegoUploadLogResultCallback): void {
+
+  uploadLog(callback?: zego.ZegoUploadLogResultCallback): void {
     if (this._bridge) {
       this._bridge.uploadLog(callback)
     } else {
       // TODO: Web
     }
   }
+
   enableDebugAssistant(enable: boolean): void {
     if (this._bridge) {
       this._bridge.enableDebugAssistant(enable)
@@ -145,9 +136,6 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
     callback?: zego.ZegoRoomLoginCallback
   ): void {
     if (this._bridge) {
-      if (!this._bridge) {
-        return
-      }
       this._bridge.loginRoom(
         roomID,
         user.userID ?? '',
@@ -164,9 +152,6 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
 
   logoutRoom(roomID?: string, callback?: zego.ZegoRoomLogoutCallback): void {
     if (this._bridge) {
-      if (!this._bridge) {
-        return
-      }
       this._bridge.logoutRoom(roomID ?? '', callback)
     } else {
       // TODO: Web
@@ -174,20 +159,38 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
   }
 
   switchRoom(fromRoomID: string, toRoomID: string, config?: zego.ZegoRoomConfig): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.switchRoom(
+        fromRoomID,
+        toRoomID,
+        config?.maxMemberCount ?? 0,
+        config?.isUserStatusNotify ?? false,
+        config?.token ?? ''
+      )
+    } else {
+      // TODO: Web
+    }
   }
 
   renewToken(roomID: string, token: string): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.renewToken(roomID, token)
+    } else {
+      // TODO: Web
+    }
   }
 
   setRoomExtraInfo(
     roomID: string,
     key: string,
     value: string,
-    callback: zego.ZegoRoomSetRoomExtraInfoCallback
+    callback?: zego.ZegoRoomSetRoomExtraInfoCallback
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setRoomExtraInfo(roomID, key, value, callback)
+    } else {
+      // TODO: Web
+    }
   }
 
   startPublishingStream(
@@ -196,7 +199,6 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
     channel?: zego.ZegoPublishChannel
   ): void {
     if (this._bridge) {
-      console.log('[startPublishingStream] streamID:', streamID, ' channel:', channel)
       this._bridge.startPublishingStream(
         streamID,
         config?.roomID ?? '',
@@ -222,14 +224,18 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
     channel?: zego.ZegoPublishChannel,
     callback?: zego.ZegoPublisherSetStreamExtraInfoCallback
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setStreamExtraInfo(extraInfo, channel ?? 0, callback)
+    } else {
+      // TODO: Web
+    }
   }
+
   startPreview(canvas?: zego.ZegoCanvas, channel?: zego.ZegoPublishChannel): void {
     if (this._bridge) {
-      console.log('[startPreview] channel:', channel, ' canvas:', canvas)
       this._bridge.startPreview(channel ?? 0)
       if (canvas) {
-        this._rendererController.localViews.set(channel, canvas.view)
+        this._rendererController.localViews.set(channel ?? 0, canvas.view)
       }
     } else {
       // TODO: Web
@@ -239,75 +245,177 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
   stopPreview(channel?: zego.ZegoPublishChannel): void {
     if (this._bridge) {
       this._bridge.stopPreview(channel ?? 0)
+      this._rendererController.localViews.delete(channel ?? 0)
     } else {
       // TODO: Web
     }
   }
 
   setVideoConfig(config: zego.ZegoVideoConfig, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setVideoConfig(
+        config.captureWidth,
+        config.captureHeight,
+        config.encodeWidth,
+        config.encodeHeight,
+        config.fps,
+        config.bitrate,
+        config.codecID,
+        config.keyFrameInterval,
+        channel ?? 0
+      )
+    } else {
+      // TODO: Web
+    }
   }
+
   getVideoConfig(channel?: zego.ZegoPublishChannel): zego.ZegoVideoConfig {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      let config = this._bridge.getVideoConfig(channel ?? 0) as zego.ZegoVideoConfig
+      return config
+    } else {
+      // TODO: Web
+    }
   }
+
   setVideoMirrorMode(
     mirrorMode: zego.ZegoVideoMirrorMode,
     channel?: zego.ZegoPublishChannel
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setVideoMirrorMode(mirrorMode, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setAppOrientation(orientation: zego.ZegoOrientation, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setAppOrientation(orientation, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setAudioConfig(config: zego.ZegoAudioConfig, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setAudioConfig(config.bitrate, config.channel, config.codecID, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   getAudioConfig(channel?: zego.ZegoPublishChannel): zego.ZegoAudioConfig {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      let config = this._bridge.getAudioConfig(channel ?? 0) as zego.ZegoAudioConfig
+      return config
+    } else {
+      // TODO: Web
+    }
   }
+
   setPublishStreamEncryptionKey(key: string, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPublishStreamEncryptionKey(key, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   mutePublishStreamAudio(mute: boolean, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.mutePublishStreamAudio(mute, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   mutePublishStreamVideo(mute: boolean, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.mutePublishStreamVideo(mute, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   enableTrafficControl(enable: boolean, property: number, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.enableTrafficControl(enable, property, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setMinVideoBitrateForTrafficControl(
     bitrate: number,
     mode: zego.ZegoTrafficControlMinVideoBitrateMode,
     channel?: zego.ZegoPublishChannel
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setMinVideoBitrateForTrafficControl(bitrate, mode, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setMinVideoFpsForTrafficControl(fps: number, channel?: zego.ZegoPublishChannel): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setMinVideoFpsForTrafficControl(fps, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setMinVideoResolutionForTrafficControl(
     width: number,
     height: number,
     channel?: zego.ZegoPublishChannel
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setMinVideoResolutionForTrafficControl(width, height, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
   }
+
   setCaptureVolume(volume: number): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setCaptureVolume(volume)
+    } else {
+      // TODO: Web
+    }
   }
+
   enableHardwareEncoder(enable: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.enableHardwareEncoder(enable)
+    } else {
+      // TODO: Web
+    }
   }
+
   setCapturePipelineScaleMode(mode: zego.ZegoCapturePipelineScaleMode): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setCapturePipelineScaleMode(mode)
+    } else {
+      // TODO: Web
+    }
   }
+
   isVideoEncoderSupported(codecID: zego.ZegoVideoCodecID): boolean {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      return this._bridge.isVideoEncoderSupported(codecID)
+    } else {
+      // TODO: Web
+    }
   }
+
   setAppOrientationMode(mode: zego.ZegoOrientationMode): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setAppOrientationMode(mode)
+    } else {
+      // TODO: Web
+    }
   }
 
   startPlayingStream(
@@ -328,52 +436,117 @@ export class ZegoExpressEngineImpl extends ZegoExpressEngine {
   stopPlayingStream(streamID: string): void {
     if (this._bridge) {
       this._bridge.stopPlayingStream(streamID)
+      this._rendererController.remoteViews.delete(streamID)
     } else {
       // TODO: Web
     }
   }
 
   setPlayStreamDecryptionKey(streamID: string, key: string): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPlayStreamDecryptionKey(streamID, key)
+    } else {
+      // TODO: Web
+    }
   }
+
   setPlayVolume(streamID: string, volume: number): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPlayVolume(streamID, volume)
+    } else {
+      // TODO: Web
+    }
   }
+
   setAllPlayStreamVolume(volume: number): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setAllPlayStreamVolume(volume)
+    } else {
+      // TODO: Web
+    }
   }
+
   setPlayStreamVideoType(streamID: string, streamType: zego.ZegoVideoStreamType): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPlayStreamVideoType(streamID, streamType)
+    } else {
+      // TODO: Web
+    }
   }
+
   setPlayStreamBufferIntervalRange(
     streamID: string,
     minBufferInterval: number,
     maxBufferInterval: number
   ): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval)
+    } else {
+      // TODO: Web
+    }
   }
+
   setPlayStreamFocusOn(streamID: string): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.setPlayStreamFocusOn(streamID)
+    } else {
+      // TODO: Web
+    }
   }
+
   mutePlayStreamAudio(streamID: string, mute: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.mutePlayStreamAudio(streamID, mute)
+    } else {
+      // TODO: Web
+    }
   }
+
   mutePlayStreamVideo(streamID: string, mute: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.mutePlayStreamVideo(streamID, mute)
+    } else {
+      // TODO: Web
+    }
   }
+
   muteAllPlayStreamAudio(mute: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.muteAllPlayStreamAudio(mute)
+    } else {
+      // TODO: Web
+    }
   }
+
   muteAllPlayStreamVideo(mute: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.muteAllPlayStreamVideo(mute)
+    } else {
+      // TODO: Web
+    }
   }
+
   enableHardwareDecoder(enable: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.enableHardwareDecoder(enable)
+    } else {
+      // TODO: Web
+    }
   }
+
   enableCheckPoc(enable: boolean): void {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      this._bridge.enableCheckPoc(enable)
+    } else {
+      // TODO: Web
+    }
   }
+
   isVideoDecoderSupported(codecID: zego.ZegoVideoCodecID): boolean {
-    throw new Error('Method not implemented.')
+    if (this._bridge) {
+      return this._bridge.isVideoDecoderSupported(codecID)
+    } else {
+      // TODO: Web
+    }
   }
 }

@@ -35,10 +35,19 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("setJsTextureRendererController",
                     &ZegoExpressBridge::setJsTextureRendererController);
 
-    bridge.function("getVersion", &ZegoExpressBridge::getVersion);
     bridge.function("createEngine", &ZegoExpressBridge::createEngine);
     bridge.function("destroyEngine", &ZegoExpressBridge::destroyEngine);
+    bridge.function("setEngineConfig", &ZegoExpressBridge::setEngineConfig);
+    bridge.function("setLogConfig", &ZegoExpressBridge::setLogConfig);
+    bridge.function("setRoomMode", &ZegoExpressBridge::setRoomMode);
+    bridge.function("getVersion", &ZegoExpressBridge::getVersion);
+    bridge.function("setApiCalledCallback", &ZegoExpressBridge::setApiCalledCallback);
+    bridge.function("isFeatureSupported", &ZegoExpressBridge::isFeatureSupported);
     bridge.function("setEventHandler", &ZegoExpressBridge::setEventHandler);
+    bridge.function("setRoomScenario", &ZegoExpressBridge::setRoomScenario);
+    bridge.function("uploadLog", &ZegoExpressBridge::uploadLog);
+    bridge.function("enableDebugAssistant", &ZegoExpressBridge::enableDebugAssistant);
+    bridge.function("callExperimentalAPI", &ZegoExpressBridge::callExperimentalAPI);
 
     bridge.function("loginRoom", &ZegoExpressBridge::loginRoom);
     bridge.function("logoutRoom", &ZegoExpressBridge::logoutRoom);
@@ -48,6 +57,7 @@ bool RegisterExpressBridge(se::Object *ns) {
 
     bridge.function("startPublishingStream", &ZegoExpressBridge::startPublishingStream);
     bridge.function("stopPublishingStream", &ZegoExpressBridge::stopPublishingStream);
+    bridge.function("getVideoConfig", &ZegoExpressBridge::getVideoConfig);
 
     bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
     bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
