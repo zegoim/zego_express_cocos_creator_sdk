@@ -39,7 +39,7 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
     void createEngine(unsigned int appID, const std::string &appSign, int scenario);
     void destroyEngine(const se::Value &callback);
     void setEngineConfig(const se::Value &advancedConfig);
-    void setLogConfig(const std::string &logPath, unsigned long long logSize);
+    void setLogConfig(const std::string &logPath, uint64_t logSize);
     void setRoomMode(int mode);
     std::string getVersion();
     void setApiCalledCallback(const se::Value &callback);

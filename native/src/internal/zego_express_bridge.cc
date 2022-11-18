@@ -63,7 +63,7 @@ void ZegoExpressBridge::setEngineConfig(const se::Value &advancedConfig) {
     ZegoExpressSDK::setEngineConfig(engineConfig);
 }
 
-void ZegoExpressBridge::setLogConfig(const std::string &logPath, unsigned long long logSize) {
+void ZegoExpressBridge::setLogConfig(const std::string &logPath, uint64_t logSize) {
     auto logConfig = ZegoLogConfig{};
     logConfig.logPath = logPath;
     logConfig.logSize = logSize;
@@ -129,7 +129,7 @@ void ZegoExpressBridge::enableDebugAssistant(bool enable) {
 
 std::string ZegoExpressBridge::callExperimentalAPI(const std::string &params) {
     if (!native_engine_) {
-        return;
+        return "";
     }
     return native_engine_->callExperimentalAPI(params);
 }
@@ -212,7 +212,7 @@ void ZegoExpressBridge::stopPublishingStream(int channel) {
 
 se::Object *ZegoExpressBridge::getVideoConfig(int channel) {
     if (!native_engine_) {
-        return;
+        return se::Object::createPlainObject();
     }
     auto config = native_engine_->getVideoConfig();
     auto jsConfig = se::Object::createPlainObject();
