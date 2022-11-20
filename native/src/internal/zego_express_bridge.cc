@@ -334,4 +334,33 @@ void ZegoExpressBridge::onRoomStateChanged(const std::string &roomID,
     });
 }
 
+void ZegoExpressBridge::onRoomStreamUpdate(const std::string &roomID, ZegoUpdateType updateType,
+                                           const std::vector<ZegoStream> &streamList,
+                                           const std::string &extendedData) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomStreamUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto js_stream_list = ccstd::vector<se::Object *>();
+            for (auto &stream : streamList) {
+                auto js_stream = se::Object::createPlainObject();
+                auto js_user = se::Object::createPlainObject();
+                js_user->setProperty("userID", se::Value(stream.user.userID));
+                js_user->setProperty("userName", se::Value(stream.user.userName));
+                js_stream->setProperty("user", se::Value(js_user));
+                js_stream->setProperty("streamID", se::Value(stream.streamID));
+                js_stream->setProperty("extraInfo", se::Value(stream.extraInfo));
+                js_stream_list.push_back(js_stream);
+            }
+            sebind::callFunction<void>(method, roomID, updateType, js_stream_list, extendedData);
+        }
+    });
+}
+
 } // namespace zego::cocos
