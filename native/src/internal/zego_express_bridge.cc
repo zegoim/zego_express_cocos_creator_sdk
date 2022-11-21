@@ -148,17 +148,17 @@ void ZegoExpressBridge::loginRoom(const std::string &roomID, const std::string &
     room_config.isUserStatusNotify = isUserStatusNotify;
     room_config.token = token;
 
-    native_engine_->loginRoom(roomID, ZegoUser(userID, userName), room_config,
-                              [callback](int errorCode, std::string extendedData) {
-                                  RunOnCocosThread([callback, errorCode, extendedData]() {
-                                      se::AutoHandleScope hs;
-                                      if (!callback.isObject() ||
-                                          !callback.toObject()->isFunction()) {
-                                          return;
-                                      }
-                                      sebind::callFunction<void>(callback, errorCode, extendedData);
-                                  });
-                              });
+    auto job = [callback](int errorCode, std::string extendedData) {
+        RunOnCocosThread([callback, errorCode, extendedData]() {
+            se::AutoHandleScope hs;
+            if (!callback.isObject() || !callback.toObject()->isFunction()) {
+                return;
+            }
+            sebind::callFunction<void>(callback, errorCode, extendedData);
+        });
+    };
+
+    native_engine_->loginRoom(roomID, ZegoUser(userID, userName), room_config, job);
 }
 
 void ZegoExpressBridge::logoutRoom(const std::string &roomID) {
@@ -257,7 +257,15 @@ void ZegoExpressBridge::onApiCalledResult(int errorCode, const std::string &func
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
-            sebind::callFunction<void>(method, errorCode, funcName, info);
+            // MARK: Do not use "sebind::callFunction" because it missing the js "this" object param
+            //            sebind::callFunction<void>(method, errorCode, funcName, info);
+
+            se::Value js_error_code, js_func_name, js_info;
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            nativevalue_to_se(funcName, js_func_name, nullptr);
+            nativevalue_to_se(info, js_info, nullptr);
+            se::ValueArray args{js_error_code, js_func_name, js_info};
+            method.toObject()->call(args, event_handler_->toObject());
         }
     });
 }
@@ -274,7 +282,13 @@ void ZegoExpressBridge::onDebugError(int errorCode, const std::string &funcName,
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
-            sebind::callFunction<void>(method, errorCode, funcName, info);
+            //            sebind::callFunction<void>(method, errorCode, funcName, info);
+            se::Value js_error_code, js_func_name, js_info;
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            nativevalue_to_se(funcName, js_func_name, nullptr);
+            nativevalue_to_se(info, js_info, nullptr);
+            se::ValueArray args{js_error_code, js_func_name, js_info};
+            method.toObject()->call(args, event_handler_->toObject());
         }
     });
 }
@@ -291,27 +305,13 @@ void ZegoExpressBridge::onRoomStateUpdate(const std::string &roomID, ZegoRoomSta
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
-            auto func = method.toObject();
-            if (!func->isFunction()) {
-                return;
-            }
-
-            se::Value js_room_id;
+            se::Value js_room_id, js_state, js_error_code, js_extended_data;
             nativevalue_to_se(roomID, js_room_id, nullptr);
-            se::Value js_state;
             nativevalue_to_se(state, js_state, nullptr);
-            se::Value js_error_code;
             nativevalue_to_se(errorCode, js_error_code, nullptr);
-            se::Value js_extended_data;
             nativevalue_to_se(extendedData, js_extended_data, nullptr);
-
-            se::ValueArray args;
-            args.push_back(js_room_id);
-            args.push_back(js_state);
-            args.push_back(js_error_code);
-            args.push_back(js_extended_data);
-
-            func->call(args, event_handler_->toObject());
+            se::ValueArray args{js_room_id, js_state, js_error_code, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
         }
     });
 }
@@ -329,7 +329,14 @@ void ZegoExpressBridge::onRoomStateChanged(const std::string &roomID,
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
-            sebind::callFunction<void>(method, roomID, reason, errorCode, extendedData);
+            //            sebind::callFunction<void>(method, roomID, reason, errorCode, extendedData);
+            se::Value js_room_id, js_reason, js_error_code, js_extended_data;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(reason, js_reason, nullptr);
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            nativevalue_to_se(extendedData, js_extended_data, nullptr);
+            se::ValueArray args{js_room_id, js_reason, js_error_code, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
         }
     });
 }
@@ -347,18 +354,25 @@ void ZegoExpressBridge::onRoomStreamUpdate(const std::string &roomID, ZegoUpdate
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
-            auto js_stream_list = ccstd::vector<se::Object *>();
+            auto se_stream_list = ccstd::vector<se::Object *>();
             for (auto &stream : streamList) {
-                auto js_stream = se::Object::createPlainObject();
-                auto js_user = se::Object::createPlainObject();
-                js_user->setProperty("userID", se::Value(stream.user.userID));
-                js_user->setProperty("userName", se::Value(stream.user.userName));
-                js_stream->setProperty("user", se::Value(js_user));
-                js_stream->setProperty("streamID", se::Value(stream.streamID));
-                js_stream->setProperty("extraInfo", se::Value(stream.extraInfo));
-                js_stream_list.push_back(js_stream);
+                auto se_stream = se::Object::createPlainObject();
+                auto se_user = se::Object::createPlainObject();
+                se_user->setProperty("userID", se::Value(stream.user.userID));
+                se_user->setProperty("userName", se::Value(stream.user.userName));
+                se_stream->setProperty("user", se::Value(se_user));
+                se_stream->setProperty("streamID", se::Value(stream.streamID));
+                se_stream->setProperty("extraInfo", se::Value(stream.extraInfo));
+                se_stream_list.push_back(se_stream);
             }
-            sebind::callFunction<void>(method, roomID, updateType, js_stream_list, extendedData);
+            // sebind::callFunction<void>(method, roomID, updateType, js_stream_list, extendedData);
+            se::Value js_room_id, js_update_type, js_stream_list, js_extended_data;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(updateType, js_update_type, nullptr);
+            nativevalue_to_se(se_stream_list, js_stream_list, nullptr);
+            nativevalue_to_se(extendedData, js_extended_data, nullptr);
+            se::ValueArray args{js_room_id, js_update_type, js_stream_list, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
         }
     });
 }
