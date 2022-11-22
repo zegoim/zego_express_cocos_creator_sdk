@@ -764,6 +764,14 @@ export enum ZegoStreamEvent {
   PlayEnd = 206,
 }
 
+/** Super resolution mode. */
+export enum ZegoSuperResolutionState {
+  /** Super resolution turned off. */
+  Off = 0,
+  /** Super resolution turned on. */
+  On = 1,
+}
+
 /**
  * Log config.
  *
