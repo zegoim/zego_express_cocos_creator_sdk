@@ -86,6 +86,44 @@ void ZegoExpressEventHandler::onDebugError(int errorCode, const std::string &fun
     });
 }
 
+void ZegoExpressEventHandler::onEngineStateUpdate(ZegoEngineState state) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onEngineStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_state;
+            nativevalue_to_se(state, js_state, nullptr);
+            se::ValueArray args{js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRecvExperimentalAPI(const std::string &content) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRecvExperimentalAPI", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_content;
+            nativevalue_to_se(content, js_content, nullptr);
+            se::ValueArray args{js_content};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
 void ZegoExpressEventHandler::onRoomStateUpdate(const std::string &roomID, ZegoRoomState state,
                                                 int errorCode, const std::string &extendedData) {
     if (!event_handler_) {
@@ -134,6 +172,55 @@ void ZegoExpressEventHandler::onRoomStateChanged(const std::string &roomID,
     });
 }
 
+void ZegoExpressEventHandler::onRoomUserUpdate(const std::string &roomID, ZegoUpdateType updateType,
+                                               const std::vector<ZegoUser> &userList) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomUserUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_user_list = ccstd::vector<se::Object *>();
+            for (auto &user : userList) {
+                auto se_user = se::Object::createPlainObject();
+                se_user->setProperty("userID", se::Value(user.userID));
+                se_user->setProperty("userName", se::Value(user.userName));
+                se_user_list.push_back(se_user);
+            }
+            se::Value js_room_id, js_update_type, js_user_list;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(updateType, js_update_type, nullptr);
+            nativevalue_to_se(se_user_list, js_user_list, nullptr);
+            se::ValueArray args{js_room_id, js_update_type, js_user_list};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRoomOnlineUserCountUpdate(const std::string &roomID, int count) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomOnlineUserCountUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_room_id, js_count;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(count, js_count, nullptr);
+            se::ValueArray args{js_room_id, js_count};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
 void ZegoExpressEventHandler::onRoomStreamUpdate(const std::string &roomID,
                                                  ZegoUpdateType updateType,
                                                  const std::vector<ZegoStream> &streamList,
@@ -166,6 +253,309 @@ void ZegoExpressEventHandler::onRoomStreamUpdate(const std::string &roomID,
             nativevalue_to_se(se_stream_list, js_stream_list, nullptr);
             nativevalue_to_se(extendedData, js_extended_data, nullptr);
             se::ValueArray args{js_room_id, js_update_type, js_stream_list, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRoomStreamExtraInfoUpdate(
+    const std::string &roomID, const std::vector<ZegoStream> &streamList) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomStreamExtraInfoUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_stream_list = ccstd::vector<se::Object *>();
+            for (auto &stream : streamList) {
+                auto se_stream = se::Object::createPlainObject();
+                auto se_user = se::Object::createPlainObject();
+                se_user->setProperty("userID", se::Value(stream.user.userID));
+                se_user->setProperty("userName", se::Value(stream.user.userName));
+                se_stream->setProperty("user", se::Value(se_user));
+                se_stream->setProperty("streamID", se::Value(stream.streamID));
+                se_stream->setProperty("extraInfo", se::Value(stream.extraInfo));
+                se_stream_list.push_back(se_stream);
+            }
+            se::Value js_room_id, js_update_type, js_stream_list, js_extended_data;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(se_stream_list, js_stream_list, nullptr);
+            se::ValueArray args{js_room_id, js_stream_list};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRoomExtraInfoUpdate(
+    const std::string &roomID, const std::vector<ZegoRoomExtraInfo> &roomExtraInfoList) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomExtraInfoUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_info_list = ccstd::vector<se::Object *>();
+            for (auto &info : roomExtraInfoList) {
+                auto se_info = se::Object::createPlainObject();
+                se_info->setProperty("key", se::Value(info.key));
+                se_info->setProperty("value", se::Value(info.value));
+                auto se_user = se::Object::createPlainObject();
+                se_user->setProperty("userID", se::Value(info.updateUser.userID));
+                se_user->setProperty("userName", se::Value(info.updateUser.userName));
+                se_info->setProperty("updateUser", se::Value(se_user));
+                se_info->setProperty("updateTime", se::Value(info.updateTime));
+                se_info_list.push_back(se_info);
+            }
+            se::Value js_room_id, js_info_list;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(se_info_list, js_info_list, nullptr);
+            se::ValueArray args{js_room_id, js_info_list};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRoomTokenWillExpire(const std::string &roomID,
+                                                    int remainTimeInSecond) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRoomTokenWillExpire", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_room_id, js_second;
+            nativevalue_to_se(roomID, js_room_id, nullptr);
+            nativevalue_to_se(remainTimeInSecond, js_second, nullptr);
+            se::ValueArray args{js_room_id, js_second};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherStateUpdate(const std::string &streamID,
+                                                     ZegoPublisherState state, int errorCode,
+                                                     const std::string &extendedData) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state, js_error_code, js_extended_data;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            nativevalue_to_se(extendedData, js_extended_data, nullptr);
+            se::ValueArray args{js_stream_id, js_state, js_error_code, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherQualityUpdate(const std::string &streamID,
+                                                       const ZegoPublishStreamQuality &quality) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherQualityUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_quality = se::Object::createPlainObject();
+            se_quality->setProperty("videoCaptureFPS", se::Value(quality.videoCaptureFPS));
+            se_quality->setProperty("videoEncodeFPS", se::Value(quality.videoEncodeFPS));
+            se_quality->setProperty("videoSendFPS", se::Value(quality.videoSendFPS));
+            se_quality->setProperty("videoKBPS", se::Value(quality.videoKBPS));
+            se_quality->setProperty("audioCaptureFPS", se::Value(quality.audioCaptureFPS));
+            se_quality->setProperty("audioSendFPS", se::Value(quality.audioSendFPS));
+            se_quality->setProperty("audioKBPS", se::Value(quality.audioKBPS));
+            se_quality->setProperty("rtt", se::Value(quality.rtt));
+            se_quality->setProperty("packetLostRate", se::Value(quality.packetLostRate));
+            se_quality->setProperty("level", se::Value(quality.level));
+            se_quality->setProperty("isHardwareEncode", se::Value(quality.isHardwareEncode));
+            se_quality->setProperty("videoCodecID", se::Value(quality.videoCodecID));
+            se_quality->setProperty("totalSendBytes", se::Value(quality.totalSendBytes));
+            se_quality->setProperty("audioSendBytes", se::Value(quality.audioSendBytes));
+            se_quality->setProperty("videoSendBytes", se::Value(quality.videoSendBytes));
+
+            se::Value js_stream_id, js_quality;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(se_quality, js_quality, nullptr);
+            se::ValueArray args{js_stream_id, js_quality};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherCapturedAudioFirstFrame() {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherCapturedAudioFirstFrame",
+                                                    &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::ValueArray args{};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherCapturedVideoFirstFrame(ZegoPublishChannel channel) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherCapturedVideoFirstFrame",
+                                                    &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_channel;
+            nativevalue_to_se(channel, js_channel, nullptr);
+            se::ValueArray args{js_channel};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherRenderVideoFirstFrame(ZegoPublishChannel channel) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherRenderVideoFirstFrame", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_channel;
+            nativevalue_to_se(channel, js_channel, nullptr);
+            se::ValueArray args{js_channel};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherVideoSizeChanged(int width, int height,
+                                                          ZegoPublishChannel channel) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherVideoSizeChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_width, js_height, js_channel;
+            nativevalue_to_se(width, js_width, nullptr);
+            nativevalue_to_se(height, js_height, nullptr);
+            nativevalue_to_se(channel, js_channel, nullptr);
+            se::ValueArray args{js_width, js_height, js_channel};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherRelayCDNStateUpdate(
+    const std::string &streamID, const std::vector<ZegoStreamRelayCDNInfo> &infoList) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherRelayCDNStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_info_list = ccstd::vector<se::Object *>();
+            for (auto &info : infoList) {
+                auto se_info = se::Object::createPlainObject();
+                se_info->setProperty("url", se::Value(info.url));
+                se_info->setProperty("state", se::Value(info.state));
+                se_info->setProperty("updateReason", se::Value(info.updateReason));
+                se_info->setProperty("stateTime", se::Value(info.stateTime));
+                se_info_list.push_back(se_info);
+            }
+            se::Value js_stream_id, js_info_list;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(se_info_list, js_info_list, nullptr);
+            se::ValueArray args{js_stream_id, js_info_list};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherVideoEncoderChanged(ZegoVideoCodecID fromCodecID,
+                                                             ZegoVideoCodecID toCodecID,
+                                                             ZegoPublishChannel channel) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherVideoEncoderChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_from, js_to, js_channel;
+            nativevalue_to_se(fromCodecID, js_from, nullptr);
+            nativevalue_to_se(toCodecID, js_to, nullptr);
+            nativevalue_to_se(channel, js_channel, nullptr);
+            se::ValueArray args{js_from, js_to, js_channel};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPublisherStreamEvent(ZegoStreamEvent eventID,
+                                                     const std::string &streamID,
+                                                     const std::string &extraInfo) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPublisherStreamEvent", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_event_id, js_stream_id, js_extra_info;
+            nativevalue_to_se(eventID, js_event_id, nullptr);
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(extraInfo, js_extra_info, nullptr);
+            se::ValueArray args{js_event_id, js_stream_id, js_extra_info};
             method.toObject()->call(args, event_handler_->toObject());
         }
     });
