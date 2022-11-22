@@ -12,3 +12,8 @@ target_link_libraries(zego_express_engine_plugin
     "${ZEGO_EXPRESS_LIBRARY_PATH}/libZegoExpressEngine.so"
     ${ENGINE_NAME} # cocos_engine
 )
+
+# Fix the issue that "libcocos.so" exported EGL related symbols build for debug,
+# causing ZegoExpressEngine to fail to link the correct symbols from "libEGL.so" and crash.
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fvisibility=hidden")
