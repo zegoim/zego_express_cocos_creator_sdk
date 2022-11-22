@@ -926,6 +926,12 @@ export enum ZegoErrorCode {
   /** Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please try again later. */
   CopyrightedMusicGetPitchFail = 1017049,
 
+  /** Description: This resource is not shared in the room. <br>Cause: No users in the room share this resource. <br>Solutions: Please any one user in the room to call the [requestresource] function to request resources and share them. */
+  CopyrightedMusicNotSharedResource = 1017050,
+
+  /** Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again */
+  CopyrightedMusicGetSharedResourceTimesOver = 1017051,
+
   /** Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it. */
   CopyrightedMusicNotSupportMethod = 1017095,
 

@@ -450,9 +450,9 @@ export enum ZegoRemoteDeviceState {
   RebootRequired = 7,
   /** System media services stop, such as under the iOS platform, when the system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services. */
   SystemMediaServicesLost = 8,
-  /** Capturing disabled */
+  /** The remote user calls [enableCamera] or [muteMicrophone] to disable the camera or microphone. */
   Disable = 9,
-  /** The remote device is muted */
+  /** The remote user actively calls [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream. */
   Mute = 10,
   /** The device is interrupted, such as a phone call interruption, etc. */
   Interruption = 11,
@@ -1043,33 +1043,33 @@ export class ZegoStreamRelayCDNInfo {
 /**
  * Advanced player configuration.
  *
- * Configure playing stream CDN configuration, video layer, room id.
+ * Configure stream resource mode, CDN configuration and other advanced configurations.
  */
 export class ZegoPlayerConfig {
   /** Stream resource mode. */
   resourceMode: ZegoStreamResourceMode
 
   /** The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback. */
-  cdnConfig: ZegoCDNConfig
+  cdnConfig?: ZegoCDNConfig
 
   /** @deprecated This property has been deprecated since version 1.19.0, please use the [setPlayStreamVideoType] function instead. */
-  videoLayer: ZegoPlayerVideoLayer
+  videoLayer?: ZegoPlayerVideoLayer
 
-  /** The Room ID. */
-  roomID: string
+  /** The Room ID. It only needs to be filled in the multi-room mode, which indicates which room this stream needs to be bound to. This parameter is ignored in single room mode. */
+  roomID?: string
 
-  /** The video encoding type of the stream. */
-  videoCodecID: ZegoVideoCodecID
+  /** The video encoding type of the stream, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored. */
+  videoCodecID?: ZegoVideoCodecID
 
-  /** The resource type of the source stream. */
-  sourceResourceType: ZegoResourceType
+  /** The resource type of the source stream, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored. */
+  sourceResourceType?: ZegoResourceType
 
-  /** Preconfigured codec template ID */
-  codecTemplateID: number
+  /** Preconfigured codec template ID, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored. */
+  codecTemplateID?: number
 
   constructor() {
     this.resourceMode = ZegoStreamResourceMode.Default
-    this.cdnConfig = new ZegoCDNConfig()
+    this.cdnConfig = null
     this.videoLayer = 99
     this.roomID = ''
     this.videoCodecID = ZegoVideoCodecID.Unknown
