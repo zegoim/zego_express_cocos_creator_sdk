@@ -183,10 +183,17 @@ void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_
     for (uint32_t h = 0; h < param.height; h++) {
         src_index = h * param.strides[0];
         for (uint32_t w = 0; w < fixed_stride; w += 4) {
+#if defined(ANDROID)
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 0]; // R
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 1]; // G
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 2]; // B
+            dst_buffer[dst_index++] = src_buffer[src_index + w + 3]; // A
+#else
             dst_buffer[dst_index++] = src_buffer[src_index + w + 2]; // R
             dst_buffer[dst_index++] = src_buffer[src_index + w + 1]; // G
             dst_buffer[dst_index++] = src_buffer[src_index + w + 0]; // B
             dst_buffer[dst_index++] = src_buffer[src_index + w + 3]; // A
+#endif
         }
     }
 }
