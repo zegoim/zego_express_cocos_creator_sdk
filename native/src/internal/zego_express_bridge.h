@@ -22,14 +22,14 @@ using namespace ZEGO::EXPRESS;
 
 namespace zego::cocos {
 
-class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>,
-                          public IZegoEventHandler,
-                          public IZegoApiCalledEventHandler,
-                          public IZegoCustomVideoRenderHandler {
+class ZegoExpressBridge {
 
   public:
     ZegoExpressBridge();
     ~ZegoExpressBridge() {}
+
+  private:
+    IZegoExpressEngine *native_engine_ = nullptr;
 
   public:
     void setJsTextureRendererController(const se::Value &controller);
@@ -72,26 +72,6 @@ class ZegoExpressBridge : public std::enable_shared_from_this<ZegoExpressBridge>
   public:
     void startPlayingStream(const std::string &streamID);
     void stopPlayingStream(const std::string &streamID);
-
-#pragma mark - Callback
-  public:
-    void onApiCalledResult(int, const std::string &, const std::string &) override;
-    void onDebugError(int errorCode, const std::string &funcName, const std::string &info) override;
-
-    void onRoomStateUpdate(const std::string &roomID, ZegoRoomState state, int errorCode,
-                           const std::string &extendedData) override;
-
-    void onRoomStateChanged(const std::string &roomID, ZegoRoomStateChangedReason reason,
-                            int errorCode, const std::string &extendedData) override;
-
-    void onRoomStreamUpdate(const std::string &roomID, ZegoUpdateType updateType,
-                            const std::vector<ZegoStream> &streamList,
-                            const std::string &extendedData) override;
-
-  private:
-    IZegoExpressEngine *native_engine_ = nullptr;
-    std::shared_ptr<se::Value> event_handler_;
-    std::shared_ptr<se::Value> api_called_callback_;
 };
 
 } // namespace zego::cocos
