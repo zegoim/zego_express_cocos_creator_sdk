@@ -30,6 +30,16 @@ export interface ZegoEventHandler {
    */
   onEngineStateUpdate?(state: zego.ZegoEngineState): void
   /**
+   * Experimental API callback
+   *
+   * Available since: 2.7.0
+   * Description: Receive experimental API callbacks in JSON string format.
+   * Caution: Please use this feature with the help of ZEGO Technical Support.
+   *
+   * @param content Callback content in JSON string format.
+   */
+  onRecvExperimentalAPI?(content: string): void
+  /**
    * The callback triggered when the room connection state changes.
    *
    * Available since: 1.1.0
@@ -275,6 +285,23 @@ export interface ZegoEventHandler {
    */
   onPublisherRelayCDNStateUpdate?(streamID: string, infoList: zego.ZegoStreamRelayCDNInfo[]): void
   /**
+   * The callback triggered when the video encoder changes in publishing stream.
+   *
+   * Available since: 2.12.0
+   * Description: After the H.265 automatic downgrade policy is enabled, if H.265 encoding is not supported or the encoding fails during the streaming process with H.265 encoding, the SDK will actively downgrade to the specified encoding (H.264), and this callback will be triggered at this time.
+   * When to trigger: In the process of streaming with H.265 encoding, if H.265 encoding is not supported or encoding fails, the SDK will actively downgrade to the specified encoding (H.264), and this callback will be triggered at this time.
+   * Caution: When this callback is triggered, if local video recording or cloud recording is in progress, multiple recording files will be generated. Developers need to collect all the recording files for processing after the recording ends. When this callback is triggered, because the streaming code has changed, the developer can evaluate whether to notify the streaming end, so that the streaming end can deal with it accordingly.
+   *
+   * @param fromCodecID Video codec ID before the change.
+   * @param toCodecID Video codec ID after the change.
+   * @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+   */
+  onPublisherVideoEncoderChanged?(
+    fromCodecID: zego.ZegoVideoCodecID,
+    toCodecID: zego.ZegoVideoCodecID,
+    channel: zego.ZegoPublishChannel
+  ): void
+  /**
    * The callback triggered when publishing stream.
    *
    * Available since: 2.18.0
@@ -423,6 +450,23 @@ export interface ZegoEventHandler {
    * @param extraInfo extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
    */
   onPlayerStreamEvent?(eventID: zego.ZegoStreamEvent, streamID: string, extraInfo: string): void
+  /**
+   * Playing stream video super resolution enabled state changes.
+   *
+   * Available since: 3.0.0
+   * Description: Playing stream video super resolution enabled state changes.
+   * When to trigger: When [enableVideoSuperResolution] enables or disables video super resolution, the developer will be notified whether to enable video super resolution according to the actual situation when playing stream video rendering.
+   * Caution: None.
+   *
+   * @param streamID Stream ID.
+   * @param state Video super resolution state.
+   * @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+   */
+  onPlayerVideoSuperResolutionUpdate?(
+    streamID: string,
+    state: zego.ZegoSuperResolutionState,
+    errorCode: number
+  ): void
 }
 
 export interface ZegoApiCalledEventHandler {
