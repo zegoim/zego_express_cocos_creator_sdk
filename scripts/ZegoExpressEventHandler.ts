@@ -14,7 +14,7 @@ export interface ZegoEventHandler {
    * @param funcName Function name.
    * @param info Detailed error information.
    */
-  onDebugError?(errorCode: number, funcName: string, info: string): void
+  onDebugError(errorCode: number, funcName: string, info: string): void
   /**
    * The callback triggered when the audio/video engine state changes.
    *
@@ -508,5 +508,5 @@ export interface ZegoApiCalledEventHandler {
    * @param funcName Function name.
    * @param info Detailed error information.
    */
-  onApiCalledResult?(errorCode: number, funcName: string, info: string): void
+  onApiCalledResult(errorCode: number, funcName: string, info: string): void
 }
