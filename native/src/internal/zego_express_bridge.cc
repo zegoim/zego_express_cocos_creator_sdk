@@ -162,33 +162,70 @@ void ZegoExpressBridge::loginRoom(const std::string &roomID, const std::string &
     native_engine_->loginRoom(roomID, ZegoUser(userID, userName), room_config, job);
 }
 
-void ZegoExpressBridge::logoutRoom(const std::string &roomID) {
-    // TODO: Callback
+void ZegoExpressBridge::logoutRoom(const std::string &roomID, const se::Value &callback) {
     if (!native_engine_) {
         return;
     }
+
+    auto job = [callback](int errorCode, std::string extendedData) {
+        RunOnCocosThread([callback, errorCode, extendedData]() {
+            se::AutoHandleScope hs;
+            if (!callback.isObject() || !callback.toObject()->isFunction()) {
+                return;
+            }
+            sebind::callFunction<void>(callback, errorCode, extendedData);
+        });
+    };
+
     if (roomID.empty()) {
-        native_engine_->logoutRoom();
+        native_engine_->logoutRoom(job);
     } else {
-        native_engine_->logoutRoom(roomID);
+        native_engine_->logoutRoom(roomID, job);
     }
+}
+
+void ZegoExpressBridge::switchRoom(const std::string &fromRoomID, const std::string &toRoomID,
+                                   int maxMemberCount, bool isUserStatusNotify,
+                                   const std::string &token) {
+    if (!native_engine_) {
+        return;
+    }
+    ZegoRoomConfig room_config{};
+    room_config.maxMemberCount = maxMemberCount;
+    room_config.isUserStatusNotify = isUserStatusNotify;
+    room_config.token = token;
+
+    native_engine_->switchRoom(fromRoomID, toRoomID, &room_config);
+}
+
+void ZegoExpressBridge::renewToken(const std::string &roomID, const std::string &token) {
+    if (!native_engine_) {
+        return;
+    }
+
+    native_engine_->renewToken(roomID, token);
+}
+
+void ZegoExpressBridge::setRoomExtraInfo(const std::string &roomID, const std::string &key,
+                                         const std::string &value, const se::Value &callback) {
+    if (!native_engine_) {
+        return;
+    }
+
+    auto job = [callback](int errorCode) {
+        RunOnCocosThread([callback, errorCode]() {
+            se::AutoHandleScope hs;
+            if (!callback.isObject() || !callback.toObject()->isFunction()) {
+                return;
+            }
+            sebind::callFunction<void>(callback, errorCode);
+        });
+    };
+
+    native_engine_->setRoomExtraInfo(roomID, key, value, job);
 }
 
 #pragma mark - Publisher module
-
-void ZegoExpressBridge::startPreview(int channel) {
-    if (!native_engine_) {
-        return;
-    }
-    native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
-}
-
-void ZegoExpressBridge::stopPreview(int channel) {
-    if (!native_engine_) {
-        return;
-    }
-    native_engine_->stopPreview(ZegoPublishChannel(channel));
-}
 
 void ZegoExpressBridge::startPublishingStream(const std::string &streamID,
                                               const std::string &roomID,
@@ -211,11 +248,62 @@ void ZegoExpressBridge::stopPublishingStream(int channel) {
     native_engine_->stopPublishingStream(ZegoPublishChannel(channel));
 }
 
+void ZegoExpressBridge::setStreamExtraInfo(const std::string &extraInfo, int channel,
+                                           const se::Value &callback) {
+    if (!native_engine_) {
+        return;
+    }
+
+    auto job = [callback](int errorCode) {
+        RunOnCocosThread([callback, errorCode]() {
+            se::AutoHandleScope hs;
+            if (!callback.isObject() || !callback.toObject()->isFunction()) {
+                return;
+            }
+            sebind::callFunction<void>(callback, errorCode);
+        });
+    };
+
+    native_engine_->setStreamExtraInfo(extraInfo, job);
+}
+
+void ZegoExpressBridge::startPreview(int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startPreview(nullptr, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::stopPreview(int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopPreview(ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setVideoConfig(int captureWidth, int captureHeight, int encodeWidth,
+                                       int encodeHeight, int fps, int bitrate, int codecID,
+                                       int keyFrameInterval, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    auto config = ZegoVideoConfig{};
+    config.captureWidth = captureWidth;
+    config.captureHeight = captureHeight;
+    config.encodeWidth = encodeWidth;
+    config.encodeHeight = encodeHeight;
+    config.fps = fps;
+    config.bitrate = bitrate;
+    config.codecID = ZegoVideoCodecID(codecID);
+    config.keyFrameInterval = keyFrameInterval;
+    native_engine_->setVideoConfig(config, ZegoPublishChannel(channel));
+}
+
 se::Object *ZegoExpressBridge::getVideoConfig(int channel) {
     if (!native_engine_) {
         return se::Object::createPlainObject();
     }
-    auto config = native_engine_->getVideoConfig();
+    auto config = native_engine_->getVideoConfig(ZegoPublishChannel(channel));
     auto jsConfig = se::Object::createPlainObject();
     jsConfig->setProperty("captureWidth", se::Value(config.captureWidth));
     jsConfig->setProperty("captureHeight", se::Value(config.captureHeight));
@@ -226,6 +314,117 @@ se::Object *ZegoExpressBridge::getVideoConfig(int channel) {
     jsConfig->setProperty("codecID", se::Value(config.codecID));
     jsConfig->setProperty("keyFrameInterval", se::Value(config.keyFrameInterval));
     return jsConfig;
+}
+
+void ZegoExpressBridge::setAppOrientation(int orientation, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
+    native_engine_->setAppOrientation(ZegoOrientation(orientation), ZegoPublishChannel(channel));
+#endif
+}
+
+void ZegoExpressBridge::setAudioConfig(int bitrate, int audioChannel, int codecID, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    auto config = ZegoAudioConfig{};
+    config.bitrate = bitrate;
+    config.channel = ZegoAudioChannel(audioChannel);
+    config.codecID = ZegoAudioCodecID(codecID);
+    native_engine_->setAudioConfig(config, ZegoPublishChannel(channel));
+}
+
+se::Object *ZegoExpressBridge::getAudioConfig(int channel) {
+    if (!native_engine_) {
+        return se::Object::createPlainObject();
+    }
+    auto config = native_engine_->getAudioConfig(ZegoPublishChannel(channel));
+    auto jsConfig = se::Object::createPlainObject();
+    jsConfig->setProperty("bitrate", se::Value(config.bitrate));
+    jsConfig->setProperty("channel", se::Value(config.channel));
+    jsConfig->setProperty("codecID", se::Value(config.codecID));
+    return jsConfig;
+}
+
+void ZegoExpressBridge::setPublishStreamEncryptionKey(const std::string &key, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPublishStreamEncryptionKey(key, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::mutePublishStreamAudio(bool mute, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->mutePublishStreamAudio(mute, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::mutePublishStreamVideo(bool mute, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->mutePublishStreamVideo(mute, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::enableTrafficControl(bool enable, int property, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableTrafficControl(enable, property, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setMinVideoBitrateForTrafficControl(int bitrate, int mode, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setMinVideoBitrateForTrafficControl(
+        bitrate, ZegoTrafficControlMinVideoBitrateMode(mode), ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setMinVideoFpsForTrafficControl(int fps, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setMinVideoFpsForTrafficControl(fps, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setMinVideoResolutionForTrafficControl(int width, int height, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setMinVideoResolutionForTrafficControl(width, height,
+                                                           ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCaptureVolume(int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCaptureVolume(volume);
+}
+
+void ZegoExpressBridge::enableHardwareEncoder(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableHardwareEncoder(enable);
+}
+
+void ZegoExpressBridge::setCapturePipelineScaleMode(int mode) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode(mode));
+}
+
+bool ZegoExpressBridge::isVideoEncoderSupported(int codecID) {
+    if (!native_engine_) {
+        return;
+    }
+    return native_engine_->isVideoEncoderSupported(ZegoVideoCodecID(codecID));
 }
 
 #pragma mark - Player module

@@ -55,18 +55,42 @@ class ZegoExpressBridge {
     void loginRoom(const std::string &roomID, const std::string &userID,
                    const std::string &userName, unsigned int maxMemberCount,
                    bool isUserStatusNotify, const std::string &token, const se::Value &callback);
-    void logoutRoom(const std::string &roomID);
+    void logoutRoom(const std::string &roomID, const se::Value &callback);
+    void switchRoom(const std::string &fromRoomID, const std::string &toRoomID, int maxMemberCount,
+                    bool isUserStatusNotify, const std::string &token);
+
+    void renewToken(const std::string &roomID, const std::string &token);
+    void setRoomExtraInfo(const std::string &roomID, const std::string &key,
+                          const std::string &value, const se::Value &callback);
 
 #pragma mark - Publisher module
   public:
-    void startPreview(int channel);
-    void stopPreview(int channel);
-
     void startPublishingStream(const std::string &streamID, const std::string &roomID,
                                int forceSynchronousNetworkTime, int streamCensorshipMode,
                                int channel);
     void stopPublishingStream(int channel);
+    void setStreamExtraInfo(const std::string &extraInfo, int channel, const se::Value &callback);
+    void startPreview(int channel);
+    void stopPreview(int channel);
+
+    void setVideoConfig(int captureWidth, int captureHeight, int encodeWidth, int encodeHeight,
+                        int fps, int bitrate, int codecID, int keyFrameInterval, int channel);
+
     se::Object *getVideoConfig(int channel);
+    void setAppOrientation(int orientation, int channel);
+    void setAudioConfig(int bitrate, int audioChannel, int codecID, int channel);
+    se::Object *getAudioConfig(int channel);
+    void setPublishStreamEncryptionKey(const std::string &key, int channel);
+    void mutePublishStreamAudio(bool mute, int channel);
+    void mutePublishStreamVideo(bool mute, int channel);
+    void enableTrafficControl(bool enable, int property, int channel);
+    void setMinVideoBitrateForTrafficControl(int bitrate, int mode, int channel);
+    void setMinVideoFpsForTrafficControl(int fps, int channel);
+    void setMinVideoResolutionForTrafficControl(int width, int height, int channel);
+    void setCaptureVolume(int volume);
+    void enableHardwareEncoder(bool enable);
+    void setCapturePipelineScaleMode(int mode);
+    bool isVideoEncoderSupported(int codecID);
 
 #pragma mark - Player module
   public:

@@ -51,13 +51,35 @@ bool RegisterExpressBridge(se::Object *ns) {
 
     bridge.function("loginRoom", &ZegoExpressBridge::loginRoom);
     bridge.function("logoutRoom", &ZegoExpressBridge::logoutRoom);
-
-    bridge.function("startPreview", &ZegoExpressBridge::startPreview);
-    bridge.function("stopPreview", &ZegoExpressBridge::stopPreview);
+    bridge.function("switchRoom", &ZegoExpressBridge::switchRoom);
+    bridge.function("renewToken", &ZegoExpressBridge::renewToken);
+    bridge.function("setRoomExtraInfo", &ZegoExpressBridge::setRoomExtraInfo);
 
     bridge.function("startPublishingStream", &ZegoExpressBridge::startPublishingStream);
     bridge.function("stopPublishingStream", &ZegoExpressBridge::stopPublishingStream);
+    bridge.function("setStreamExtraInfo", &ZegoExpressBridge::setStreamExtraInfo);
+    bridge.function("startPreview", &ZegoExpressBridge::startPreview);
+    bridge.function("stopPreview", &ZegoExpressBridge::stopPreview);
+    bridge.function("setVideoConfig", &ZegoExpressBridge::setVideoConfig);
     bridge.function("getVideoConfig", &ZegoExpressBridge::getVideoConfig);
+    bridge.function("setAppOrientation", &ZegoExpressBridge::setAppOrientation);
+    bridge.function("setAudioConfig", &ZegoExpressBridge::setAudioConfig);
+    bridge.function("getAudioConfig", &ZegoExpressBridge::getAudioConfig);
+    bridge.function("setPublishStreamEncryptionKey",
+                    &ZegoExpressBridge::setPublishStreamEncryptionKey);
+    bridge.function("mutePublishStreamAudio", &ZegoExpressBridge::mutePublishStreamAudio);
+    bridge.function("mutePublishStreamVideo", &ZegoExpressBridge::mutePublishStreamVideo);
+    bridge.function("enableTrafficControl", &ZegoExpressBridge::enableTrafficControl);
+    bridge.function("setMinVideoBitrateForTrafficControl",
+                    &ZegoExpressBridge::setMinVideoBitrateForTrafficControl);
+    bridge.function("setMinVideoFpsForTrafficControl",
+                    &ZegoExpressBridge::setMinVideoFpsForTrafficControl);
+    bridge.function("setMinVideoResolutionForTrafficControl",
+                    &ZegoExpressBridge::setMinVideoResolutionForTrafficControl);
+    bridge.function("setCaptureVolume", &ZegoExpressBridge::setCaptureVolume);
+    bridge.function("enableHardwareEncoder", &ZegoExpressBridge::enableHardwareEncoder);
+    bridge.function("setCapturePipelineScaleMode", &ZegoExpressBridge::setCapturePipelineScaleMode);
+    bridge.function("isVideoEncoderSupported", &ZegoExpressBridge::isVideoEncoderSupported);
 
     bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
     bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
