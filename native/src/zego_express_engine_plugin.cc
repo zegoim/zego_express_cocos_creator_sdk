@@ -80,9 +80,24 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("enableHardwareEncoder", &ZegoExpressBridge::enableHardwareEncoder);
     bridge.function("setCapturePipelineScaleMode", &ZegoExpressBridge::setCapturePipelineScaleMode);
     bridge.function("isVideoEncoderSupported", &ZegoExpressBridge::isVideoEncoderSupported);
+    bridge.function("setAppOrientationMode", &ZegoExpressBridge::setAppOrientationMode);
 
     bridge.function("startPlayingStream", &ZegoExpressBridge::startPlayingStream);
     bridge.function("stopPlayingStream", &ZegoExpressBridge::stopPlayingStream);
+    bridge.function("setPlayStreamDecryptionKey", &ZegoExpressBridge::setPlayStreamDecryptionKey);
+    bridge.function("setPlayVolume", &ZegoExpressBridge::setPlayVolume);
+    bridge.function("setAllPlayStreamVolume", &ZegoExpressBridge::setAllPlayStreamVolume);
+    bridge.function("setPlayStreamVideoType", &ZegoExpressBridge::setPlayStreamVideoType);
+    bridge.function("setPlayStreamBufferIntervalRange",
+                    &ZegoExpressBridge::setPlayStreamBufferIntervalRange);
+    bridge.function("setPlayStreamFocusOn", &ZegoExpressBridge::setPlayStreamFocusOn);
+    bridge.function("mutePlayStreamAudio", &ZegoExpressBridge::mutePlayStreamAudio);
+    bridge.function("mutePlayStreamVideo", &ZegoExpressBridge::mutePlayStreamVideo);
+    bridge.function("muteAllPlayStreamAudio", &ZegoExpressBridge::muteAllPlayStreamAudio);
+    bridge.function("muteAllPlayStreamVideo", &ZegoExpressBridge::muteAllPlayStreamVideo);
+    bridge.function("enableHardwareDecoder", &ZegoExpressBridge::enableHardwareDecoder);
+    bridge.function("enableCheckPoc", &ZegoExpressBridge::enableCheckPoc);
+    bridge.function("isVideoDecoderSupported", &ZegoExpressBridge::isVideoDecoderSupported);
 
     bridge.install(ns);
     return true;

@@ -91,11 +91,26 @@ class ZegoExpressBridge {
     void enableHardwareEncoder(bool enable);
     void setCapturePipelineScaleMode(int mode);
     bool isVideoEncoderSupported(int codecID);
+    void setAppOrientationMode(int mode);
 
 #pragma mark - Player module
   public:
-    void startPlayingStream(const std::string &streamID);
+    void startPlayingStream(const std::string &streamID, const se::Value &config);
     void stopPlayingStream(const std::string &streamID);
+    void setPlayStreamDecryptionKey(const std::string &streamID, const std::string &key);
+    void setPlayVolume(const std::string &streamID, int volume);
+    void setAllPlayStreamVolume(int volume);
+    void setPlayStreamVideoType(const std::string &streamID, int streamType);
+    void setPlayStreamBufferIntervalRange(const std::string &streamID, int minBufferInterval,
+                                          int maxBufferInterval);
+    void setPlayStreamFocusOn(const std::string &streamID);
+    void mutePlayStreamAudio(const std::string &streamID, bool mute);
+    void mutePlayStreamVideo(const std::string &streamID, bool mute);
+    void muteAllPlayStreamAudio(bool mute);
+    void muteAllPlayStreamVideo(bool mute);
+    void enableHardwareDecoder(bool enable);
+    void enableCheckPoc(bool enable);
+    bool isVideoDecoderSupported(int codecID);
 };
 
 } // namespace zego::cocos

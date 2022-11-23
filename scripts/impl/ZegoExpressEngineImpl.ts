@@ -424,7 +424,7 @@ export class ZegoExpressEngineImpl {
     config?: zego.ZegoPlayerConfig
   ): void {
     if (this._bridge) {
-      this._bridge.startPlayingStream(streamID)
+      this._bridge.startPlayingStream(streamID, config ?? null)
       if (canvas) {
         this._rendererController.remoteViews.set(streamID, canvas.view)
       }

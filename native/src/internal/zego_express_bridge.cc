@@ -422,18 +422,91 @@ void ZegoExpressBridge::setCapturePipelineScaleMode(int mode) {
 
 bool ZegoExpressBridge::isVideoEncoderSupported(int codecID) {
     if (!native_engine_) {
-        return;
+        return false;
     }
     return native_engine_->isVideoEncoderSupported(ZegoVideoCodecID(codecID));
 }
 
-#pragma mark - Player module
-
-void ZegoExpressBridge::startPlayingStream(const std::string &streamID) {
+void ZegoExpressBridge::setAppOrientationMode(int mode) {
     if (!native_engine_) {
         return;
     }
-    native_engine_->startPlayingStream(streamID);
+    // TODO: Use express standard c++ api
+    zego_express_set_app_orientation_mode(zego_orientation_mode(mode));
+}
+
+#pragma mark - Player module
+
+void ZegoExpressBridge::startPlayingStream(const std::string &streamID, const se::Value &config) {
+    if (!native_engine_) {
+        return;
+    }
+
+    if (!config.isObject()) {
+        native_engine_->startPlayingStream(streamID);
+    } else {
+        auto playerConfig = ZegoPlayerConfig{};
+
+        se::Value js_resource_mode;
+        if (config.toObject()->getProperty("resourceMode", &js_resource_mode) &&
+            js_resource_mode.isNumber()) {
+            playerConfig.resourceMode = ZegoStreamResourceMode(js_resource_mode.toInt32());
+        }
+
+        se::Value js_cdn_config;
+        if (config.toObject()->getProperty("cdnConfig", &js_cdn_config)) {
+            if (js_cdn_config.isObject()) {
+                auto cdnConfig = ZegoCDNConfig{};
+                se::Value js_url, js_auth_param, js_protocol, js_quic_version;
+                if (js_cdn_config.toObject()->getProperty("url", &js_url) && js_url.isString()) {
+                    cdnConfig.url = js_url.toString();
+                }
+                if (js_cdn_config.toObject()->getProperty("authParam", &js_auth_param) &&
+                    js_auth_param.isString()) {
+                    cdnConfig.authParam = js_auth_param.toString();
+                }
+                if (js_cdn_config.toObject()->getProperty("protocol", &js_protocol) &&
+                    js_protocol.isString()) {
+                    cdnConfig.protocol = js_protocol.toString();
+                }
+                if (js_cdn_config.toObject()->getProperty("quicVersion", &js_quic_version) &&
+                    js_quic_version.isString()) {
+                    cdnConfig.quicVersion = js_quic_version.toString();
+                }
+            }
+        }
+
+        se::Value js_video_layer;
+        if (config.toObject()->getProperty("videoLayer", &js_video_layer) &&
+            js_video_layer.isNumber()) {
+            playerConfig.videoLayer = ZegoPlayerVideoLayer(js_video_layer.toInt32());
+        }
+
+        se::Value js_room_id;
+        if (config.toObject()->getProperty("roomID", &js_room_id) && js_room_id.isString()) {
+            playerConfig.roomID = js_room_id.toString();
+        }
+
+        se::Value js_video_codec_id;
+        if (config.toObject()->getProperty("videoCodecID", &js_video_codec_id) &&
+            js_video_codec_id.isNumber()) {
+            playerConfig.videoCodecID = ZegoVideoCodecID(js_video_codec_id.toInt32());
+        }
+
+        se::Value js_source_resourceType;
+        if (config.toObject()->getProperty("sourceResourceType", &js_source_resourceType) &&
+            js_source_resourceType.isNumber()) {
+            playerConfig.sourceResourceType = ZegoResourceType(js_source_resourceType.toInt32());
+        }
+
+        se::Value js_codec_template_id;
+        if (config.toObject()->getProperty("codecTemplateID", &js_codec_template_id) &&
+            js_codec_template_id.isNumber()) {
+            playerConfig.codecTemplateID = js_codec_template_id.toInt32();
+        }
+
+        native_engine_->startPlayingStream(streamID, playerConfig);
+    }
 }
 
 void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
@@ -441,6 +514,101 @@ void ZegoExpressBridge::stopPlayingStream(const std::string &streamID) {
         return;
     }
     native_engine_->stopPlayingStream(streamID);
+}
+
+void ZegoExpressBridge::setPlayStreamDecryptionKey(const std::string &streamID,
+                                                   const std::string &key) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPlayStreamDecryptionKey(streamID, key);
+}
+
+void ZegoExpressBridge::setPlayVolume(const std::string &streamID, int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPlayVolume(streamID, volume);
+}
+
+void ZegoExpressBridge::setAllPlayStreamVolume(int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAllPlayStreamVolume(volume);
+}
+
+void ZegoExpressBridge::setPlayStreamVideoType(const std::string &streamID, int streamType) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPlayStreamVideoType(streamID, ZegoVideoStreamType(streamType));
+}
+
+void ZegoExpressBridge::setPlayStreamBufferIntervalRange(const std::string &streamID,
+                                                         int minBufferInterval,
+                                                         int maxBufferInterval) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPlayStreamBufferIntervalRange(streamID, minBufferInterval,
+                                                     maxBufferInterval);
+}
+
+void ZegoExpressBridge::setPlayStreamFocusOn(const std::string &streamID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setPlayStreamFocusOn(streamID);
+}
+
+void ZegoExpressBridge::mutePlayStreamAudio(const std::string &streamID, bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->mutePlayStreamAudio(streamID, mute);
+}
+
+void ZegoExpressBridge::mutePlayStreamVideo(const std::string &streamID, bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->mutePlayStreamVideo(streamID, mute);
+}
+
+void ZegoExpressBridge::muteAllPlayStreamAudio(bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->muteAllPlayStreamAudio(mute);
+}
+
+void ZegoExpressBridge::muteAllPlayStreamVideo(bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->muteAllPlayStreamVideo(mute);
+}
+
+void ZegoExpressBridge::enableHardwareDecoder(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableHardwareDecoder(enable);
+}
+
+void ZegoExpressBridge::enableCheckPoc(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableCheckPoc(enable);
+}
+
+bool ZegoExpressBridge::isVideoDecoderSupported(int codecID) {
+    if (!native_engine_) {
+        return false;
+    }
+    return native_engine_->isVideoDecoderSupported(ZegoVideoCodecID(codecID));
 }
 
 } // namespace zego::cocos

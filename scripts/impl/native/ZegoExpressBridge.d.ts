@@ -85,7 +85,7 @@ declare class ZegoExpressBridge {
   // #endregion
 
   // #region Player module
-  startPlayingStream(streamID: string): void
+  startPlayingStream(streamID: string, config: Object | null): void
   stopPlayingStream(streamID: string): void
   setPlayStreamDecryptionKey(streamID: string, key: string): void
   setPlayVolume(streamID: string, volume: number): void
