@@ -91,6 +91,40 @@ class ZegoExpressEventHandler : public std::enable_shared_from_this<ZegoExpressE
 
     void onPublisherStreamEvent(ZegoStreamEvent eventID, const std::string &streamID,
                                 const std::string &extraInfo) override;
+
+    void onPlayerStateUpdate(const std::string &streamID, ZegoPlayerState state, int errorCode,
+                             const std::string &extendedData) override;
+
+    void onPlayerQualityUpdate(const std::string &streamID,
+                               const ZegoPlayStreamQuality &quality) override;
+
+    void onPlayerMediaEvent(const std::string &streamID, ZegoPlayerMediaEvent event) override;
+
+    void onPlayerRecvAudioFirstFrame(const std::string &streamID) override;
+
+    void onPlayerRecvVideoFirstFrame(const std::string &streamID) override;
+
+    void onPlayerRenderVideoFirstFrame(const std::string &streamID) override;
+
+    void onPlayerRenderCameraVideoFirstFrame(const std::string &streamID) override;
+
+    void onPlayerVideoSizeChanged(const std::string &streamID, int width, int height) override;
+
+    void onPlayerRecvSEI(const std::string &streamID, const unsigned char *data,
+                         unsigned int dataLength) override;
+
+    void onPlayerRecvAudioSideInfo(const std::string &streamID, const unsigned char *data,
+                                   unsigned int dataLength) override;
+
+    void onPlayerLowFpsWarning(ZegoVideoCodecID codecID, const std::string &streamID) override;
+
+    void onPlayerStreamEvent(ZegoStreamEvent eventID, const std::string &streamID,
+                             const std::string &extraInfo) override;
+
+#if TARGET_OS_IPHONE || defined(ANDROID)
+    void onPlayerVideoSuperResolutionUpdate(const std::string &streamID,
+                                            ZegoSuperResolutionState state, int errorCode) override;
+#endif
 };
 
 } // namespace zego::cocos

@@ -426,6 +426,31 @@ export interface ZegoEventHandler {
    */
   onPlayerVideoSizeChanged?(streamID: string, width: number, height: number): void
   /**
+   * The callback triggered when Supplemental Enhancement Information is received.
+   *
+   * Available since: 1.1.0
+   * Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
+   * Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
+   * Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+   *
+   * @param streamID Stream ID.
+   * @param data SEI content.
+   */
+  onPlayerRecvSEI?(streamID: string, data: Uint8Array): void
+  /**
+   * Receive the audio side information content of the remote stream.
+   *
+   * Available since: 2.19.0
+   * Description: After the [startPlayingStream] function is called successfully, when the remote stream sends audio side information, the local end will receive this callback.
+   * Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends audio side information, the local end will receive this callback.
+   * Caution: 1. When [mutePlayStreamAudio] or [muteAllPlayStreamAudio] is called to set only the video stream to be pulled, the audio side information not be received. 2. Due to factors such as the network, the received data may be missing, but the order is guaranteed.
+   * Related APIs: Send audio side information by the [sendAudioSideInfo] function.
+   *
+   * @param streamID Stream ID.
+   * @param data Audio side information content.
+   */
+  onPlayerRecvAudioSideInfo?(streamID: string, data: Uint8Array): void
+  /**
    * Playing stream low frame rate warning.
    *
    * Available since: 2.14.0

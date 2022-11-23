@@ -561,4 +561,330 @@ void ZegoExpressEventHandler::onPublisherStreamEvent(ZegoStreamEvent eventID,
     });
 }
 
+void ZegoExpressEventHandler::onPlayerStateUpdate(const std::string &streamID,
+                                                  ZegoPlayerState state, int errorCode,
+                                                  const std::string &extendedData) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state, js_error_code, js_extended_data;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            nativevalue_to_se(extendedData, js_extended_data, nullptr);
+            se::ValueArray args{js_stream_id, js_state, js_error_code, js_extended_data};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerQualityUpdate(const std::string &streamID,
+                                                    const ZegoPlayStreamQuality &quality) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerQualityUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_quality = se::Object::createPlainObject();
+            se_quality->setProperty("videoRecvFPS", se::Value(quality.videoRecvFPS));
+            se_quality->setProperty("videoDejitterFPS", se::Value(quality.videoDejitterFPS));
+            se_quality->setProperty("videoDecodeFPS", se::Value(quality.videoDecodeFPS));
+            se_quality->setProperty("videoRenderFPS", se::Value(quality.videoRenderFPS));
+            se_quality->setProperty("videoKBPS", se::Value(quality.videoKBPS));
+            se_quality->setProperty("videoBreakRate", se::Value(quality.videoBreakRate));
+            se_quality->setProperty("audioRecvFPS", se::Value(quality.audioRecvFPS));
+            se_quality->setProperty("audioDejitterFPS", se::Value(quality.audioDejitterFPS));
+            se_quality->setProperty("audioDecodeFPS", se::Value(quality.audioDecodeFPS));
+            se_quality->setProperty("audioRenderFPS", se::Value(quality.audioRenderFPS));
+            se_quality->setProperty("audioKBPS", se::Value(quality.audioKBPS));
+            se_quality->setProperty("audioBreakRate", se::Value(quality.audioBreakRate));
+            se_quality->setProperty("mos", se::Value(quality.mos));
+            se_quality->setProperty("rtt", se::Value(quality.rtt));
+            se_quality->setProperty("packetLostRate", se::Value(quality.packetLostRate));
+            se_quality->setProperty("peerToPeerDelay", se::Value(quality.peerToPeerDelay));
+            se_quality->setProperty("peerToPeerPacketLostRate",
+                                    se::Value(quality.peerToPeerPacketLostRate));
+            se_quality->setProperty("level", se::Value(quality.level));
+            se_quality->setProperty("delay", se::Value(quality.delay));
+            se_quality->setProperty("avTimestampDiff", se::Value(quality.avTimestampDiff));
+            se_quality->setProperty("isHardwareDecode", se::Value(quality.isHardwareDecode));
+            se_quality->setProperty("videoCodecID", se::Value(quality.videoCodecID));
+            se_quality->setProperty("totalRecvBytes", se::Value(quality.totalRecvBytes));
+            se_quality->setProperty("audioRecvBytes", se::Value(quality.audioRecvBytes));
+            se_quality->setProperty("videoRecvBytes", se::Value(quality.videoRecvBytes));
+            se_quality->setProperty("audioCumulativeBreakCount",
+                                    se::Value(quality.audioCumulativeBreakCount));
+            se_quality->setProperty("audioCumulativeBreakTime",
+                                    se::Value(quality.audioCumulativeBreakTime));
+            se_quality->setProperty("audioCumulativeBreakRate",
+                                    se::Value(quality.audioCumulativeBreakRate));
+            se_quality->setProperty("audioCumulativeDecodeTime",
+                                    se::Value(quality.audioCumulativeDecodeTime));
+            se_quality->setProperty("videoCumulativeBreakCount",
+                                    se::Value(quality.videoCumulativeBreakCount));
+            se_quality->setProperty("videoCumulativeBreakTime",
+                                    se::Value(quality.videoCumulativeBreakTime));
+            se_quality->setProperty("videoCumulativeBreakRate",
+                                    se::Value(quality.videoCumulativeBreakRate));
+            se_quality->setProperty("videoCumulativeDecodeTime",
+                                    se::Value(quality.videoCumulativeDecodeTime));
+
+            se::Value js_stream_id, js_quality;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(se_quality, js_quality, nullptr);
+            se::ValueArray args{js_stream_id, js_quality};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerMediaEvent(const std::string &streamID,
+                                                 ZegoPlayerMediaEvent event) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerMediaEvent", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_event;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(event, js_event, nullptr);
+            se::ValueArray args{js_stream_id, js_event};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRecvAudioFirstFrame(const std::string &streamID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRecvAudioFirstFrame", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            se::ValueArray args{js_stream_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRecvVideoFirstFrame(const std::string &streamID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRecvVideoFirstFrame", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            se::ValueArray args{js_stream_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRenderVideoFirstFrame(const std::string &streamID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRenderVideoFirstFrame", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            se::ValueArray args{js_stream_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRenderCameraVideoFirstFrame(const std::string &streamID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRenderCameraVideoFirstFrame",
+                                                    &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            se::ValueArray args{js_stream_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerVideoSizeChanged(const std::string &streamID, int width,
+                                                       int height) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerVideoSizeChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_width, js_height;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(width, js_width, nullptr);
+            nativevalue_to_se(height, js_height, nullptr);
+            se::ValueArray args{js_stream_id, js_width, js_height};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRecvSEI(const std::string &streamID,
+                                              const unsigned char *data, unsigned int dataLength) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRecvSEI", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Object *se_data =
+                se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, data, dataLength);
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+
+            se::ValueArray args{js_stream_id, se::Value(se_data)};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerRecvAudioSideInfo(const std::string &streamID,
+                                                        const unsigned char *data,
+                                                        unsigned int dataLength) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerRecvAudioSideInfo", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Object *se_data =
+                se::Object::createTypedArray(se::Object::TypedArrayType::UINT8, data, dataLength);
+            se::Value js_stream_id;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+
+            se::ValueArray args{js_stream_id, se::Value(se_data)};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerLowFpsWarning(ZegoVideoCodecID codecID,
+                                                    const std::string &streamID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerLowFpsWarning", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_codec_id, js_stream_id;
+            nativevalue_to_se(codecID, js_codec_id, nullptr);
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            se::ValueArray args{js_codec_id, js_stream_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPlayerStreamEvent(ZegoStreamEvent eventID,
+                                                  const std::string &streamID,
+                                                  const std::string &extraInfo) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerLowFpsWarning", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_event_id, js_stream_id, js_extra_info;
+            nativevalue_to_se(eventID, js_event_id, nullptr);
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(extraInfo, js_extra_info, nullptr);
+            se::ValueArray args{js_event_id, js_stream_id, js_extra_info};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+#if TARGET_OS_IPHONE || defined(ANDROID)
+void ZegoExpressEventHandler::onPlayerVideoSuperResolutionUpdate(const std::string &streamID,
+                                                                 ZegoSuperResolutionState state,
+                                                                 int errorCode) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPlayerLowFpsWarning", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state, js_error_code;
+
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            nativevalue_to_se(errorCode, js_error_code, nullptr);
+            se::ValueArray args{js_stream_id, js_state, js_error_code};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+#endif
+
 } // namespace zego::cocos
