@@ -806,6 +806,10 @@ export class ZegoEngineProfile {
 
   /** The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940 */
   scenario: ZegoScenario
+
+  constructor() {
+    this.scenario = ZegoScenario.Default
+  }
 }
 
 /**
@@ -863,6 +867,65 @@ export class ZegoVideoConfig {
 
   /** Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing. */
   keyFrameInterval: number
+
+  /**
+   * Create video configuration with preset enumeration values
+   */
+  constructor(preset?: ZegoVideoConfigPreset) {
+    preset = preset ?? ZegoVideoConfigPreset.Preset360P
+    this.codecID = ZegoVideoCodecID.Default
+    this.keyFrameInterval = 2
+    switch (preset) {
+      case ZegoVideoConfigPreset.Preset180P:
+        this.captureWidth = 320
+        this.captureHeight = 180
+        this.encodeWidth = 320
+        this.encodeHeight = 180
+        this.fps = 15
+        this.bitrate = 300
+        break
+      case ZegoVideoConfigPreset.Preset270P:
+        this.captureWidth = 480
+        this.captureHeight = 270
+        this.encodeWidth = 480
+        this.encodeHeight = 270
+        this.fps = 15
+        this.bitrate = 400
+        break
+      case ZegoVideoConfigPreset.Preset360P:
+        this.captureWidth = 640
+        this.captureHeight = 360
+        this.encodeWidth = 640
+        this.encodeHeight = 360
+        this.fps = 15
+        this.bitrate = 600
+        break
+      case ZegoVideoConfigPreset.Preset540P:
+        this.captureWidth = 960
+        this.captureHeight = 540
+        this.encodeWidth = 960
+        this.encodeHeight = 540
+        this.fps = 15
+        this.bitrate = 1200
+        break
+      case ZegoVideoConfigPreset.Preset720P:
+        this.captureWidth = 1280
+        this.captureHeight = 720
+        this.encodeWidth = 1280
+        this.encodeHeight = 720
+        this.fps = 15
+        this.bitrate = 1500
+        break
+      case ZegoVideoConfigPreset.Preset1080P:
+        this.captureWidth = 1920
+        this.captureHeight = 1080
+        this.encodeWidth = 1920
+        this.encodeHeight = 1080
+        this.fps = 15
+        this.bitrate = 3000
+        break
+    }
+  }
 }
 
 /**
