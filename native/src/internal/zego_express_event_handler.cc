@@ -311,7 +311,7 @@ void ZegoExpressEventHandler::onRoomExtraInfoUpdate(
                 se_user->setProperty("userID", se::Value(info.updateUser.userID));
                 se_user->setProperty("userName", se::Value(info.updateUser.userName));
                 se_info->setProperty("updateUser", se::Value(se_user));
-                se_info->setProperty("updateTime", se::Value(info.updateTime));
+                se_info->setProperty("updateTime", se::Value((uint64_t)info.updateTime));
                 se_info_list.push_back(se_info);
             }
             se::Value js_room_id, js_info_list;
@@ -503,7 +503,7 @@ void ZegoExpressEventHandler::onPublisherRelayCDNStateUpdate(
                 se_info->setProperty("url", se::Value(info.url));
                 se_info->setProperty("state", se::Value(info.state));
                 se_info->setProperty("updateReason", se::Value(info.updateReason));
-                se_info->setProperty("stateTime", se::Value(info.stateTime));
+                se_info->setProperty("stateTime", se::Value((uint64_t)info.stateTime));
                 se_info_list.push_back(se_info);
             }
             se::Value js_stream_id, js_info_list;
