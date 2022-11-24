@@ -1132,7 +1132,7 @@ export class ZegoPlayerConfig {
 
   constructor() {
     this.resourceMode = ZegoStreamResourceMode.Default
-    this.cdnConfig = null
+    this.cdnConfig = undefined
     this.videoLayer = 99
     this.roomID = ''
     this.videoCodecID = ZegoVideoCodecID.Unknown
