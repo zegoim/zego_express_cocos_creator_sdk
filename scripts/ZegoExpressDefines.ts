@@ -402,6 +402,20 @@ export enum ZegoStreamRelayCDNUpdateReason {
   MixStreamServerInternalError = 10,
 }
 
+/** Device type. */
+export enum ZegoDeviceType {
+  /** Unknown device type. */
+  Unknown = 0,
+  /** Camera device. */
+  Camera = 1,
+  /** Microphone device. */
+  Microphone = 2,
+  /** Speaker device. */
+  Speaker = 3,
+  /** Audio device. (Other audio device that cannot be accurately classified into microphones or speakers.) */
+  AudioDevice = 4,
+}
+
 /** The exception type for the device. */
 export enum ZegoDeviceExceptionType {
   /** Unknown device exception. */
@@ -720,6 +734,38 @@ export enum ZegoNetworkSpeedTestType {
   Downlink = 1,
 }
 
+/** Camera focus mode. */
+export enum ZegoCameraFocusMode {
+  /** Auto focus. */
+  AutoFocus = 0,
+  /** Continuous auto focus. */
+  ContinuousAutoFocus = 1,
+}
+
+/** Camera exposure mode. */
+export enum ZegoCameraExposureMode {
+  /** Auto exposure. */
+  AutoExposure = 0,
+  /** Continuous auto exposure. */
+  ContinuousAutoExposure = 1,
+}
+
+/** voice activity detection type */
+export enum ZegoAudioVADType {
+  /** noise */
+  Noise = 0,
+  /** speech */
+  Speech = 1,
+}
+
+/** stable voice activity detection type */
+export enum ZegoAudioVADStableStateMonitorType {
+  /** captured */
+  Captured = 0,
+  /** custom processed */
+  CustomProcessed = 1,
+}
+
 /** Orientation mode of the video. */
 export enum ZegoOrientationMode {
   /** Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end. */
@@ -979,6 +1025,43 @@ export class ZegoRoomExtraInfo {
 
   /** Update time of the room extra information, UNIX timestamp, in milliseconds. */
   updateTime: number
+}
+
+/**
+ * View related coordinates.
+ */
+export class ZegoRect {
+  /** The horizontal offset from the top-left corner */
+  x: number
+
+  /** The vertical offset from the top-left corner */
+  y: number
+
+  /** The width of the rectangle */
+  width: number
+
+  /** The height of the rectangle */
+  height: number
+}
+
+/**
+ * Coordinates used by the ROI function.
+ */
+export class ZegoRoiRect {
+  /** The horizontal offset from the top-left corner */
+  x: number
+
+  /** The vertical offset from the top-left corner */
+  y: number
+
+  /** The width of the rectangle */
+  width: number
+
+  /** The height of the rectangle */
+  height: number
+
+  /** ROI strength, currently supported value range is [0, 4], 0 is no effect, 4 is the strongest. */
+  strength: number
 }
 
 /**
@@ -1245,6 +1328,61 @@ export class ZegoPlayStreamQuality {
 
   /** Accumulated video decode time, in milliseconds (Available since 2.9.0) */
   videoCumulativeDecodeTime: number
+}
+
+/**
+ * Device Info.
+ *
+ * Including device ID and name
+ */
+export class ZegoDeviceInfo {
+  /** Device ID */
+  deviceID: string
+
+  /** Device name */
+  deviceName: string
+}
+
+/**
+ * System performance monitoring status
+ */
+export class ZegoPerformanceStatus {
+  /** Current CPU usage of the app, value range [0, 1] */
+  cpuUsageApp: number
+
+  /** Current CPU usage of the system, value range [0, 1] */
+  cpuUsageSystem: number
+
+  /** Current memory usage of the app, value range [0, 1] */
+  memoryUsageApp: number
+
+  /** Current memory usage of the system, value range [0, 1] */
+  memoryUsageSystem: number
+
+  /** Current memory used of the app, in MB */
+  memoryUsedApp: number
+}
+
+/**
+ * Configuration for start sound level monitor.
+ */
+export class ZegoSoundLevelConfig {
+  /** Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms. */
+  millisecond: number
+
+  /** Set whether the sound level callback includes the VAD detection result. */
+  enableVAD: boolean
+}
+
+/**
+ * Sound level info object.
+ */
+export class ZegoSoundLevelInfo {
+  /** Sound level value. */
+  soundLevel: number
+
+  /** Whether the stream corresponding to StreamID contains voice, 0 means noise, 1 means normal voice. This value is valid only when the [enableVAD] parameter in the [ZegoSoundLevelConfig] configuration is set to true when calling [startSoundLevelMonitor]. */
+  vad: number
 }
 
 /**
