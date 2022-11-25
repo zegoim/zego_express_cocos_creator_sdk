@@ -549,4 +549,363 @@ export class ZegoExpressEngineImpl {
       // TODO: Web
     }
   }
+
+  muteMicrophone(mute: boolean): void {
+    if (this._bridge) {
+      this._bridge.muteMicrophone(mute)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  isMicrophoneMuted(): boolean {
+    if (this._bridge) {
+      return this._bridge.isMicrophoneMuted()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  muteSpeaker(mute: boolean): void {
+    if (this._bridge) {
+      this._bridge.muteSpeaker(mute)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  isSpeakerMuted(): boolean {
+    if (this._bridge) {
+      return this._bridge.isSpeakerMuted()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getAudioDeviceList(deviceType: zego.ZegoAudioDeviceType): zego.ZegoDeviceInfo[] {
+    if (this._bridge) {
+      return this._bridge.getAudioDeviceList(deviceType) as zego.ZegoDeviceInfo[]
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getDefaultAudioDeviceID(deviceType: zego.ZegoAudioDeviceType): string {
+    if (this._bridge) {
+      return this._bridge.getDefaultAudioDeviceID(deviceType)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  useAudioDevice(deviceType: zego.ZegoAudioDeviceType, deviceID: string): void {
+    if (this._bridge) {
+      this._bridge.useAudioDevice(deviceType, deviceID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getAudioDeviceVolume(deviceType: zego.ZegoAudioDeviceType, deviceID: string): number {
+    if (this._bridge) {
+      return this._bridge.getAudioDeviceVolume(deviceType, deviceID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setAudioDeviceVolume(
+    deviceType: zego.ZegoAudioDeviceType,
+    deviceID: string,
+    volume: number
+  ): void {
+    if (this._bridge) {
+      this._bridge.setAudioDeviceVolume(deviceType, deviceID, volume)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startAudioDeviceVolumeMonitor(deviceType: zego.ZegoAudioDeviceType, deviceID: string): void {
+    if (this._bridge) {
+      this._bridge.startAudioDeviceVolumeMonitor(deviceType, deviceID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopAudioDeviceVolumeMonitor(deviceType: zego.ZegoAudioDeviceType, deviceID: string): void {
+    if (this._bridge) {
+      this._bridge.stopAudioDeviceVolumeMonitor(deviceType, deviceID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  muteAudioDevice(deviceType: zego.ZegoAudioDeviceType, deviceID: string, mute: boolean): void {
+    if (this._bridge) {
+      this._bridge.muteAudioDevice(deviceType, deviceID, mute)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setAudioDeviceMode(deviceMode: zego.ZegoAudioDeviceMode): void {
+    if (this._bridge) {
+      this._bridge.setAudioDeviceMode(deviceMode)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  isAudioDeviceMuted(deviceType: zego.ZegoAudioDeviceType, deviceID: string): boolean {
+    if (this._bridge) {
+      return this._bridge.isAudioDeviceMuted(deviceType, deviceID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableAudioCaptureDevice(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableAudioCaptureDevice(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getAudioRouteType(): zego.ZegoAudioRoute {
+    if (this._bridge) {
+      return this._bridge.getAudioRouteType()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setAudioRouteToSpeaker(defaultToSpeaker: boolean): void {
+    if (this._bridge) {
+      this._bridge.setAudioRouteToSpeaker(defaultToSpeaker)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableCamera(enable: boolean, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.enableCamera(enable, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  useFrontCamera(enable: boolean, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.useFrontCamera(enable, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  isCameraFocusSupported(channel?: zego.ZegoPublishChannel): boolean {
+    if (this._bridge) {
+      return this._bridge.isCameraFocusSupported(channel)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraFocusMode(mode: zego.ZegoCameraFocusMode, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.setCameraFocusMode(mode, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraFocusPointInPreview(x: number, y: number, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.setCameraFocusPointInPreview(x, y, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraExposureMode(
+    mode: zego.ZegoCameraExposureMode,
+    channel?: zego.ZegoPublishChannel
+  ): void {
+    if (this._bridge) {
+      this._bridge.setCameraExposureMode(mode, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraExposurePointInPreview(x: number, y: number, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.setCameraExposurePointInPreview(x, y, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraExposureCompensation(value: number, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.setCameraExposureCompensation(value, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setCameraZoomFactor(factor: number, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.setCameraZoomFactor(factor, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getCameraMaxZoomFactor(channel?: zego.ZegoPublishChannel): number {
+    if (this._bridge) {
+      return this._bridge.getCameraMaxZoomFactor(channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableCameraAdaptiveFPS(
+    enable: boolean,
+    minFPS: number,
+    maxFPS: number,
+    channel?: zego.ZegoPublishChannel
+  ): void {
+    if (this._bridge) {
+      this._bridge.enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  useVideoDevice(deviceID: string, channel?: zego.ZegoPublishChannel): void {
+    if (this._bridge) {
+      this._bridge.useVideoDevice(deviceID, channel ?? 0)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getVideoDeviceList(): zego.ZegoDeviceInfo[] {
+    if (this._bridge) {
+      return this._bridge.getVideoDeviceList() as zego.ZegoDeviceInfo[]
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getDefaultVideoDeviceID(): string {
+    if (this._bridge) {
+      return this._bridge.getDefaultVideoDeviceID()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startSoundLevelMonitor(config?: zego.ZegoSoundLevelConfig): void {
+    if (this._bridge) {
+      this._bridge.startSoundLevelMonitor(config?.millisecond ?? 100, config?.enableVAD ?? false)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopSoundLevelMonitor(): void {
+    if (this._bridge) {
+      this._bridge.stopSoundLevelMonitor()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startAudioSpectrumMonitor(millisecond?: number): void {
+    if (this._bridge) {
+      this._bridge.startAudioSpectrumMonitor(millisecond ?? 100)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopAudioSpectrumMonitor(): void {
+    if (this._bridge) {
+      this._bridge.stopAudioSpectrumMonitor()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableHeadphoneMonitor(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableHeadphoneMonitor(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setHeadphoneMonitorVolume(volume: number): void {
+    if (this._bridge) {
+      this._bridge.setHeadphoneMonitorVolume(volume)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableMixSystemPlayout(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableMixSystemPlayout(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setMixSystemPlayoutVolume(volume: number): void {
+    if (this._bridge) {
+      this._bridge.setMixSystemPlayoutVolume(volume)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableMixEnginePlayout(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableMixEnginePlayout(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startAudioVADStableStateMonitor(
+    type: zego.ZegoAudioVADStableStateMonitorType,
+    millisecond: number
+  ): void {
+    if (this._bridge) {
+      this._bridge.startAudioVADStableStateMonitor(type, millisecond)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopAudioVADStableStateMonitor(type: zego.ZegoAudioVADStableStateMonitorType): void {
+    if (this._bridge) {
+      this._bridge.stopAudioVADStableStateMonitor(type)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  getCurrentAudioDevice(deviceType: zego.ZegoAudioDeviceType): zego.ZegoDeviceInfo {
+    if (this._bridge) {
+      return this._bridge.getCurrentAudioDevice(deviceType) as zego.ZegoDeviceInfo
+    } else {
+      // TODO: Web
+    }
+  }
 }

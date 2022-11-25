@@ -15,6 +15,7 @@ export interface ZegoEventHandler {
    * @param info Detailed error information.
    */
   onDebugError(errorCode: number, funcName: string, info: string): void
+
   /**
    * The callback triggered when the audio/video engine state changes.
    *
@@ -29,6 +30,7 @@ export interface ZegoEventHandler {
    * @param state The audio/video engine state.
    */
   onEngineStateUpdate?(state: zego.ZegoEngineState): void
+
   /**
    * Experimental API callback
    *
@@ -39,6 +41,7 @@ export interface ZegoEventHandler {
    * @param content Callback content in JSON string format.
    */
   onRecvExperimentalAPI?(content: string): void
+
   /**
    * The callback triggered when the room connection state changes.
    *
@@ -63,6 +66,7 @@ export interface ZegoEventHandler {
     errorCode: number,
     extendedData: string
   ): void
+
   /**
    * The callback triggered when the room connection state changes.
    *
@@ -85,6 +89,7 @@ export interface ZegoEventHandler {
     errorCode: number,
     extendedData: string
   ): void
+
   /**
    * The callback triggered when the number of other users in the room increases or decreases.
    *
@@ -108,6 +113,7 @@ export interface ZegoEventHandler {
     updateType: zego.ZegoUpdateType,
     userList: zego.ZegoUser[]
   ): void
+
   /**
    * The callback triggered every 30 seconds to report the current number of online users.
    *
@@ -122,6 +128,7 @@ export interface ZegoEventHandler {
    * @param count Count of online users.
    */
   onRoomOnlineUserCountUpdate?(roomID: string, count: number): void
+
   /**
    * The callback triggered when the number of streams published by the other users in the same room increases or decreases.
    *
@@ -146,6 +153,7 @@ export interface ZegoEventHandler {
     streamList: zego.ZegoStream[],
     extendedData: string
   ): void
+
   /**
    * The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
    *
@@ -161,6 +169,7 @@ export interface ZegoEventHandler {
    * @param streamList List of streams that the extra info was updated.
    */
   onRoomStreamExtraInfoUpdate?(roomID: string, streamList: zego.ZegoStream[]): void
+
   /**
    * The callback triggered when there is an update on the extra information of the room.
    *
@@ -175,6 +184,7 @@ export interface ZegoEventHandler {
    * @param roomExtraInfoList List of the extra info updated.
    */
   onRoomExtraInfoUpdate?(roomID: string, roomExtraInfoList: zego.ZegoRoomExtraInfo[]): void
+
   /**
    * Callback notification that room Token authentication is about to expire.
    *
@@ -190,6 +200,7 @@ export interface ZegoEventHandler {
    * @param remainTimeInSecond The remaining time before the token expires.
    */
   onRoomTokenWillExpire?(roomID: string, remainTimeInSecond: number): void
+
   /**
    * The callback triggered when the state of stream publishing changes.
    *
@@ -209,6 +220,7 @@ export interface ZegoEventHandler {
     errorCode: number,
     extendedData: string
   ): void
+
   /**
    * Callback for current stream publishing quality.
    *
@@ -221,6 +233,7 @@ export interface ZegoEventHandler {
    * @param quality Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
    */
   onPublisherQualityUpdate?(streamID: string, quality: zego.ZegoPublishStreamQuality): void
+
   /**
    * The callback triggered when the first audio frame is captured.
    *
@@ -230,6 +243,7 @@ export interface ZegoEventHandler {
    * Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
    */
   onPublisherCapturedAudioFirstFrame?(): void
+
   /**
    * The callback triggered when the first video frame is captured.
    *
@@ -242,6 +256,7 @@ export interface ZegoEventHandler {
    * @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
    */
   onPublisherCapturedVideoFirstFrame?(channel: zego.ZegoPublishChannel): void
+
   /**
    * The callback triggered when the first video frame is rendered.
    *
@@ -253,6 +268,7 @@ export interface ZegoEventHandler {
    * @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
    */
   onPublisherRenderVideoFirstFrame?(channel: zego.ZegoPublishChannel): void
+
   /**
    * The callback triggered when the video capture resolution changes.
    *
@@ -272,6 +288,7 @@ export interface ZegoEventHandler {
     height: number,
     channel: zego.ZegoPublishChannel
   ): void
+
   /**
    * The callback triggered when the state of relayed streaming to CDN changes.
    *
@@ -284,6 +301,7 @@ export interface ZegoEventHandler {
    * @param infoList List of information that the current CDN is relaying.
    */
   onPublisherRelayCDNStateUpdate?(streamID: string, infoList: zego.ZegoStreamRelayCDNInfo[]): void
+
   /**
    * The callback triggered when the video encoder changes in publishing stream.
    *
@@ -301,6 +319,7 @@ export interface ZegoEventHandler {
     toCodecID: zego.ZegoVideoCodecID,
     channel: zego.ZegoPublishChannel
   ): void
+
   /**
    * The callback triggered when publishing stream.
    *
@@ -314,6 +333,7 @@ export interface ZegoEventHandler {
    * @param extraInfo extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
    */
   onPublisherStreamEvent?(eventID: zego.ZegoStreamEvent, streamID: string, extraInfo: string): void
+
   /**
    * The callback triggered when the state of stream playing changes.
    *
@@ -333,6 +353,7 @@ export interface ZegoEventHandler {
     errorCode: number,
     extendedData: string
   ): void
+
   /**
    * Callback for current stream playing quality.
    *
@@ -346,6 +367,7 @@ export interface ZegoEventHandler {
    * @param quality Playing stream quality, including audio and video framerate, bitrate, RTT, etc.
    */
   onPlayerQualityUpdate?(streamID: string, quality: zego.ZegoPlayStreamQuality): void
+
   /**
    * The callback triggered when a media event occurs during streaming playing.
    *
@@ -358,6 +380,7 @@ export interface ZegoEventHandler {
    * @param event Specific events received when playing the stream.
    */
   onPlayerMediaEvent?(streamID: string, event: zego.ZegoPlayerMediaEvent): void
+
   /**
    * The callback triggered when the first audio frame is received.
    *
@@ -370,6 +393,7 @@ export interface ZegoEventHandler {
    * @param streamID Stream ID.
    */
   onPlayerRecvAudioFirstFrame?(streamID: string): void
+
   /**
    * The callback triggered when the first video frame is received.
    *
@@ -383,6 +407,7 @@ export interface ZegoEventHandler {
    * @param streamID Stream ID.
    */
   onPlayerRecvVideoFirstFrame?(streamID: string): void
+
   /**
    * The callback triggered when the first video frame is rendered.
    *
@@ -396,6 +421,7 @@ export interface ZegoEventHandler {
    * @param streamID Stream ID.
    */
   onPlayerRenderVideoFirstFrame?(streamID: string): void
+
   /**
    * Calls back when the stream playing end renders the first frame of the video from the remote camera.
    *
@@ -410,6 +436,7 @@ export interface ZegoEventHandler {
    * @param streamID Stream ID.
    */
   onPlayerRenderCameraVideoFirstFrame?(streamID: string): void
+
   /**
    * The callback triggered when the stream playback resolution changes.
    *
@@ -425,6 +452,7 @@ export interface ZegoEventHandler {
    * @param height Video decoding resolution height.
    */
   onPlayerVideoSizeChanged?(streamID: string, width: number, height: number): void
+
   /**
    * The callback triggered when Supplemental Enhancement Information is received.
    *
@@ -437,6 +465,7 @@ export interface ZegoEventHandler {
    * @param data SEI content.
    */
   onPlayerRecvSEI?(streamID: string, data: Uint8Array): void
+
   /**
    * Receive the audio side information content of the remote stream.
    *
@@ -450,6 +479,7 @@ export interface ZegoEventHandler {
    * @param data Audio side information content.
    */
   onPlayerRecvAudioSideInfo?(streamID: string, data: Uint8Array): void
+
   /**
    * Playing stream low frame rate warning.
    *
@@ -462,6 +492,7 @@ export interface ZegoEventHandler {
    * @param streamID Stream ID.
    */
   onPlayerLowFpsWarning?(codecID: zego.ZegoVideoCodecID, streamID: string): void
+
   /**
    * The callback triggered when playing stream.
    *
@@ -475,6 +506,7 @@ export interface ZegoEventHandler {
    * @param extraInfo extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
    */
   onPlayerStreamEvent?(eventID: zego.ZegoStreamEvent, streamID: string, extraInfo: string): void
+
   /**
    * Playing stream video super resolution enabled state changes.
    *
@@ -491,6 +523,198 @@ export interface ZegoEventHandler {
     streamID: string,
     state: zego.ZegoSuperResolutionState,
     errorCode: number
+  ): void
+
+  /**
+   * The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
+   *
+   * Only supports desktop.
+   * This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+   *
+   * @param updateType Update type (add/delete)
+   * @param deviceType Audio device type
+   * @param deviceInfo Audio device information
+   */
+  onAudioDeviceStateChanged?(
+    updateType: zego.ZegoUpdateType,
+    deviceType: zego.ZegoAudioDeviceType,
+    deviceInfo: zego.ZegoDeviceInfo
+  ): void
+
+  /**
+   * The callback triggered when there is a change of the volume for the audio devices.
+   *
+   * Available since: 1.0.0
+   * Description: This callback is used to receive audio device volume change events.
+   * When to trigger: The callback triggered when there is a change of the volume fo the audio devices.
+   * Restrictions: None
+   * Platform differences: Only supports Windows and macOS.
+   *
+   * @param deviceType Audio device type
+   * @param deviceID Audio device ID
+   * @param volume audio device volume
+   */
+  onAudioDeviceVolumeChanged?(
+    deviceType: zego.ZegoAudioDeviceType,
+    deviceID: string,
+    volume: number
+  ): void
+
+  /**
+   * The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
+   *
+   * Available since: 1.0.0
+   * Description: By listening to this callback, users can update the video capture using a specific device when necessary.
+   * When to trigger: This callback is triggered when a video device is added or removed from the system.
+   * Restrictions: None
+   * Platform differences: Only supports Windows and macOS.
+   * Note: This function is only available in ZegoExpressVideo SDK!
+   *
+   * @param updateType Update type (add/delete)
+   * @param deviceInfo Audio device information
+   */
+  onVideoDeviceStateChanged?(updateType: zego.ZegoUpdateType, deviceInfo: zego.ZegoDeviceInfo): void
+
+  /**
+   * The local captured audio sound level callback.
+   *
+   * Available since: 2.10.0
+   * Description: The local captured audio sound level callback.
+   * Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
+   * Caution:
+   *   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+   *   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
+   * Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate] or [onRemoteSoundLevelInfoUpdate].
+   *
+   * @param soundLevelInfo Locally captured sound level value, ranging from 0.0 to 100.0.
+   */
+  onCapturedSoundLevelInfoUpdate?(soundLevelInfo: zego.ZegoSoundLevelInfo): void
+
+  /**
+   * The remote playing streams audio sound level callback.
+   *
+   * Available since: 2.10.0
+   * Description: The remote playing streams audio sound level callback.
+   * Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor], you are in the state of playing the stream [startPlayingStream].
+   * Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+   * Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring local captured audio sound by callback [onCapturedSoundLevelUpdate] or [onCapturedSoundLevelInfoUpdate].
+   *
+   * @param soundLevelInfos Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0.
+   */
+  onRemoteSoundLevelInfoUpdate?(soundLevelInfos: Map<string, zego.ZegoSoundLevelInfo>): void
+
+  /**
+   * The local captured audio spectrum callback.
+   *
+   * Available since: 1.1.0
+   * Description: The local captured audio spectrum callback.
+   * Trigger: After you start the audio spectrum monitor by calling [startAudioSpectrumMonitor].
+   * Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] and [startPreview].
+   * Related APIs: Start audio spectrum monitoring via [startAudioSpectrumMonitor]. Monitoring remote played audio spectrum by callback [onRemoteAudioSpectrumUpdate]
+   *
+   * @param audioSpectrum Locally captured audio spectrum value list. Spectrum value range is [0-2^30].
+   */
+  onCapturedAudioSpectrumUpdate?(audioSpectrum: number[]): void
+
+  /**
+   * The remote playing streams audio spectrum callback.
+   *
+   * Available since: 1.1.0
+   * Description: The remote playing streams audio spectrum callback.
+   * Trigger: After you start the audio spectrum monitor by calling [startAudioSpectrumMonitor], you are in the state of playing the stream [startPlayingStream].
+   * Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called.
+   * Related APIs: Start audio spectrum monitoring via [startAudioSpectrumMonitor]. Monitoring local played audio spectrum by callback [onCapturedAudioSpectrumUpdate].
+   *
+   * @param audioSpectrums Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
+   */
+  onRemoteAudioSpectrumUpdate?(audioSpectrums: Map<string, number[]>): void
+
+  /**
+   * The callback triggered when a local device exception occurred.
+   *
+   * Available since: 2.15.0
+   * Description: The callback triggered when a local device exception occurs.
+   * Trigger: This callback is triggered when the function of the local audio or video device is abnormal.
+   *
+   * @param exceptionType The type of the device exception.
+   * @param deviceType The type of device where the exception occurred.
+   * @param deviceID Device ID. Currently, only desktop devices are supported to distinguish different devices; for mobile devices, this parameter will return an empty string.
+   */
+  onLocalDeviceExceptionOccurred?(
+    exceptionType: zego.ZegoDeviceExceptionType,
+    deviceType: zego.ZegoDeviceType,
+    deviceID: string
+  ): void
+
+  /**
+   * The callback triggered when the state of the remote camera changes.
+   *
+   * Available since: 1.1.0
+   * Description: The callback triggered when the state of the remote camera changes.
+   * Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+   * Trigger: When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
+   * Caution: This callback will not be called back when the remote stream is play from the CDN, or when custom video acquisition is used at the peer.
+   * Note: This function is only available in ZegoExpressVideo SDK!
+   *
+   * @param streamID Stream ID.
+   * @param state Remote camera status.
+   */
+  onRemoteCameraStateUpdate?(streamID: string, state: zego.ZegoRemoteDeviceState): void
+
+  /**
+   * The callback triggered when the state of the remote microphone changes.
+   *
+   * Available since: 1.1.0
+   * Description: The callback triggered when the state of the remote microphone changes.
+   * Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the microphone device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+   * Trigger: When the state of the remote microphone device is changed, such as switching a microphone, etc., by listening to the callback, it is possible to obtain an event related to the remote microphone, which can be used to prompt the user that the audio may be abnormal.
+   * Caution: This callback will not be called back when the remote stream is play from the CDN, or when custom audio acquisition is used at the peer (But the stream is not published to the ZEGO RTC server.).
+   *
+   * @param streamID Stream ID.
+   * @param state Remote microphone status.
+   */
+  onRemoteMicStateUpdate?(streamID: string, state: zego.ZegoRemoteDeviceState): void
+
+  /**
+   * The callback triggered when the state of the remote speaker changes.
+   *
+   * Available since: 1.1.0
+   * Description: The callback triggered when the state of the remote microphone changes.
+   * Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the speaker device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+   * Trigger: When the state of the remote speaker device changes, such as switching the speaker, by monitoring this callback, you can get events related to the remote speaker.
+   * Caution: This callback will not be called back when the remote stream is play from the CDN.
+   *
+   * @param streamID Stream ID.
+   * @param state Remote speaker status.
+   */
+  onRemoteSpeakerStateUpdate?(streamID: string, state: zego.ZegoRemoteDeviceState): void
+
+  /**
+   * Callback for device's audio route changed.
+   *
+   * Available since: 1.20.0
+   * Description: Callback for device's audio route changed.
+   * Trigger: This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+   *
+   * @param audioRoute Current audio route.
+   */
+  onAudioRouteChange?(audioRoute: zego.ZegoAudioRoute): void
+
+  /**
+   * Callback for audio VAD  stable state update.
+   *
+   * Available since: 2.14.0
+   * Description: Callback for audio VAD  stable state update.
+   * When to trigger: the [startAudioVADStableStateMonitor] function must be called to start the audio VAD monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
+   * Restrictions: The callback notification period is 3 seconds.
+   * Related APIs: [startAudioVADStableStateMonitor], [stopAudioVADStableStateMonitor].
+   *
+   * @param type audio VAD monitor type
+   * @param state VAD result
+   */
+  onAudioVADStateUpdate?(
+    type: zego.ZegoAudioVADStableStateMonitorType,
+    state: zego.ZegoAudioVADType
   ): void
 }
 

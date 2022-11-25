@@ -105,4 +105,51 @@ declare class ZegoExpressBridge {
   enableCheckPoc(enable: boolean): void
   isVideoDecoderSupported(codecID: number): boolean
   // #endregion
+
+  // #region Device module
+  muteMicrophone(mute: boolean): void
+  isMicrophoneMuted(): boolean
+  muteSpeaker(mute: boolean): void
+  isSpeakerMuted(): boolean
+  getAudioDeviceList(deviceType: number): Object[]
+  getDefaultAudioDeviceID(deviceType: number): string
+  useAudioDevice(deviceType: number, deviceID: string): void
+  getAudioDeviceVolume(deviceType: number, deviceID: string): number
+  setAudioDeviceVolume(deviceType: number, deviceID: string, volume: number): void
+  startAudioDeviceVolumeMonitor(deviceType: number, deviceID: string): void
+  stopAudioDeviceVolumeMonitor(deviceType: number, deviceID: string): void
+  muteAudioDevice(deviceType: number, deviceID: string, mute: boolean): void
+  setAudioDeviceMode(deviceMode: number): void
+  isAudioDeviceMuted(deviceType: number, deviceID: string): boolean
+  enableAudioCaptureDevice(enable: boolean): void
+  getAudioRouteType(): number
+  setAudioRouteToSpeaker(defaultToSpeaker: boolean): void
+  enableCamera(enable: boolean, channel: number): void
+  useFrontCamera(enable: boolean, channel: number): void
+  isCameraFocusSupported(channel: number): boolean
+  setCameraFocusMode(mode: number, channel: number): void
+  setCameraFocusPointInPreview(x: number, y: number, channel: number): void
+  setCameraExposureMode(mode: number, channel: number): void
+  setCameraExposurePointInPreview(x: number, y: number, channel: number): void
+  setCameraExposureCompensation(value: number, channel: number): void
+  setCameraZoomFactor(factor: number, channel: number): void
+  getCameraMaxZoomFactor(channel: number): number
+  enableCameraAdaptiveFPS(enable: boolean, minFPS: number, maxFPS: number, channel: number): void
+  useVideoDevice(deviceID: string, channel: number): void
+  getVideoDeviceList(): Object[]
+  getDefaultVideoDeviceID(): string
+  startSoundLevelMonitor(millisecond: number, enableVAD: boolean): void
+  stopSoundLevelMonitor(): void
+  startAudioSpectrumMonitor(millisecond?: number): void
+  stopAudioSpectrumMonitor(): void
+  enableHeadphoneMonitor(enable: boolean): void
+  setHeadphoneMonitorVolume(volume: number): void
+  enableMixSystemPlayout(enable: boolean): void
+  setMixSystemPlayoutVolume(volume: number): void
+  enableMixEnginePlayout(enable: boolean): void
+  startAudioVADStableStateMonitor(type: number, millisecond: number): void
+  stopAudioVADStableStateMonitor(type: number): void
+  getCurrentAudioDevice(deviceType: number): Object
+
+  // #endregion
 }
