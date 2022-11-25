@@ -1157,14 +1157,14 @@ export class ZegoCDNConfig {
   /** CDN URL */
   url: string
 
-  /** Auth param of URL */
-  authParam: string
+  /** Auth param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string). */
+  authParam?: string
 
-  /** protocol supported by the URL. If there are more than one, separate them with English commas and try them in order. */
-  protocol: string
+  /** URL supported protocols, candidate values are "tcp" and "quic". If there are more than one, separate them with English commas and try them in order. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string). */
+  protocol?: string
 
-  /** QUIC version。 If [protocol] has the QUIC protocol, this information needs to be filled in. If there are multiple version numbers, separate them with commas. */
-  quicVersion: string
+  /** QUIC version。 If [protocol] has the QUIC protocol, this information needs to be filled in. If there are multiple version numbers, separate them with commas. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string). */
+  quicVersion?: string
 }
 
 /**
