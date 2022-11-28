@@ -78,10 +78,12 @@ std::string ZegoExpressBridge::getVersion() { return ZegoExpressSDK::getVersion(
 void ZegoExpressBridge::setApiCalledCallback(const se::Value &callback) {
     se::AutoHandleScope hs;
     if (callback.isObject()) {
+        ZegoExpressSDK::setApiCalledCallback(ZegoExpressEventHandler::GetInstance());
         ZegoExpressEventHandler::GetInstance()->SetJsApiCalledCallback(callback);
     } else {
         // Clear the callback handler when developers set it to "undefind" or "null"
         ZegoExpressEventHandler::GetInstance()->ClearJsApiCalledCallback();
+        ZegoExpressSDK::setApiCalledCallback(nullptr);
     }
 }
 
