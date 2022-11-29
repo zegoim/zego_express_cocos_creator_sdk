@@ -18,7 +18,7 @@ ZegoExpressBridge::ZegoExpressBridge() {
 #endif
 }
 
-void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) {
+void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_controller) { // NOLINT
     auto controller = ZegoTextureRendererController::GetInstance();
     controller->SetJsController(js_controller);
 }
@@ -32,7 +32,7 @@ void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appS
     profile.scenario = ZegoScenario(scenario);
     native_engine_ = ZegoExpressSDK::createEngine(profile, ZegoExpressEventHandler::GetInstance());
 
-    ZegoCustomVideoRenderConfig render_config;
+    ZegoCustomVideoRenderConfig render_config{};
     render_config.bufferType = ZEGO_VIDEO_BUFFER_TYPE_RAW_DATA;
     render_config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
     native_engine_->enableCustomVideoRender(true, &render_config);
@@ -55,7 +55,7 @@ void ZegoExpressBridge::destroyEngine(const se::Value &callback) {
     native_engine_ = nullptr;
 }
 
-void ZegoExpressBridge::setEngineConfig(const se::Value &advancedConfig) {
+void ZegoExpressBridge::setEngineConfig(const se::Value &advancedConfig) { // NOLINT
     std::unordered_map<std::string, std::string> map;
     sevalue_to_native(advancedConfig, &map);
 
@@ -64,18 +64,22 @@ void ZegoExpressBridge::setEngineConfig(const se::Value &advancedConfig) {
     ZegoExpressSDK::setEngineConfig(engineConfig);
 }
 
-void ZegoExpressBridge::setLogConfig(const std::string &logPath, uint64_t logSize) {
+void ZegoExpressBridge::setLogConfig(const std::string &logPath, uint64_t logSize) { // NOLINT
     auto logConfig = ZegoLogConfig{};
     logConfig.logPath = logPath;
     logConfig.logSize = logSize;
     ZegoExpressSDK::setLogConfig(logConfig);
 }
 
-void ZegoExpressBridge::setRoomMode(int mode) { ZegoExpressSDK::setRoomMode(ZegoRoomMode(mode)); }
+void ZegoExpressBridge::setRoomMode(int mode) { // NOLINT
+    ZegoExpressSDK::setRoomMode(ZegoRoomMode(mode));
+}
 
-std::string ZegoExpressBridge::getVersion() { return ZegoExpressSDK::getVersion(); }
+std::string ZegoExpressBridge::getVersion() { // NOLINT
+    return ZegoExpressSDK::getVersion();
+}
 
-void ZegoExpressBridge::setApiCalledCallback(const se::Value &callback) {
+void ZegoExpressBridge::setApiCalledCallback(const se::Value &callback) { // NOLINT
     se::AutoHandleScope hs;
     if (callback.isObject()) {
         ZegoExpressSDK::setApiCalledCallback(ZegoExpressEventHandler::GetInstance());
@@ -87,16 +91,16 @@ void ZegoExpressBridge::setApiCalledCallback(const se::Value &callback) {
     }
 }
 
-bool ZegoExpressBridge::isFeatureSupported(int featureType) {
+bool ZegoExpressBridge::isFeatureSupported(int featureType) { // NOLINT
     return ZegoExpressSDK::isFeatureSupported(ZegoFeatureType(featureType));
 }
 
-void ZegoExpressBridge::setEventHandler(const se::Value &handler) {
+void ZegoExpressBridge::setEventHandler(const se::Value &handler) { // NOLINT
     se::AutoHandleScope hs;
     if (handler.isObject()) {
         ZegoExpressEventHandler::GetInstance()->SetJsEventHandler(handler);
     } else {
-        // Clear the callback handler when developers set it to "undefind" or "null"
+        // Clear the callback handler when developers set it to "undefined" or "null"
         ZegoExpressEventHandler::GetInstance()->ClearJsEventHandler();
     }
 }
@@ -151,7 +155,7 @@ void ZegoExpressBridge::loginRoom(const std::string &roomID, const std::string &
     room_config.isUserStatusNotify = isUserStatusNotify;
     room_config.token = token;
 
-    auto job = [callback](int errorCode, std::string extendedData) {
+    auto job = [callback](int errorCode, const std::string &extendedData) {
         RunOnCocosThread([callback, errorCode, extendedData]() {
             se::AutoHandleScope hs;
             if (!callback.isObject() || !callback.toObject()->isFunction()) {
@@ -169,7 +173,7 @@ void ZegoExpressBridge::logoutRoom(const std::string &roomID, const se::Value &c
         return;
     }
 
-    auto job = [callback](int errorCode, std::string extendedData) {
+    auto job = [callback](int errorCode, const std::string &extendedData) {
         RunOnCocosThread([callback, errorCode, extendedData]() {
             se::AutoHandleScope hs;
             if (!callback.isObject() || !callback.toObject()->isFunction()) {
@@ -266,7 +270,7 @@ void ZegoExpressBridge::setStreamExtraInfo(const std::string &extraInfo, int cha
         });
     };
 
-    native_engine_->setStreamExtraInfo(extraInfo, job);
+    native_engine_->setStreamExtraInfo(extraInfo, job, ZegoPublishChannel(channel));
 }
 
 void ZegoExpressBridge::startPreview(int channel) {

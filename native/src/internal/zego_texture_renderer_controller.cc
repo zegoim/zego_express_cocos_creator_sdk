@@ -44,7 +44,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
     }
 
     RunOnCocosThread([=]() {
-        std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
+        std::shared_ptr<ZegoCocosVideoFrame> frame;
         {
             std::lock_guard<std::mutex> lock(captured_video_frame_mutex_);
             frame = captured_video_frames_[channel];
@@ -122,7 +122,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
     }
 
     RunOnCocosThread([=] {
-        std::shared_ptr<ZegoCocosVideoFrame> frame = nullptr;
+        std::shared_ptr<ZegoCocosVideoFrame> frame;
         {
             std::lock_guard<std::mutex> lock(remote_video_frame_mutex_);
             frame = remote_video_frames_[streamID];
@@ -174,11 +174,11 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char **da
     });
 }
 
-void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer,
+void ZegoTextureRendererController::CopyAndProcessVideoFrameBuffer(const uint8_t *src_buffer,
                                                                    uint8_t *dst_buffer,
                                                                    ZegoVideoFrameParam param) {
     uint32_t fixed_stride = param.width * 4;
-    uint32_t src_index = 0;
+    uint32_t src_index;
     uint32_t dst_index = 0;
     for (uint32_t h = 0; h < param.height; h++) {
         src_index = h * param.strides[0];

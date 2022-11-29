@@ -41,8 +41,8 @@ class ZegoTextureRendererController : public IZegoCustomVideoRenderHandler {
 
   private:
     /// Convert BGRA to RGBA, and cut the stride padding
-    void CopyAndProcessVideoFrameBuffer(uint8_t *src_buffer, uint8_t *dst_buffer,
-                                        ZegoVideoFrameParam param);
+    static void CopyAndProcessVideoFrameBuffer(const uint8_t *src_buffer, uint8_t *dst_buffer,
+                                               ZegoVideoFrameParam param);
 
   private:
     std::shared_ptr<se::Value> js_controller_;

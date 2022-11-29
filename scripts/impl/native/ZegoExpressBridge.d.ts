@@ -150,6 +150,5 @@ declare class ZegoExpressBridge {
   startAudioVADStableStateMonitor(type: number, millisecond: number): void
   stopAudioVADStableStateMonitor(type: number): void
   getCurrentAudioDevice(deviceType: number): Object
-
   // #endregion
 }
