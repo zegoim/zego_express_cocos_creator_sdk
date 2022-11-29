@@ -125,6 +125,44 @@ class ZegoExpressEventHandler : public std::enable_shared_from_this<ZegoExpressE
     void onPlayerVideoSuperResolutionUpdate(const std::string &streamID,
                                             ZegoSuperResolutionState state, int errorCode) override;
 #endif
+
+    void onAudioDeviceStateChanged(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType,
+                                   const ZegoDeviceInfo &deviceInfo) override;
+
+    void onAudioDeviceVolumeChanged(ZegoAudioDeviceType deviceType, const std::string &deviceID,
+                                    int volume) override;
+
+    void onVideoDeviceStateChanged(ZegoUpdateType updateType,
+                                   const ZegoDeviceInfo &deviceInfo) override;
+
+    void onCapturedSoundLevelInfoUpdate(const ZegoSoundLevelInfo &soundLevelInfo) override;
+
+    void onRemoteSoundLevelInfoUpdate(
+        const std::unordered_map<std::string, ZegoSoundLevelInfo> &soundLevelInfos) override;
+
+    void onCapturedAudioSpectrumUpdate(const ZegoAudioSpectrum &audioSpectrum) override;
+
+    void onRemoteAudioSpectrumUpdate(
+        const std::unordered_map<std::string, ZegoAudioSpectrum> &audioSpectrums) override;
+
+    void onLocalDeviceExceptionOccurred(ZegoDeviceExceptionType exceptionType,
+                                        ZegoDeviceType deviceType,
+                                        const std::string &deviceID) override;
+
+    void onRemoteCameraStateUpdate(const std::string &streamID,
+                                   ZegoRemoteDeviceState state) override;
+
+    void onRemoteMicStateUpdate(const std::string &streamID, ZegoRemoteDeviceState state) override;
+
+    void onRemoteSpeakerStateUpdate(const std::string &streamID,
+                                    ZegoRemoteDeviceState state) override;
+
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
+    void onAudioRouteChange(ZegoAudioRoute audioRoute) override;
+#endif
+
+    void onAudioVADStateUpdate(ZegoAudioVADStableStateMonitorType type,
+                               ZegoAudioVADType state) override;
 };
 
 } // namespace zego::cocos

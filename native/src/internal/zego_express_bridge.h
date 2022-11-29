@@ -111,6 +111,52 @@ class ZegoExpressBridge {
     void enableHardwareDecoder(bool enable);
     void enableCheckPoc(bool enable);
     bool isVideoDecoderSupported(int codecID);
+
+#pragma mark - Device module
+  public:
+    void muteMicrophone(bool mute);
+    bool isMicrophoneMuted();
+    void muteSpeaker(bool mute);
+    bool isSpeakerMuted();
+    ccstd::vector<se::Object *> getAudioDeviceList(int deviceType);
+    std::string getDefaultAudioDeviceID(int deviceType);
+    void useAudioDevice(int deviceType, const std::string &deviceID);
+    int getAudioDeviceVolume(int deviceType, const std::string &deviceID);
+    void setAudioDeviceVolume(int deviceType, const std::string &deviceID, int volume);
+    void startAudioDeviceVolumeMonitor(int deviceType, const std::string &deviceID);
+    void stopAudioDeviceVolumeMonitor(int deviceType, const std::string &deviceID);
+    void muteAudioDevice(int deviceType, const std::string &deviceID, bool mute);
+    void setAudioDeviceMode(int deviceMode);
+    bool isAudioDeviceMuted(int deviceType, const std::string &deviceID);
+    void enableAudioCaptureDevice(bool enable);
+    int getAudioRouteType();
+    void setAudioRouteToSpeaker(bool defaultToSpeaker);
+    void enableCamera(bool enable, int channel);
+    void useFrontCamera(bool enable, int channel);
+    bool isCameraFocusSupported(int channel);
+    void setCameraFocusMode(int mode, int channel);
+    void setCameraFocusPointInPreview(float x, float y, int channel);
+    void setCameraExposureMode(int mode, int channel);
+    void setCameraExposurePointInPreview(float x, float y, int channel);
+    void setCameraExposureCompensation(float value, int channel);
+    void setCameraZoomFactor(float factor, int channel);
+    float getCameraMaxZoomFactor(int channel);
+    void enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, int channel);
+    void useVideoDevice(const std::string &deviceID, int channel);
+    ccstd::vector<se::Object *> getVideoDeviceList();
+    std::string getDefaultVideoDeviceID();
+    void startSoundLevelMonitor(int millisecond, bool enableVAD);
+    void stopSoundLevelMonitor();
+    void startAudioSpectrumMonitor(int millisecond);
+    void stopAudioSpectrumMonitor();
+    void enableHeadphoneMonitor(bool enable);
+    void setHeadphoneMonitorVolume(int volume);
+    void enableMixSystemPlayout(bool enable);
+    void setMixSystemPlayoutVolume(int volume);
+    void enableMixEnginePlayout(bool enable);
+    void startAudioVADStableStateMonitor(int type, int millisecond);
+    void stopAudioVADStableStateMonitor(int type);
+    se::Object *getCurrentAudioDevice(int deviceType);
 };
 
 } // namespace zego::cocos

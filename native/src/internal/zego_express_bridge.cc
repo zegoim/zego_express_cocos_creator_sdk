@@ -613,4 +613,333 @@ bool ZegoExpressBridge::isVideoDecoderSupported(int codecID) {
     return native_engine_->isVideoDecoderSupported(ZegoVideoCodecID(codecID));
 }
 
+#pragma mark - Device module
+
+void ZegoExpressBridge::muteMicrophone(bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->muteMicrophone(mute);
+}
+
+bool ZegoExpressBridge::isMicrophoneMuted() {
+    if (!native_engine_) {
+        return false;
+    }
+    return native_engine_->isMicrophoneMuted();
+}
+
+void ZegoExpressBridge::muteSpeaker(bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->muteSpeaker(mute);
+}
+
+bool ZegoExpressBridge::isSpeakerMuted() {
+    if (!native_engine_) {
+        return false;
+    }
+    return native_engine_->isSpeakerMuted();
+}
+
+ccstd::vector<se::Object *> ZegoExpressBridge::getAudioDeviceList(int deviceType) {
+    if (!native_engine_) {
+        return {};
+    }
+    auto list = native_engine_->getAudioDeviceList(ZegoAudioDeviceType(deviceType));
+    auto se_list = ccstd::vector<se::Object *>();
+    for (auto &item : list) {
+        auto se_item = se::Object::createPlainObject();
+        se_item->setProperty("deviceID", se::Value(item.deviceID));
+        se_item->setProperty("deviceName", se::Value(item.deviceName));
+        se_list.push_back(se_item);
+    }
+    return se_list;
+}
+
+std::string ZegoExpressBridge::getDefaultAudioDeviceID(int deviceType) {
+    if (!native_engine_) {
+        return "";
+    }
+    return native_engine_->getDefaultAudioDeviceID(ZegoAudioDeviceType(deviceType));
+}
+
+void ZegoExpressBridge::useAudioDevice(int deviceType, const std::string &deviceID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->useAudioDevice(ZegoAudioDeviceType(deviceType), deviceID);
+}
+
+int ZegoExpressBridge::getAudioDeviceVolume(int deviceType, const std::string &deviceID) {
+    if (!native_engine_) {
+        return 0;
+    }
+    return native_engine_->getAudioDeviceVolume(ZegoAudioDeviceType(deviceType), deviceID);
+}
+
+void ZegoExpressBridge::setAudioDeviceVolume(int deviceType, const std::string &deviceID,
+                                             int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAudioDeviceVolume(ZegoAudioDeviceType(deviceType), deviceID, volume);
+}
+
+void ZegoExpressBridge::startAudioDeviceVolumeMonitor(int deviceType, const std::string &deviceID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startAudioDeviceVolumeMonitor(ZegoAudioDeviceType(deviceType), deviceID);
+}
+
+void ZegoExpressBridge::stopAudioDeviceVolumeMonitor(int deviceType, const std::string &deviceID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopAudioDeviceVolumeMonitor(ZegoAudioDeviceType(deviceType), deviceID);
+}
+
+void ZegoExpressBridge::muteAudioDevice(int deviceType, const std::string &deviceID, bool mute) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->muteAudioDevice(ZegoAudioDeviceType(deviceType), deviceID, mute);
+}
+
+void ZegoExpressBridge::setAudioDeviceMode(int deviceMode) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAudioDeviceMode(ZegoAudioDeviceMode(deviceMode));
+}
+
+bool ZegoExpressBridge::isAudioDeviceMuted(int deviceType, const std::string &deviceID) {
+    if (!native_engine_) {
+        return false;
+    }
+    return native_engine_->isAudioDeviceMuted(ZegoAudioDeviceType(deviceType), deviceID);
+}
+
+void ZegoExpressBridge::enableAudioCaptureDevice(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableAudioCaptureDevice(enable);
+}
+
+int ZegoExpressBridge::getAudioRouteType() {
+    if (!native_engine_) {
+        return 0;
+    }
+    return native_engine_->getAudioRouteType();
+}
+
+void ZegoExpressBridge::setAudioRouteToSpeaker(bool defaultToSpeaker) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAudioRouteToSpeaker(defaultToSpeaker);
+}
+
+void ZegoExpressBridge::enableCamera(bool enable, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableCamera(enable, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::useFrontCamera(bool enable, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->useFrontCamera(enable, ZegoPublishChannel(channel));
+}
+
+bool ZegoExpressBridge::isCameraFocusSupported(int channel) {
+    if (!native_engine_) {
+        return false;
+    }
+    return native_engine_->isCameraFocusSupported(ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraFocusMode(int mode, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraFocusMode(ZegoCameraFocusMode(mode), ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraFocusPointInPreview(float x, float y, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraFocusPointInPreview(x, y, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraExposureMode(int mode, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraExposureMode(ZegoCameraExposureMode(mode),
+                                          ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraExposurePointInPreview(float x, float y, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraExposurePointInPreview(x, y, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraExposureCompensation(float value, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraExposureCompensation(value, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::setCameraZoomFactor(float factor, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setCameraZoomFactor(factor, ZegoPublishChannel(channel));
+}
+
+float ZegoExpressBridge::getCameraMaxZoomFactor(int channel) {
+    if (!native_engine_) {
+        return 0;
+    }
+    return native_engine_->getCameraMaxZoomFactor(ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableCameraAdaptiveFPS(enable, minFPS, maxFPS, ZegoPublishChannel(channel));
+}
+
+void ZegoExpressBridge::useVideoDevice(const std::string &deviceID, int channel) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->useVideoDevice(deviceID, ZegoPublishChannel(channel));
+}
+
+ccstd::vector<se::Object *> ZegoExpressBridge::getVideoDeviceList() {
+    if (!native_engine_) {
+        return {};
+    }
+    auto list = native_engine_->getVideoDeviceList();
+    auto se_list = ccstd::vector<se::Object *>();
+    for (auto &item : list) {
+        auto se_item = se::Object::createPlainObject();
+        se_item->setProperty("deviceID", se::Value(item.deviceID));
+        se_item->setProperty("deviceName", se::Value(item.deviceName));
+        se_list.push_back(se_item);
+    }
+    return se_list;
+}
+
+std::string ZegoExpressBridge::getDefaultVideoDeviceID() {
+    if (!native_engine_) {
+        return "";
+    }
+    return native_engine_->getDefaultVideoDeviceID();
+}
+
+void ZegoExpressBridge::startSoundLevelMonitor(int millisecond, bool enableVAD) {
+    if (!native_engine_) {
+        return;
+    }
+    auto config = ZegoSoundLevelConfig{};
+    config.millisecond = millisecond;
+    config.enableVAD = enableVAD;
+    native_engine_->startSoundLevelMonitor(config);
+}
+
+void ZegoExpressBridge::stopSoundLevelMonitor() {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopSoundLevelMonitor();
+}
+
+void ZegoExpressBridge::startAudioSpectrumMonitor(int millisecond) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startAudioSpectrumMonitor(millisecond);
+}
+
+void ZegoExpressBridge::stopAudioSpectrumMonitor() {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopAudioSpectrumMonitor();
+}
+
+void ZegoExpressBridge::enableHeadphoneMonitor(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableHeadphoneMonitor(enable);
+}
+
+void ZegoExpressBridge::setHeadphoneMonitorVolume(int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setHeadphoneMonitorVolume(volume);
+}
+
+void ZegoExpressBridge::enableMixSystemPlayout(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableMixSystemPlayout(enable);
+}
+
+void ZegoExpressBridge::setMixSystemPlayoutVolume(int volume) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setMixSystemPlayoutVolume(volume);
+}
+
+void ZegoExpressBridge::enableMixEnginePlayout(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableMixEnginePlayout(enable);
+}
+
+void ZegoExpressBridge::startAudioVADStableStateMonitor(int type, int millisecond) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType(type),
+                                                    millisecond);
+}
+
+void ZegoExpressBridge::stopAudioVADStableStateMonitor(int type) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType(type));
+}
+
+se::Object *ZegoExpressBridge::getCurrentAudioDevice(int deviceType) {
+    if (!native_engine_) {
+        return se::Object::createPlainObject();
+    }
+    auto device = native_engine_->getCurrentAudioDevice(ZegoAudioDeviceType(deviceType));
+    auto se_device = se::Object::createPlainObject();
+    se_device->setProperty("deviceID", se::Value(device.deviceID));
+    se_device->setProperty("deviceName", se::Value(device.deviceName));
+    return se_device;
+}
+
 } // namespace zego::cocos

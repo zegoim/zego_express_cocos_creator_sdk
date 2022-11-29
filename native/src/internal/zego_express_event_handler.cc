@@ -887,4 +887,294 @@ void ZegoExpressEventHandler::onPlayerVideoSuperResolutionUpdate(const std::stri
 }
 #endif
 
+void ZegoExpressEventHandler::onAudioDeviceStateChanged(ZegoUpdateType updateType,
+                                                        ZegoAudioDeviceType deviceType,
+                                                        const ZegoDeviceInfo &deviceInfo) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onAudioDeviceStateChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_device_info = se::Object::createPlainObject();
+            se_device_info->setProperty("deviceID", se::Value(deviceInfo.deviceID));
+            se_device_info->setProperty("deviceName", se::Value(deviceInfo.deviceName));
+            se::Value js_update_type, js_device_type, js_device_info;
+            nativevalue_to_se(updateType, js_update_type, nullptr);
+            nativevalue_to_se(deviceType, js_device_type, nullptr);
+            nativevalue_to_se(se_device_info, js_device_info, nullptr);
+            se::ValueArray args{js_update_type, js_device_type, js_device_info};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onAudioDeviceVolumeChanged(ZegoAudioDeviceType deviceType,
+                                                         const std::string &deviceID, int volume) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onAudioDeviceVolumeChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_device_type, js_device_id, js_volume;
+            nativevalue_to_se(deviceType, js_device_type, nullptr);
+            nativevalue_to_se(deviceID, js_device_id, nullptr);
+            nativevalue_to_se(volume, js_volume, nullptr);
+            se::ValueArray args{js_device_type, js_device_id, js_volume};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onVideoDeviceStateChanged(ZegoUpdateType updateType,
+                                                        const ZegoDeviceInfo &deviceInfo) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onVideoDeviceStateChanged", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_device_info = se::Object::createPlainObject();
+            se_device_info->setProperty("deviceID", se::Value(deviceInfo.deviceID));
+            se_device_info->setProperty("deviceName", se::Value(deviceInfo.deviceName));
+            se::Value js_update_type, js_device_info;
+            nativevalue_to_se(updateType, js_update_type, nullptr);
+            nativevalue_to_se(se_device_info, js_device_info, nullptr);
+            se::ValueArray args{js_update_type, js_device_info};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onCapturedSoundLevelInfoUpdate(
+    const ZegoSoundLevelInfo &soundLevelInfo) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onCapturedSoundLevelInfoUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_info = se::Object::createPlainObject();
+            se_info->setProperty("soundLevel", se::Value(soundLevelInfo.soundLevel));
+            se_info->setProperty("vad", se::Value(soundLevelInfo.vad));
+            se::Value js_info;
+            nativevalue_to_se(se_info, js_info, nullptr);
+            se::ValueArray args{js_info};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRemoteSoundLevelInfoUpdate(
+    const std::unordered_map<std::string, ZegoSoundLevelInfo> &soundLevelInfos) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRemoteSoundLevelInfoUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_info_map = ccstd::unordered_map<std::string, se::Object *>();
+            for (auto &info : soundLevelInfos) {
+                auto se_info = se::Object::createPlainObject();
+                se_info->setProperty("soundLevel", se::Value(info.second.soundLevel));
+                se_info->setProperty("vad", se::Value(info.second.vad));
+                se_info_map[info.first] = se_info;
+            }
+            se::Value js_info_map;
+            nativevalue_to_se(se_info_map, js_info_map, nullptr);
+            se::ValueArray args{js_info_map};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onCapturedAudioSpectrumUpdate(
+    const ZegoAudioSpectrum &audioSpectrum) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onCapturedAudioSpectrumUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_spectrum;
+            nativevalue_to_se(audioSpectrum, js_spectrum, nullptr);
+            se::ValueArray args{js_spectrum};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRemoteAudioSpectrumUpdate(
+    const std::unordered_map<std::string, ZegoAudioSpectrum> &audioSpectrums) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRemoteAudioSpectrumUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_map;
+            nativevalue_to_se(audioSpectrums, js_map, nullptr);
+            se::ValueArray args{js_map};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onLocalDeviceExceptionOccurred(ZegoDeviceExceptionType exceptionType,
+                                                             ZegoDeviceType deviceType,
+                                                             const std::string &deviceID) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onLocalDeviceExceptionOccurred", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_exception_type, js_device_type, js_device_id;
+            nativevalue_to_se(exceptionType, js_exception_type, nullptr);
+            nativevalue_to_se(deviceType, js_device_type, nullptr);
+            nativevalue_to_se(deviceID, js_device_id, nullptr);
+            se::ValueArray args{js_exception_type, js_device_type, js_device_id};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRemoteCameraStateUpdate(const std::string &streamID,
+                                                        ZegoRemoteDeviceState state) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRemoteCameraStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            se::ValueArray args{js_stream_id, js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRemoteMicStateUpdate(const std::string &streamID,
+                                                     ZegoRemoteDeviceState state) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRemoteMicStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            se::ValueArray args{js_stream_id, js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onRemoteSpeakerStateUpdate(const std::string &streamID,
+                                                         ZegoRemoteDeviceState state) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onRemoteSpeakerStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_stream_id, js_state;
+            nativevalue_to_se(streamID, js_stream_id, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            se::ValueArray args{js_stream_id, js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
+void ZegoExpressEventHandler::onAudioRouteChange(ZegoAudioRoute audioRoute) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onAudioRouteChange", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_audio_route;
+            nativevalue_to_se(audioRoute, js_audio_route, nullptr);
+            se::ValueArray args{js_audio_route};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+#endif
+
+void ZegoExpressEventHandler::onAudioVADStateUpdate(ZegoAudioVADStableStateMonitorType type,
+                                                    ZegoAudioVADType state) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onAudioVADStateUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            se::Value js_type, js_state;
+            nativevalue_to_se(type, js_type, nullptr);
+            nativevalue_to_se(state, js_state, nullptr);
+            se::ValueArray args{js_type, js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
 } // namespace zego::cocos
