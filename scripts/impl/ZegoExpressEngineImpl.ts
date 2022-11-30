@@ -908,4 +908,164 @@ export class ZegoExpressEngineImpl {
       // TODO: Web
     }
   }
+
+  enableAEC(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableAEC(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableHeadphoneAEC(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableHeadphoneAEC(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setAECMode(mode: zego.ZegoAECMode): void {
+    if (this._bridge) {
+      this._bridge.setAECMode(mode)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableAGC(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableAGC(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableANS(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableANS(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableTransientANS(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableTransientANS(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setANSMode(mode: zego.ZegoANSMode): void {
+    if (this._bridge) {
+      this._bridge.setANSMode(mode)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  startEffectsEnv(): void {
+    if (this._bridge) {
+      this._bridge.startEffectsEnv()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopEffectsEnv(): void {
+    if (this._bridge) {
+      this._bridge.stopEffectsEnv()
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableEffectsBeauty(enable: boolean): void {
+    if (this._bridge) {
+      this._bridge.enableEffectsBeauty(enable)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setEffectsBeautyParam(param: zego.ZegoEffectsBeautyParam): void {
+    if (this._bridge) {
+      this._bridge.setEffectsBeautyParam(param)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setAudioEqualizerGain(bandIndex: number, bandGain: number): void {
+    if (this._bridge) {
+      this._bridge.setAudioEqualizerGain(bandIndex, bandGain)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setVoiceChangerPreset(preset: zego.ZegoVoiceChangerPreset): void {
+    if (this._bridge) {
+      this._bridge.setVoiceChangerPreset(preset)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setVoiceChangerParam(param: zego.ZegoVoiceChangerParam): void {
+    if (this._bridge) {
+      this._bridge.setVoiceChangerParam(param)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setReverbPreset(preset: zego.ZegoReverbPreset): void {
+    if (this._bridge) {
+      this._bridge.setReverbPreset(preset)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setReverbAdvancedParam(param: zego.ZegoReverbAdvancedParam): void {
+    if (this._bridge) {
+      this._bridge.setReverbAdvancedParam(param)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setReverbEchoParam(param: zego.ZegoReverbEchoParam): void {
+    if (this._bridge) {
+      this._bridge.setReverbEchoParam(param)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enableVirtualStereo(enable: boolean, angle: number): void {
+    if (this._bridge) {
+      this._bridge.enableVirtualStereo(enable, angle)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  enablePlayStreamVirtualStereo(enable: boolean, angle: number, streamID: string): void {
+    if (this._bridge) {
+      this._bridge.enablePlayStreamVirtualStereo(enable, angle, streamID)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  setElectronicEffects(enable: boolean, mode: zego.ZegoElectronicEffectsMode, tonal: number): void {
+    if (this._bridge) {
+      this._bridge.setElectronicEffects(enable, mode, tonal)
+    } else {
+      // TODO: Web
+    }
+  }
 }

@@ -188,6 +188,96 @@ export enum ZegoPublisherState {
   Publishing = 2,
 }
 
+/** Voice changer preset value. */
+export enum ZegoVoiceChangerPreset {
+  /** No Voice changer */
+  None = 0,
+  /** Male to child voice (loli voice effect) */
+  MenToChild = 1,
+  /** Male to female voice (kindergarten voice effect) */
+  MenToWomen = 2,
+  /** Female to child voice */
+  WomenToChild = 3,
+  /** Female to male voice */
+  WomenToMen = 4,
+  /** Foreigner voice effect */
+  Foreigner = 5,
+  /** Autobot Optimus Prime voice effect */
+  OptimusPrime = 6,
+  /** Android robot voice effect */
+  Android = 7,
+  /** Ethereal voice effect */
+  Ethereal = 8,
+  /** Magnetic(Male) voice effect */
+  MaleMagnetic = 9,
+  /** Fresh(Female) voice effect */
+  FemaleFresh = 10,
+  /** Electronic effects in C major voice effect */
+  MajorC = 11,
+  /** Electronic effects in A minor voice effect */
+  MinorA = 12,
+  /** Electronic effects in harmonic minor voice effect */
+  HarmonicMinor = 13,
+  /** Female Vitality Sound effect */
+  FemaleEnergetic = 14,
+  /** Richness effect */
+  RichNess = 15,
+  /** Muffled effect */
+  Muffled = 16,
+  /** Roundness effect */
+  Roundness = 17,
+  /** Falsetto effect */
+  Falsetto = 18,
+  /** Fullness effect */
+  Fullness = 19,
+  /** Clear effect */
+  Clear = 20,
+  /** Hight effect */
+  HighlyResonant = 21,
+  /** Loud clear effect */
+  LoudClear = 22,
+  /** Minions effect */
+  Minions = 23,
+}
+
+/** Reverberation preset value. */
+export enum ZegoReverbPreset {
+  /** No Reverberation */
+  None = 0,
+  /** Soft room reverb effect */
+  SoftRoom = 1,
+  /** Large room reverb effect */
+  LargeRoom = 2,
+  /** Concert hall reverb effect */
+  ConcertHall = 3,
+  /** Valley reverb effect */
+  Valley = 4,
+  /** Recording studio reverb effect */
+  RecordingStudio = 5,
+  /** Basement reverb effect */
+  Basement = 6,
+  /** KTV reverb effect */
+  KTV = 7,
+  /** Popular reverb effect */
+  Popular = 8,
+  /** Rock reverb effect */
+  Rock = 9,
+  /** Vocal concert reverb effect */
+  VocalConcert = 10,
+  /** Gramophone reverb effect */
+  GramoPhone = 11,
+}
+
+/** Mode of Electronic Effects. */
+export enum ZegoElectronicEffectsMode {
+  /** Major */
+  Major = 0,
+  /** Minor */
+  Minor = 1,
+  /** Harmonic Minor */
+  HarmonicMinor = 2,
+}
+
 /** Video configuration resolution and bitrate preset enumeration. The preset resolutions are adapted for mobile and desktop. On mobile, height is longer than width, and desktop is the opposite. For example, 1080p is actually 1080(w) x 1920(h) on mobile and 1920(w) x 1080(h) on desktop. */
 export enum ZegoVideoConfigPreset {
   /** Set the resolution to 320x180, the default is 15 fps, the code rate is 300 kbps */
@@ -302,6 +392,28 @@ export enum ZegoVideoStreamType {
   Small = 1,
   /** big resolution type */
   Big = 2,
+}
+
+/** Audio echo cancellation mode. */
+export enum ZegoAECMode {
+  /** Aggressive echo cancellation may affect the sound quality slightly, but the echo will be very clean. */
+  Aggressive = 0,
+  /** Moderate echo cancellation, which may slightly affect a little bit of sound, but the residual echo will be less. */
+  Medium = 1,
+  /** Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening. */
+  Soft = 2,
+}
+
+/** Active Noise Suppression mode. */
+export enum ZegoANSMode {
+  /** Soft ANS. In most instances, the sound quality will not be damaged, but some noise will remain. */
+  Soft = 0,
+  /** Medium ANS. It may damage some sound quality, but it has a good noise reduction effect. */
+  Medium = 1,
+  /** Aggressive ANS. It may significantly impair the sound quality, but it has a good noise reduction effect. */
+  Aggressive = 2,
+  /** AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use. */
+  AI = 3,
 }
 
 /** Video transmission mode when current bitrate is lower than the set minimum bitrate. */
@@ -975,6 +1087,90 @@ export class ZegoVideoConfig {
 }
 
 /**
+ * Voice changer parameter.
+ *
+ * Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
+ */
+export class ZegoVoiceChangerParam {
+  /** Pitch parameter, value range [-12.0, 12.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note the tone-shifting sound effect is only effective for the sound played by the media player, and does not change the tone collected by the microphone. Note that on v2.18.0 and older version, the value range is [-8.0, 8.0]. */
+  pitch: number
+
+  constructor() {
+    this.pitch = 0
+  }
+}
+
+/**
+ * Audio reverberation advanced parameters.
+ *
+ * Developers can use the SDK's built-in presets to change the parameters of the reverb.
+ */
+export class ZegoReverbAdvancedParam {
+  /** Room size(%), in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb. */
+  roomSize: number
+
+  /** Echo(%), in the range [0.0, 100.0], to control the trailing length of the reverb. */
+  reverberance: number
+
+  /** Reverb Damping(%), range [0.0, 100.0], controls the attenuation of the reverb, the higher the damping, the higher the attenuation. */
+  damping: number
+
+  /** only wet */
+  wetOnly: boolean
+
+  /** wet gain(dB), range [-20.0, 10.0] */
+  wetGain: number
+
+  /** dry gain(dB), range [-20.0, 10.0] */
+  dryGain: number
+
+  /** Tone Low. 100% by default */
+  toneLow: number
+
+  /** Tone High. 100% by default */
+  toneHigh: number
+
+  /** PreDelay(ms), range [0.0, 200.0] */
+  preDelay: number
+
+  /** Stereo Width(%). 0% by default */
+  stereoWidth: number
+
+  constructor() {
+    this.roomSize = 0
+    this.reverberance = 0
+    this.damping = 0
+    this.wetOnly = false
+    this.wetGain = 0
+    this.dryGain = 0
+    this.toneLow = 100
+    this.toneHigh = 100
+    this.preDelay = 0
+    this.stereoWidth = 0
+  }
+}
+
+/**
+ * Audio reverberation echo parameters.
+ */
+export class ZegoReverbEchoParam {
+  /** Gain of input audio signal, in the range [0.0, 1.0] */
+  inGain: number
+
+  /** Gain of output audio signal, in the range [0.0, 1.0] */
+  outGain: number
+
+  /** Number of echos, in the range [0, 7] */
+  numDelays: number
+
+  /** Respective delay of echo signal, in milliseconds, in the range [0, 5000] ms */
+  delay: number[]
+
+  /** Respective decay coefficient of echo signal, in the range [0.0, 1.0] */
+  decay: number[]
+}
+
+/**
  * User object.
  *
  * Configure user ID and username to identify users in the room.
@@ -1361,6 +1557,32 @@ export class ZegoPerformanceStatus {
 
   /** Current memory used of the app, in MB */
   memoryUsedApp: number
+}
+
+/**
+ * Beauty configuration param.
+ *
+ * Configure the whiten, rosy, smooth, and sharpen parameters for beauty.
+ */
+export class ZegoEffectsBeautyParam {
+  /** The whiten intensity parameter, the value range is [0,100], and the default is 50. */
+  whitenIntensity: number
+
+  /** the rosy intensity parameter, value range [0,100], and the default is 50. */
+  rosyIntensity: number
+
+  /** the smooth intensity parameter, value range [0,100], and the default is 50. */
+  smoothIntensity: number
+
+  /** the sharpen intensity parameter, value range [0,100], and the default is 50. */
+  sharpenIntensity: number
+
+  constructor() {
+    this.whitenIntensity = 50
+    this.rosyIntensity = 50
+    this.smoothIntensity = 50
+    this.sharpenIntensity = 50
+  }
 }
 
 /**

@@ -151,4 +151,27 @@ declare class ZegoExpressBridge {
   stopAudioVADStableStateMonitor(type: number): void
   getCurrentAudioDevice(deviceType: number): Object
   // #endregion
+
+  // #region Device module
+  enableAEC(enable: boolean): void
+  enableHeadphoneAEC(enable: boolean): void
+  setAECMode(mode: number): void
+  enableAGC(enable: boolean): void
+  enableANS(enable: boolean): void
+  enableTransientANS(enable: boolean): void
+  setANSMode(mode: number): void
+  startEffectsEnv(): void
+  stopEffectsEnv(): void
+  enableEffectsBeauty(enable: boolean): void
+  setEffectsBeautyParam(param: Object): void
+  setAudioEqualizerGain(bandIndex: number, bandGain: number): void
+  setVoiceChangerPreset(preset: number): void
+  setVoiceChangerParam(param: Object): void
+  setReverbPreset(preset: number): void
+  setReverbAdvancedParam(param: Object): void
+  setReverbEchoParam(param: Object): void
+  enableVirtualStereo(enable: boolean, angle: number): void
+  enablePlayStreamVirtualStereo(enable: boolean, angle: number, streamID: string): void
+  setElectronicEffects(enable: boolean, mode: number, tonal: number): void
+  // #endregion
 }
