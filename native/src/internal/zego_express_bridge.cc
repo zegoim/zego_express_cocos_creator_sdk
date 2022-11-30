@@ -716,7 +716,9 @@ void ZegoExpressBridge::setAudioDeviceMode(int deviceMode) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setAudioDeviceMode(ZegoAudioDeviceMode(deviceMode));
+#endif
 }
 
 bool ZegoExpressBridge::isAudioDeviceMuted(int deviceType, const std::string &deviceID) {
@@ -737,14 +739,20 @@ int ZegoExpressBridge::getAudioRouteType() {
     if (!native_engine_) {
         return 0;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     return native_engine_->getAudioRouteType();
+#else
+    return 0;
+#endif
 }
 
 void ZegoExpressBridge::setAudioRouteToSpeaker(bool defaultToSpeaker) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setAudioRouteToSpeaker(defaultToSpeaker);
+#endif
 }
 
 void ZegoExpressBridge::enableCamera(bool enable, int channel) {
@@ -758,64 +766,86 @@ void ZegoExpressBridge::useFrontCamera(bool enable, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->useFrontCamera(enable, ZegoPublishChannel(channel));
+#endif
 }
 
 bool ZegoExpressBridge::isCameraFocusSupported(int channel) {
     if (!native_engine_) {
         return false;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     return native_engine_->isCameraFocusSupported(ZegoPublishChannel(channel));
+#else
+    return false;
+#endif
 }
 
 void ZegoExpressBridge::setCameraFocusMode(int mode, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraFocusMode(ZegoCameraFocusMode(mode), ZegoPublishChannel(channel));
+#endif
 }
 
 void ZegoExpressBridge::setCameraFocusPointInPreview(float x, float y, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraFocusPointInPreview(x, y, ZegoPublishChannel(channel));
+#endif
 }
 
 void ZegoExpressBridge::setCameraExposureMode(int mode, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraExposureMode(ZegoCameraExposureMode(mode),
                                           ZegoPublishChannel(channel));
+#endif
 }
 
 void ZegoExpressBridge::setCameraExposurePointInPreview(float x, float y, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraExposurePointInPreview(x, y, ZegoPublishChannel(channel));
+#endif
 }
 
 void ZegoExpressBridge::setCameraExposureCompensation(float value, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraExposureCompensation(value, ZegoPublishChannel(channel));
+#endif
 }
 
 void ZegoExpressBridge::setCameraZoomFactor(float factor, int channel) {
     if (!native_engine_) {
         return;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     native_engine_->setCameraZoomFactor(factor, ZegoPublishChannel(channel));
+#endif
 }
 
 float ZegoExpressBridge::getCameraMaxZoomFactor(int channel) {
     if (!native_engine_) {
         return 0;
     }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     return native_engine_->getCameraMaxZoomFactor(ZegoPublishChannel(channel));
+#else
+    return 0;
+#endif
 }
 
 void ZegoExpressBridge::enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, int channel) {
