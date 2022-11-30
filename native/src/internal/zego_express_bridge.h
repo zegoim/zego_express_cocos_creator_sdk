@@ -157,6 +157,29 @@ class ZegoExpressBridge {
     void startAudioVADStableStateMonitor(int type, int millisecond);
     void stopAudioVADStableStateMonitor(int type);
     se::Object *getCurrentAudioDevice(int deviceType);
+
+#pragma mark - Device module
+  public:
+    void enableAEC(bool enable);
+    void enableHeadphoneAEC(bool enable);
+    void setAECMode(int mode);
+    void enableAGC(bool enable);
+    void enableANS(bool enable);
+    void enableTransientANS(bool enable);
+    void setANSMode(int mode);
+    void startEffectsEnv();
+    void stopEffectsEnv();
+    void enableEffectsBeauty(bool enable);
+    void setEffectsBeautyParam(const se::Value &param);
+    void setAudioEqualizerGain(int bandIndex, float bandGain);
+    void setVoiceChangerPreset(int preset);
+    void setVoiceChangerParam(const se::Value &param);
+    void setReverbPreset(int preset);
+    void setReverbAdvancedParam(const se::Value &param);
+    void setReverbEchoParam(const se::Value &param);
+    void enableVirtualStereo(bool enable, int angle);
+    void enablePlayStreamVirtualStereo(bool enable, int angle, const std::string &streamID);
+    void setElectronicEffects(bool enable, int mode, int tonal);
 };
 
 } // namespace zego::cocos

@@ -946,4 +946,228 @@ se::Object *ZegoExpressBridge::getCurrentAudioDevice(int deviceType) {
     return se_device;
 }
 
+void ZegoExpressBridge::enableAEC(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableAEC(enable);
+}
+
+void ZegoExpressBridge::enableHeadphoneAEC(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
+    native_engine_->enableHeadphoneAEC(enable);
+#endif
+}
+
+void ZegoExpressBridge::setAECMode(int mode) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAECMode(ZegoAECMode(mode));
+}
+
+void ZegoExpressBridge::enableAGC(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableAGC(enable);
+}
+
+void ZegoExpressBridge::enableANS(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableANS(enable);
+}
+
+void ZegoExpressBridge::enableTransientANS(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableTransientANS(enable);
+}
+
+void ZegoExpressBridge::setANSMode(int mode) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setANSMode(ZegoANSMode(mode));
+}
+
+void ZegoExpressBridge::startEffectsEnv() {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startEffectsEnv();
+}
+
+void ZegoExpressBridge::stopEffectsEnv() {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopEffectsEnv();
+}
+
+void ZegoExpressBridge::enableEffectsBeauty(bool enable) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableEffectsBeauty(enable);
+}
+
+void ZegoExpressBridge::setEffectsBeautyParam(const se::Value &param) {
+    if (!native_engine_) {
+        return;
+    }
+    auto beauty_param = ZegoEffectsBeautyParam{};
+    se::Value js_whiten, js_rosy, js_smooth, js_sharpen;
+    if (param.toObject()->getProperty("whitenIntensity", &js_whiten) && js_whiten.isNumber()) {
+        beauty_param.whitenIntensity = js_whiten.toInt32();
+    }
+    if (param.toObject()->getProperty("rosyIntensity", &js_rosy) && js_rosy.isNumber()) {
+        beauty_param.rosyIntensity = js_rosy.toInt32();
+    }
+    if (param.toObject()->getProperty("smoothIntensity", &js_smooth) && js_smooth.isNumber()) {
+        beauty_param.smoothIntensity = js_smooth.toInt32();
+    }
+    if (param.toObject()->getProperty("sharpenIntensity", &js_sharpen) && js_sharpen.isNumber()) {
+        beauty_param.sharpenIntensity = js_sharpen.toInt32();
+    }
+    native_engine_->setEffectsBeautyParam(beauty_param);
+}
+
+void ZegoExpressBridge::setAudioEqualizerGain(int bandIndex, float bandGain) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setAudioEqualizerGain(bandIndex, bandGain);
+}
+
+void ZegoExpressBridge::setVoiceChangerPreset(int preset) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setVoiceChangerPreset(ZegoVoiceChangerPreset(preset));
+}
+
+void ZegoExpressBridge::setVoiceChangerParam(const se::Value &param) {
+    if (!native_engine_) {
+        return;
+    }
+    auto voice_changer_param = ZegoVoiceChangerParam{};
+    se::Value js_pitch;
+    if (param.toObject()->getProperty("pitch", &js_pitch) && js_pitch.isNumber()) {
+        voice_changer_param.pitch = js_pitch.toFloat();
+    }
+    native_engine_->setVoiceChangerParam(voice_changer_param);
+}
+
+void ZegoExpressBridge::setReverbPreset(int preset) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setReverbPreset(ZegoReverbPreset(preset));
+}
+
+void ZegoExpressBridge::setReverbAdvancedParam(const se::Value &param) {
+    if (!native_engine_) {
+        return;
+    }
+    auto reverb_param = ZegoReverbAdvancedParam{};
+    se::Value js_room_size, js_reverberance, js_damping, js_wet_only, js_wet_gain, js_dry_gain,
+        js_tone_low, js_tone_high, js_pre_delay, js_stereo_width;
+    if (param.toObject()->getProperty("roomSize", &js_room_size) && js_room_size.isNumber()) {
+        reverb_param.roomSize = js_room_size.toFloat();
+    }
+    if (param.toObject()->getProperty("reverberance", &js_reverberance) &&
+        js_reverberance.isNumber()) {
+        reverb_param.reverberance = js_reverberance.toFloat();
+    }
+    if (param.toObject()->getProperty("damping", &js_damping) && js_damping.isNumber()) {
+        reverb_param.damping = js_damping.toFloat();
+    }
+    if (param.toObject()->getProperty("wetOnly", &js_wet_only) && js_wet_only.isBoolean()) {
+        reverb_param.wetOnly = js_wet_only.toBoolean();
+    }
+    if (param.toObject()->getProperty("wetGain", &js_wet_gain) && js_wet_gain.isNumber()) {
+        reverb_param.wetGain = js_wet_gain.toFloat();
+    }
+    if (param.toObject()->getProperty("dryGain", &js_dry_gain) && js_dry_gain.isNumber()) {
+        reverb_param.dryGain = js_dry_gain.toFloat();
+    }
+    if (param.toObject()->getProperty("toneLow", &js_tone_low) && js_tone_low.isNumber()) {
+        reverb_param.toneLow = js_tone_low.toFloat();
+    }
+    if (param.toObject()->getProperty("toneHigh", &js_tone_high) && js_tone_high.isNumber()) {
+        reverb_param.toneHigh = js_tone_high.toFloat();
+    }
+    if (param.toObject()->getProperty("preDelay", &js_pre_delay) && js_pre_delay.isNumber()) {
+        reverb_param.preDelay = js_pre_delay.toFloat();
+    }
+    if (param.toObject()->getProperty("stereoWidth", &js_stereo_width) &&
+        js_stereo_width.isNumber()) {
+        reverb_param.stereoWidth = js_stereo_width.toFloat();
+    }
+    native_engine_->setReverbAdvancedParam(reverb_param);
+}
+
+void ZegoExpressBridge::setReverbEchoParam(const se::Value &param) {
+    if (!native_engine_) {
+        return;
+    }
+    auto echo_param = ZegoReverbEchoParam{};
+    se::Value js_in_gain, js_out_gain, js_num_delays, js_delay, js_decay;
+    if (param.toObject()->getProperty("inGain", &js_in_gain) && js_in_gain.isNumber()) {
+        echo_param.inGain = js_in_gain.toFloat();
+    }
+    if (param.toObject()->getProperty("outGain", &js_out_gain) && js_out_gain.isNumber()) {
+        echo_param.outGain = js_out_gain.toFloat();
+    }
+    if (param.toObject()->getProperty("numDelays", &js_num_delays) && js_num_delays.isNumber()) {
+        echo_param.numDelays = js_num_delays.toInt32();
+    }
+    if (param.toObject()->getProperty("delay", &js_delay) && js_delay.isObject() &&
+        js_delay.toObject()->isArray()) {
+        auto delay = ccstd::vector<int>();
+        sevalue_to_native(js_delay, &delay);
+        for (int i = 0; i < delay.size(); i++) {
+            echo_param.delay[i] = delay[i];
+        }
+    }
+    if (param.toObject()->getProperty("decay", &js_decay) && js_decay.isObject() &&
+        js_decay.toObject()->isArray()) {
+        auto decay = ccstd::vector<float>();
+        sevalue_to_native(js_decay, &decay);
+        for (int i = 0; i < decay.size(); i++) {
+            echo_param.decay[i] = decay[i];
+        }
+    }
+    native_engine_->setReverbEchoParam(echo_param);
+}
+
+void ZegoExpressBridge::enableVirtualStereo(bool enable, int angle) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enableVirtualStereo(enable, angle);
+}
+
+void ZegoExpressBridge::enablePlayStreamVirtualStereo(bool enable, int angle,
+                                                      const std::string &streamID) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->enablePlayStreamVirtualStereo(enable, angle, streamID);
+}
+
+void ZegoExpressBridge::setElectronicEffects(bool enable, int mode, int tonal) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->setElectronicEffects(enable, ZegoElectronicEffectsMode(mode), tonal);
+}
+
 } // namespace zego::cocos
