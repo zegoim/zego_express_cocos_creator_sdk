@@ -11,9 +11,11 @@ export class ZegoTextureRendererController {
     rotation: number,
     flipMode: number
   ) {
-    // console.log("js onCapturedVideoFrameRawData!!! dataLength:", dataLength, "w:", width, "h:", height)
-
     let sprite = this.localViews.get(channel)
+    if (!sprite) {
+      return
+    }
+
     let texture = new Texture2D()
     texture.reset({
       width: width,
@@ -33,9 +35,11 @@ export class ZegoTextureRendererController {
     height: number,
     rotation: number
   ) {
-    // console.log("js onRemoteVideoFrameRawData!!! dataLength:", dataLength, "w:", width, "h:", height)
-
     let sprite = this.remoteViews.get(streamID)
+    if (!sprite) {
+      return
+    }
+
     let texture = new Texture2D()
     texture.reset({
       width: width,
