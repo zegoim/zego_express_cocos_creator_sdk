@@ -46,7 +46,7 @@ void ZegoExpressEventHandler::onApiCalledResult(int errorCode, const std::string
     RunOnCocosThread([=]() {
         se::AutoHandleScope hs;
         se::Value method;
-        if (api_called_callback_->toObject()->getProperty("onApiCalledResult", &method)) {
+        if (api_called_callback_ && api_called_callback_->isObject() && api_called_callback_->toObject()->getProperty("onApiCalledResult", &method)) {
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
