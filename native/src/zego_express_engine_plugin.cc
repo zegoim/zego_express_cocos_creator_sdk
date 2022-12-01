@@ -99,6 +99,79 @@ bool RegisterExpressBridge(se::Object *ns) {
     bridge.function("enableCheckPoc", &ZegoExpressBridge::enableCheckPoc);
     bridge.function("isVideoDecoderSupported", &ZegoExpressBridge::isVideoDecoderSupported);
 
+    bridge.function("muteMicrophone", &ZegoExpressBridge::muteMicrophone);
+    bridge.function("isMicrophoneMuted", &ZegoExpressBridge::isMicrophoneMuted);
+    bridge.function("muteSpeaker", &ZegoExpressBridge::muteSpeaker);
+    bridge.function("isSpeakerMuted", &ZegoExpressBridge::isSpeakerMuted);
+    bridge.function("getAudioDeviceList", &ZegoExpressBridge::getAudioDeviceList);
+    bridge.function("getDefaultAudioDeviceID", &ZegoExpressBridge::getDefaultAudioDeviceID);
+    bridge.function("useAudioDevice", &ZegoExpressBridge::useAudioDevice);
+    bridge.function("getAudioDeviceVolume", &ZegoExpressBridge::getAudioDeviceVolume);
+    bridge.function("setAudioDeviceVolume", &ZegoExpressBridge::setAudioDeviceVolume);
+    bridge.function("startAudioDeviceVolumeMonitor",
+                    &ZegoExpressBridge::startAudioDeviceVolumeMonitor);
+    bridge.function("stopAudioDeviceVolumeMonitor",
+                    &ZegoExpressBridge::stopAudioDeviceVolumeMonitor);
+    bridge.function("muteAudioDevice", &ZegoExpressBridge::muteAudioDevice);
+    bridge.function("setAudioDeviceMode", &ZegoExpressBridge::setAudioDeviceMode);
+    bridge.function("isAudioDeviceMuted", &ZegoExpressBridge::isAudioDeviceMuted);
+    bridge.function("enableAudioCaptureDevice", &ZegoExpressBridge::enableAudioCaptureDevice);
+    bridge.function("getAudioRouteType", &ZegoExpressBridge::getAudioRouteType);
+    bridge.function("setAudioRouteToSpeaker", &ZegoExpressBridge::setAudioRouteToSpeaker);
+    bridge.function("enableCamera", &ZegoExpressBridge::enableCamera);
+    bridge.function("useFrontCamera", &ZegoExpressBridge::useFrontCamera);
+    bridge.function("isCameraFocusSupported", &ZegoExpressBridge::isCameraFocusSupported);
+    bridge.function("setCameraFocusMode", &ZegoExpressBridge::setCameraFocusMode);
+    bridge.function("setCameraFocusPointInPreview",
+                    &ZegoExpressBridge::setCameraFocusPointInPreview);
+    bridge.function("setCameraExposureMode", &ZegoExpressBridge::setCameraExposureMode);
+    bridge.function("setCameraExposurePointInPreview",
+                    &ZegoExpressBridge::setCameraExposurePointInPreview);
+    bridge.function("setCameraExposureCompensation",
+                    &ZegoExpressBridge::setCameraExposureCompensation);
+    bridge.function("setCameraZoomFactor", &ZegoExpressBridge::setCameraZoomFactor);
+    bridge.function("getCameraMaxZoomFactor", &ZegoExpressBridge::getCameraMaxZoomFactor);
+    bridge.function("enableCameraAdaptiveFPS", &ZegoExpressBridge::enableCameraAdaptiveFPS);
+    bridge.function("useVideoDevice", &ZegoExpressBridge::useVideoDevice);
+    bridge.function("getVideoDeviceList", &ZegoExpressBridge::getVideoDeviceList);
+    bridge.function("getDefaultVideoDeviceID", &ZegoExpressBridge::getDefaultVideoDeviceID);
+    bridge.function("startSoundLevelMonitor", &ZegoExpressBridge::startSoundLevelMonitor);
+    bridge.function("stopSoundLevelMonitor", &ZegoExpressBridge::stopSoundLevelMonitor);
+    bridge.function("startAudioSpectrumMonitor", &ZegoExpressBridge::startAudioSpectrumMonitor);
+    bridge.function("stopAudioSpectrumMonitor", &ZegoExpressBridge::stopAudioSpectrumMonitor);
+    bridge.function("enableHeadphoneMonitor", &ZegoExpressBridge::enableHeadphoneMonitor);
+    bridge.function("setHeadphoneMonitorVolume", &ZegoExpressBridge::setHeadphoneMonitorVolume);
+    bridge.function("enableMixSystemPlayout", &ZegoExpressBridge::enableMixSystemPlayout);
+    bridge.function("setMixSystemPlayoutVolume", &ZegoExpressBridge::setMixSystemPlayoutVolume);
+    bridge.function("enableMixEnginePlayout", &ZegoExpressBridge::enableMixEnginePlayout);
+    bridge.function("startAudioVADStableStateMonitor",
+                    &ZegoExpressBridge::startAudioVADStableStateMonitor);
+    bridge.function("stopAudioVADStableStateMonitor",
+                    &ZegoExpressBridge::stopAudioVADStableStateMonitor);
+    bridge.function("getCurrentAudioDevice", &ZegoExpressBridge::getCurrentAudioDevice);
+
+    bridge.function("enableAEC", &ZegoExpressBridge::enableAEC);
+    bridge.function("enableHeadphoneAEC", &ZegoExpressBridge::enableHeadphoneAEC);
+    bridge.function("setAECMode", &ZegoExpressBridge::setAECMode);
+    bridge.function("enableAGC", &ZegoExpressBridge::enableAGC);
+    bridge.function("enableANS", &ZegoExpressBridge::enableANS);
+    bridge.function("enableTransientANS", &ZegoExpressBridge::enableTransientANS);
+    bridge.function("setANSMode", &ZegoExpressBridge::setANSMode);
+    bridge.function("startEffectsEnv", &ZegoExpressBridge::startEffectsEnv);
+    bridge.function("stopEffectsEnv", &ZegoExpressBridge::stopEffectsEnv);
+    bridge.function("enableEffectsBeauty", &ZegoExpressBridge::enableEffectsBeauty);
+    bridge.function("setEffectsBeautyParam", &ZegoExpressBridge::setEffectsBeautyParam);
+    bridge.function("setAudioEqualizerGain", &ZegoExpressBridge::setAudioEqualizerGain);
+    bridge.function("setVoiceChangerPreset", &ZegoExpressBridge::setVoiceChangerPreset);
+    bridge.function("setVoiceChangerParam", &ZegoExpressBridge::setVoiceChangerParam);
+    bridge.function("setReverbPreset", &ZegoExpressBridge::setReverbPreset);
+    bridge.function("setReverbAdvancedParam", &ZegoExpressBridge::setReverbAdvancedParam);
+    bridge.function("setReverbEchoParam", &ZegoExpressBridge::setReverbEchoParam);
+    bridge.function("enableVirtualStereo", &ZegoExpressBridge::enableVirtualStereo);
+    bridge.function("enablePlayStreamVirtualStereo",
+                    &ZegoExpressBridge::enablePlayStreamVirtualStereo);
+    bridge.function("setElectronicEffects", &ZegoExpressBridge::setElectronicEffects);
+
     bridge.install(ns);
     return true;
 }
