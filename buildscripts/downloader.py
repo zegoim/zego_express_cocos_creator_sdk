@@ -62,7 +62,9 @@ class Downloader:
                 lib_version = f.readline().strip()
             assert len(lib_version.split('.')) == 4
             if self.lib_version:
-                assert self.lib_version == lib_version
+                # All libraries should be the same [major, minor] version
+                assert self.lib_version.split('.')[0] == lib_version.split('.')[0]
+                assert self.lib_version.split('.')[1] == lib_version.split('.')[1]
             self.lib_version = lib_version
 
     def get_lib_version(self) -> str:
