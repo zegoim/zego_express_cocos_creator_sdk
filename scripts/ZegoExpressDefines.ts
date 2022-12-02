@@ -1268,6 +1268,10 @@ export class ZegoRoiRect {
 export class ZegoCanvas {
   /** View object */
   view: Sprite
+
+  constructor(view?: Sprite) {
+    this.view = view ?? undefined
+  }
 }
 
 /**
