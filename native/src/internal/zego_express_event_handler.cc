@@ -46,7 +46,8 @@ void ZegoExpressEventHandler::onApiCalledResult(int errorCode, const std::string
     RunOnCocosThread([=]() {
         se::AutoHandleScope hs;
         se::Value method;
-        if (api_called_callback_ && api_called_callback_->isObject() && api_called_callback_->toObject()->getProperty("onApiCalledResult", &method)) {
+        if (api_called_callback_ && api_called_callback_->isObject() &&
+            api_called_callback_->toObject()->getProperty("onApiCalledResult", &method)) {
             if (!method.isObject() || !method.toObject()->isFunction()) {
                 return;
             }
@@ -1172,6 +1173,31 @@ void ZegoExpressEventHandler::onAudioVADStateUpdate(ZegoAudioVADStableStateMonit
             nativevalue_to_se(type, js_type, nullptr);
             nativevalue_to_se(state, js_state, nullptr);
             se::ValueArray args{js_type, js_state};
+            method.toObject()->call(args, event_handler_->toObject());
+        }
+    });
+}
+
+void ZegoExpressEventHandler::onPerformanceStatusUpdate(const ZegoPerformanceStatus &status) {
+    if (!event_handler_) {
+        return;
+    }
+    RunOnCocosThread([=]() {
+        se::AutoHandleScope hs;
+        se::Value method;
+        if (event_handler_->toObject()->getProperty("onPerformanceStatusUpdate", &method)) {
+            if (!method.isObject() || !method.toObject()->isFunction()) {
+                return;
+            }
+            auto se_status = se::Object::createPlainObject();
+            se_status->setProperty("cpuUsageApp", se::Value(status.cpuUsageApp));
+            se_status->setProperty("cpuUsageSystem", se::Value(status.cpuUsageSystem));
+            se_status->setProperty("memoryUsageApp", se::Value(status.memoryUsageApp));
+            se_status->setProperty("memoryUsageSystem", se::Value(status.memoryUsageSystem));
+            se_status->setProperty("memoryUsedApp", se::Value(status.memoryUsedApp));
+            se::Value js_status;
+            nativevalue_to_se(se_status, js_status, nullptr);
+            se::ValueArray args{js_status};
             method.toObject()->call(args, event_handler_->toObject());
         }
     });

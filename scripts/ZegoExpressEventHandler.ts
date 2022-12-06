@@ -716,6 +716,19 @@ export interface ZegoEventHandler {
     type: zego.ZegoAudioVADStableStateMonitorType,
     state: zego.ZegoAudioVADType
   ): void
+
+  /**
+   * System performance monitoring callback.
+   *
+   * Available since: 1.19.0
+   * Description: System performance monitoring callback. The callback notification period is the value of millisecond parameter set by call [startPerformanceMonitor].
+   * Use cases: Monitor system performance can help user quickly locate and solve performance problems and improve user experience.
+   * When to trigger: It will triggered after [createEngine], and call [startPerformanceMonitor] to start system performance monitoring.
+   * Restrictions: None.
+   *
+   * @param status System performance monitoring status.
+   */
+  onPerformanceStatusUpdate?(status: zego.ZegoPerformanceStatus): void
 }
 
 export interface ZegoApiCalledEventHandler {

@@ -174,4 +174,9 @@ declare class ZegoExpressBridge {
   enablePlayStreamVirtualStereo(enable: boolean, angle: number, streamID: string): void
   setElectronicEffects(enable: boolean, mode: number, tonal: number): void
   // #endregion
+
+  // #region Utility module
+  startPerformanceMonitor(millisecond: number): void
+  stopPerformanceMonitor(): void
+  // #endregion
 }

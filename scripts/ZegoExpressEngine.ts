@@ -2065,4 +2065,35 @@ export class ZegoExpressEngine {
   setElectronicEffects(enable: boolean, mode: zego.ZegoElectronicEffectsMode, tonal: number): void {
     return ZegoExpressEngineImpl.instance.setElectronicEffects(enable, mode, tonal)
   }
+
+  /**
+   * Start system performance monitoring.
+   *
+   * Available since: 1.19.0
+   * Description: Start system performance monitoring, monitor system or App's CPU usage and memory usage. Support set the monitoring interval.
+   * Use cases: Monitor system performance can help user quickly locate and solve performance problems and improve user experience.
+   * When to call: It needs to be called after [createEngine].
+   * Restrictions: None.
+   * Related callbacks: After starting monitoring, you can receive system performance status via [onPerformanceStatusUpdate] callback. [onPerformanceStatusUpdate] callback notification period is the value set by millisecond parameter.
+   * Related APIs: Call [stopPerformanceMonitor] to stop system performance monitoring.
+   *
+   * @param millisecond Monitoring time period(in milliseconds), the value range is [1000, 10000]. Default value is 2000 ms.
+   */
+  startPerformanceMonitor(millisecond?: number): void {
+    return ZegoExpressEngineImpl.instance.startPerformanceMonitor(millisecond)
+  }
+
+  /**
+   * Stop system performance monitoring.
+   *
+   * Available since: 1.19.0
+   * Description: Stop system performance monitoring. After the monitoring is stopped, the [onPerformanceStatusUpdate] callback will not triggered.
+   * Use cases: Monitor system performance can help user quickly locate and solve performance problems and improve user experience.
+   * When to call: It needs to be called after [createEngine].
+   * Restrictions: None.
+   * Related APIs: Call [startPerformanceMonitor] to start system performance monitoring.
+   */
+  stopPerformanceMonitor(): void {
+    return ZegoExpressEngineImpl.instance.stopPerformanceMonitor()
+  }
 }

@@ -180,6 +180,11 @@ class ZegoExpressBridge {
     void enableVirtualStereo(bool enable, int angle);
     void enablePlayStreamVirtualStereo(bool enable, int angle, const std::string &streamID);
     void setElectronicEffects(bool enable, int mode, int tonal);
+
+#pragma mark - Utility module
+  public:
+    void startPerformanceMonitor(unsigned int millisecond);
+    void stopPerformanceMonitor();
 };
 
 } // namespace zego::cocos

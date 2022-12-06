@@ -1068,4 +1068,20 @@ export class ZegoExpressEngineImpl {
       // TODO: Web
     }
   }
+
+  startPerformanceMonitor(millisecond?: number): void {
+    if (this._bridge) {
+      this._bridge.startPerformanceMonitor(millisecond ?? 2000)
+    } else {
+      // TODO: Web
+    }
+  }
+
+  stopPerformanceMonitor(): void {
+    if (this._bridge) {
+      this._bridge.stopPerformanceMonitor()
+    } else {
+      // TODO: Web
+    }
+  }
 }

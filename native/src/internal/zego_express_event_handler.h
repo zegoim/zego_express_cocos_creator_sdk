@@ -163,6 +163,8 @@ class ZegoExpressEventHandler : public std::enable_shared_from_this<ZegoExpressE
 
     void onAudioVADStateUpdate(ZegoAudioVADStableStateMonitorType type,
                                ZegoAudioVADType state) override;
+
+    void onPerformanceStatusUpdate(const ZegoPerformanceStatus &status) override;
 };
 
 } // namespace zego::cocos

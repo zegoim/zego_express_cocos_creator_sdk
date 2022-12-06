@@ -1200,4 +1200,18 @@ void ZegoExpressBridge::setElectronicEffects(bool enable, int mode, int tonal) {
     native_engine_->setElectronicEffects(enable, ZegoElectronicEffectsMode(mode), tonal);
 }
 
+void ZegoExpressBridge::startPerformanceMonitor(unsigned int millisecond) {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->startPerformanceMonitor(millisecond);
+}
+
+void ZegoExpressBridge::stopPerformanceMonitor() {
+    if (!native_engine_) {
+        return;
+    }
+    native_engine_->stopPerformanceMonitor();
+}
+
 } // namespace zego::cocos

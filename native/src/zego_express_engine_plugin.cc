@@ -172,6 +172,9 @@ bool RegisterExpressBridge(se::Object *ns) {
                     &ZegoExpressBridge::enablePlayStreamVirtualStereo);
     bridge.function("setElectronicEffects", &ZegoExpressBridge::setElectronicEffects);
 
+    bridge.function("startPerformanceMonitor", &ZegoExpressBridge::startPerformanceMonitor);
+    bridge.function("stopPerformanceMonitor", &ZegoExpressBridge::stopPerformanceMonitor);
+
     bridge.install(ns);
     return true;
 }
