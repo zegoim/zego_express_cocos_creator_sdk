@@ -18,3 +18,7 @@ target_link_libraries(zego_express_engine_plugin
     "${ZEGO_EXPRESS_LIBRARY_PATH}/ZegoExpressEngine.lib"
     ${ENGINE_NAME} # cocos_engine
 )
+
+set(POST_PROCESSER "${CMAKE_CURRENT_LIST_DIR}/Post-CopyDll.cmake")
+set(NATIVE_ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../native/engine/win64")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${POST_PROCESSER} ${NATIVE_ENGINE_PATH})
