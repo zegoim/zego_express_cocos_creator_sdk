@@ -181,7 +181,7 @@ class ZegoExpressBridge {
     void enablePlayStreamVirtualStereo(bool enable, int angle, const std::string &streamID);
     void setElectronicEffects(bool enable, int mode, int tonal);
 
-#pragma mark - Utility module
+#pragma mark - Device module
   public:
     void startPerformanceMonitor(unsigned int millisecond);
     void stopPerformanceMonitor();

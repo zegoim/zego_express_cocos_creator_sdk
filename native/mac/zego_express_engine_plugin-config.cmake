@@ -15,6 +15,6 @@ target_link_libraries(zego_express_engine_plugin
     ${ENGINE_NAME} # cocos_engine
 )
 
-set(POST_PROCESSER "${CMAKE_CURRENT_LIST_DIR}/Post-EmbedFramework.cmake")
+set(POST_PROCESSER "${CMAKE_CURRENT_LIST_DIR}/Post-ZegoExpressEnginePlugin.cmake")
 set(NATIVE_ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../native/engine/mac")
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${POST_PROCESSER} ${NATIVE_ENGINE_PATH})
