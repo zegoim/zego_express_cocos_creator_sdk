@@ -42,6 +42,8 @@ def updateMainScript(restore=False):
 def main(argv):
     args = __parse_args(argv)
 
+    subprocess.check_call('npm install', shell=True)
+
     utils.run_clang_format()
     utils.run_prettier()
 
