@@ -58,7 +58,7 @@ def main(argv):
     os.makedirs(out_dir)
 
     # Update the main script
-    subprocess.check_call(['npm', 'run', 'build'])
+    subprocess.check_call('npm run build', shell=True)
 
     # Make a release script
     updateMainScript() 
