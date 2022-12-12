@@ -13,4 +13,4 @@ def run_clang_format():
     run_clang_format.main(cmd)
 
 def run_prettier():
-    subprocess.check_call(' '.join(['npx', 'prettier', '--write', PROJ_ROOT]), shell=True)
+    subprocess.check_call(' '.join(['npx', 'prettier', '--write', PROJ_ROOT]), shell=True, cwd=PROJ_ROOT)
