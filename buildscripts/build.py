@@ -42,7 +42,7 @@ def updateMainScript(restore=False):
 def main(argv):
     args = __parse_args(argv)
 
-    subprocess.check_call('npm install', shell=True)
+    subprocess.check_call('npm install', shell=True, cwd=PROJ_ROOT)
 
     utils.run_clang_format()
     utils.run_prettier()
@@ -60,7 +60,7 @@ def main(argv):
     os.makedirs(out_dir)
 
     # Update the main script
-    subprocess.check_call('npm run build', shell=True)
+    subprocess.check_call('npm run build', shell=True, cwd=PROJ_ROOT)
 
     # Make a release script
     updateMainScript() 
