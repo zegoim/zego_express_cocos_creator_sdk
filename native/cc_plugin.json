@@ -1,6 +1,6 @@
 {
     "name": "zego_express_engine_plugin",
-    "version": "2.22.0",
+    "version": "1",
     "author": "ZEGO",
     "engine-version": ">=3.6.0",
     "modules": [
