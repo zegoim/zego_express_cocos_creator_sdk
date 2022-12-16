@@ -46,6 +46,7 @@ def main(argv):
 
     utils.run_clang_format()
     utils.run_prettier()
+    utils.run_gitmoji_changelog()
 
     if not args.no_download_deps:
         downloader = Downloader()
