@@ -1,5 +1,8 @@
-# Modify this value when you want to build for iOS Simulator or Mac Catalyst
-set(IOS_VARIANT "DEVICE") # DEVICE / SIMULATOR / MACCATALYST
+# Set the variable "IOS_VARIANT" in your project's CMakeLists.txt
+# when you want to build for iOS Simulator or Mac Catalyst
+if(NOT DEFINED IOS_VARIANT)
+    set(IOS_VARIANT "DEVICE") # DEVICE / SIMULATOR / MACCATALYST
+endif()
 
 message(STATUS "[ZEGO] Building for ${IOS_VARIANT}")
 if(IOS_VARIANT STREQUAL "DEVICE")
