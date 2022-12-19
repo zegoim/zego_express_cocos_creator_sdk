@@ -416,6 +416,18 @@ export enum ZegoANSMode {
   AI = 3,
 }
 
+/** Traffic control property (bitmask enumeration). */
+export enum ZegoTrafficControlProperty {
+  /** Basic (Adaptive (reduce) video bitrate) */
+  Basic = 0,
+  /** Adaptive (reduce) video FPS */
+  AdaptiveFPS = 1,
+  /** Adaptive (reduce) video resolution */
+  AdaptiveResolution = 1 << 1,
+  /** Adaptive (reduce) audio bitrate */
+  AdaptiveAudioBitrate = 1 << 2,
+}
+
 /** Video transmission mode when current bitrate is lower than the set minimum bitrate. */
 export enum ZegoTrafficControlMinVideoBitrateMode {
   /** Stop video transmission when current bitrate is lower than the set minimum bitrate */
