@@ -695,6 +695,7 @@ export interface ZegoEventHandler {
    * Available since: 1.20.0
    * Description: Callback for device's audio route changed.
    * Trigger: This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+   * Platform differences: Only supports iOS and Android.
    *
    * @param audioRoute Current audio route.
    */

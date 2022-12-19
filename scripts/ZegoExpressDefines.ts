@@ -790,10 +790,16 @@ export enum ZegoAudioSampleRate {
 export enum ZegoAudioSourceType {
   /** Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default) */
   Default = 0,
-  /** Use custom audio capture, refer to [enableCustomAudioIO] */
+  /** Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource] */
   Custom = 1,
   /** Use media player as audio source, only support aux channel */
   MediaPlayer = 2,
+  /** No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  None = 3,
+  /** Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  Microphone = 4,
+  /** Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  MainPublishChannel = 5,
 }
 
 /** Record type. */
