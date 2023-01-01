@@ -236,6 +236,9 @@ export enum ZegoErrorCode {
   /** Description: The Token Nonce parameter type is incorrect. <br>Cause: The nonce parameter type of the generated Token is incorrect. <br>Solutions: Ensure that nonce is int64 data. */
   RoomTokenNoncetypeError = 1002080,
 
+  /** Description: Multi-room mode required. <br>Cause: Wrong room mode been used, e.g. single-room. <br>Solutions: Please use [setRoomMode] to select multi-room mode before the engine started. */
+  RoomMultiRoomRequired = 1002081,
+
   /** Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it. */
   RoomInnerError = 1002099,
 
@@ -968,12 +971,69 @@ export enum ZegoErrorCode {
   /** Description: Scene login retry has exceeded the maximum retry time. <br>Cause: Possibly due to network problems. <br>Solutions: Please check whether the network is working or switch the network environment. */
   RangeSceneRetryTimeout = 1019004,
 
+  /** Description: Scene connection is temporarily interrupted. <br>Cause: Possibly due to network problems. <br>Solutions: Please wait or check whether the network is normal. */
+  RangeSceneNetworkInterrupt = 1019005,
+
+  /** Description: Token verification failed. <br>Cause: The parameters passed in during token generation are inconsistent with the SDK. <br>Solutions: Please use the correct token regenerated. */
+  RangeSceneTokenIllegal = 1019006,
+
+  /** Description: Token expire. <br>Cause: Token expire or the generated Token validity period parameter type is incorrect. <br>Solutions: Regenerate the Token. */
+  RangeSceneTokenExpire = 1019007,
+
+  /** Description: Coordinates out of range. <br>Cause: Coordinates out of scene range. <br>Solutions: Please pass in the correct coordinates. */
+  RangeSceneCoordinateOutOfRange = 1019020,
+
+  /** Description: The item has been created. <br>Cause: The item has been created. <br>Solutions: The item has been created. You don't need to create it again. */
+  RangeSceneItemHasBeenCreated = 1019021,
+
+  /** Description: The item binding user exceeds the maximum limit. <br>Cause: The item binding user exceeds the maximum limit. <br>Solutions: The item binding user exceeds the maximum limit. Please try again later. */
+  RangeSceneItemBindExceedLimit = 1019022,
+
+  /** Description: The item does not exist. <br>Cause: The item does not exist. <br>Solutions: Please create an item first. */
+  RangeSceneItemNotExist = 1019023,
+
+  /** Description: The item is not bound. <br>Cause: The item is not bound. <br>Solutions: Please bind the item first. */
+  RangeSceneItemNotBind = 1019024,
+
+  /** Description: The item has been operated by others. <br>Cause: The item has been operated by others. <br>Solutions: Please try again later. */
+  RangeSceneItemCasFailed = 1019025,
+
+  /** Description: The binding capacity of the item exceeds the maximum limit. <br>Cause: The binding capacity of the item exceeds the maximum limit. <br>Solutions: Please use a capacity that does not exceed the maximum binding capacity to create an item. */
+  RangeSceneItemCapacityExceedLimit = 1019026,
+
+  /** Description: The user has bound the item to the maximum limit. <br>Cause: The user has bound the item to the maximum limit. <br>Solutions: Please unbind some items that do not need to be operated temporarily. */
+  RangeSceneUserBindItemExceedLimit = 1019027,
+
+  /** Description: The item is beyond the user's view. <br>Cause: The item is beyond the user's view. <br>Solutions: Please operate the item within the user's view. */
+  RangeSceneItemOutOfUserView = 1019028,
+
   /** Description: The number of RangeScene instances exceeds the maximum number allowed. <br>Cause: The number of RangeScene instances exceeds the maximum number allowed. Up to 1 instances can be created. <br> Solutions: RangeScene can create up to 1 instances, and make sure that the number of RangeScene instances is not exceeded the maximum limit. */
   RangeSceneExceedMaxCount = 1019030,
 
   /** Description: The number of joined RangeScene teams exceeds the maximum number allowed. <br>Cause: The number of joined RangeScene teams exceeds the maximum number allowed. Up to 5 are allowed by default. <br> Solutions: RangeScene teams can joined are up to 5, and make sure that the number of RangeScene teams joned is not exceeded the maximum limit. */
   RangeSceneTeamExceedMaxCount = 1019031,
 
+  /** Description: Team id already been used. <br>Cause: The team id already been used when join team. <br> Solutions: Use a new team id to join team. */
+  RangeSceneTeamIdOccupied = 1019032,
+
+  /** Description: Team id not exist. <br>Cause: Use incorrect team id when leave team. <br> Solutions: Use correct team id when leave team. */
+  RangeSceneTeamIdIncorrect = 1019033,
+
   /** Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it. */
   RangeSceneInnerError = 1019099,
+
+  /** Description: Startup screen capture failed. <br>Cause: The user refused to grant the app screen capture permission. <br>Solutions: Allow the app to capture screen permissions. */
+  ScreenCapturePermissionDenied = 1020000,
+
+  /** Description: Startup screen capture failed. <br>Cause: The current system version does not support screen capture. <br>Solutions: Use system version above Android 5 (API level 21). */
+  ScreenCaptureNotSupport = 1020001,
+
+  /** Description: Startup screen capture failed. <br>Cause: Unable to share the screen module. <br>Solutions: Please introduce screen sharing module resources, or contact technical support. */
+  ScreenCaptureSdkNoModule = 1020002,
+
+  /** Description: The function call failed. <br>Cause: No screen capture source instance has been created. <br>Solutions: Create a screen capture source instance. */
+  ScreenCaptureNoInstance = 1020003,
+
+  /** Description: Failed to create screen capture source. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing screen capture instance or destroy the previous instance. */
+  ScreenCaptureExceedMaxCount = 1020004,
 }
