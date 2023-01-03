@@ -13,8 +13,8 @@ def run_clang_format():
     run_clang_format.main(cmd)
 
 def run_prettier():
-    subprocess.check_call(' '.join(['npx', 'prettier', '--write', PROJ_ROOT]), shell=True, cwd=PROJ_ROOT)
+    subprocess.call(' '.join(['npx', '--yes', 'prettier', '--write', PROJ_ROOT]), shell=True, cwd=PROJ_ROOT)
 
 def run_gitmoji_changelog():
     if not os.environ.get('JENKINS_HOME') and not os.environ.get('CI'):
-        subprocess.check_call(' '.join(['npx', 'gitmoji-changelog']), shell=True, cwd=PROJ_ROOT)
+        subprocess.call(' '.join(['npx', '--yes', 'gitmoji-changelog']), shell=True, cwd=PROJ_ROOT)
