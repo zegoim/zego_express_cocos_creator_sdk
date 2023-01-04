@@ -26,6 +26,10 @@ void ZegoExpressBridge::setJsTextureRendererController(const se::Value &js_contr
 #pragma mark - Main module
 
 void ZegoExpressBridge::createEngine(unsigned int appID, const std::string &appSign, int scenario) {
+    ZegoEngineConfig engine_config{};
+    engine_config.advancedConfig = {{"thirdparty_framework_info", "cocoscreator"}};
+    ZegoExpressSDK::setEngineConfig(engine_config);
+
     auto profile = ZegoEngineProfile{};
     profile.appID = appID;
     profile.appSign = appSign;
