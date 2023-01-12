@@ -145,7 +145,7 @@ export interface ZegoEventHandler {
    * @param roomID Room ID where the user is logged in, a string of up to 128 bytes in length.
    * @param updateType Update type (add/delete).
    * @param streamList Updated stream list.
-   * @param extendedData Extended information with stream updates.
+   * @param extendedData Extended information with stream updates.When receiving a stream deletion notification, the developer can convert the string into a json object to get the stream_delete_reason field, which is an array of stream deletion reasons, and the stream_delete_reason[].code field may have the following values: 1 (the user actively stops publishing stream) ; 2 (user heartbeat timeout); 3 (user repeated login); 4 (user kicked out); 5 (user disconnected); 6 (removed by the server).
    */
   onRoomStreamUpdate?(
     roomID: string,

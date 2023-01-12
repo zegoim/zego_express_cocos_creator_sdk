@@ -1043,7 +1043,7 @@ export class ZegoExpressEngine {
    * Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
    *
    * @param codecID Video codec id.Required: Yes.
-   * @return Whether the specified video decoding format is supported; true means supported, you can use this decoding format for playing stream; false means not supported, and the decoding format cannot be used for play stream.
+   * @return Whether the specified video decoding format is supported; true means supported, you can use this decoding format for playing stream; false means not supported, the SDK does not recommend users to play streams of this encoding format. If users force the play, low frame rates may occur.
    */
   isVideoDecoderSupported(codecID: zego.ZegoVideoCodecID): boolean {
     return ZegoExpressEngineImpl.instance.isVideoDecoderSupported(codecID)
@@ -1930,7 +1930,7 @@ export class ZegoExpressEngine {
    * Restrictions: Voice changer effect is only effective for SDK captured sound.
    * Related APIs:
    * If you need advanced voice changer effect, please use [setVoiceChangerParam].
-   * This function is mutually exclusive with [setReverbPreset]. If used at the same time, it will produce undefined effect.
+   * The effect of using this function together with [setReverbPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
    * Using ANDROID/ETHEREAL preset voice changer effect will modify reverberation or reverberation echo parameters. Calling [setVoiceChangerParam], [setReverbAdvancedParam], [setReverbEchoParam] may affect the voice changer effect after use these preset voice changer effect.
    * If you need advanced reverb/echo/electronic effects/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setElectronicEffects], [setVoiceChangerParam] together.
    *
@@ -1968,7 +1968,7 @@ export class ZegoExpressEngine {
    * Restrictions: Reverb effect is only effective for SDK captured sound.
    * Related APIs:
    * If you need advanced reverb effect, please use [setReverbAdvancedParam].
-   * This function is mutually exclusive with [setVoiceChangerPreset]. If used at the same time, it will produce undefined effects.
+   * The effect of using this function together with [setVoiceChangerPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
    * If you need advanced reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
    *
    * @param preset The reverberation preset enumeration.
