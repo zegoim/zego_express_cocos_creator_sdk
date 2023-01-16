@@ -29,8 +29,9 @@ bool RegisterExpressBridge(se::Object *ns) {
     sebind::class_<ZegoExpressBridge> bridge("ZegoExpressBridge");
 
     bridge.constructor<>();
-    bridge.finalizer(
-        [](ZegoExpressBridge *bridge) { printf("[ZegoExpressBridge] finalizer:%p\n", bridge); });
+    bridge.finalizer([](ZegoExpressBridge *bridge) {
+        CC_LOG_INFO("[ZEGO] [ZegoExpressBridge] finalizer:%p\n", bridge);
+    });
 
     bridge.function("setJsTextureRendererController",
                     &ZegoExpressBridge::setJsTextureRendererController);
