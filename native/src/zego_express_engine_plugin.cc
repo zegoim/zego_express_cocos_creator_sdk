@@ -12,7 +12,14 @@
 
 bool RegisterExpressBridge(se::Object *ns);
 
+static bool zego_express_engine_plugin_loaded = false;
+
 void load_zego_express_engine_plugin() {
+    if (zego_express_engine_plugin_loaded) {
+        return;
+    }
+    zego_express_engine_plugin_loaded = true;
+
     using namespace cc::plugin;
     static Listener listener(BusType::SCRIPT_ENGINE);
     listener.receive([](ScriptEngineEvent event) {
