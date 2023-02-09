@@ -19,3 +19,19 @@
 ## 🔗 API 文档
 
 [ZegoExpressEngine API Reference](https://doc-zh.zego.im/article/16985)
+
+## 📦 本地打包
+
+> 环境要求： python3, pyyaml (pip3 install pyyaml), node, npm
+
+1. git clone 此工程到本地。
+
+    `git clone git@github.com:zegoim/zego_express_cocos_creator_sdk.git`
+
+2. cd 到工程目录 zego_express_cocos_creator_sdk 然后运行构建脚本。
+
+    `cd zego_express_cocos_creator_sdk`
+
+    `python3 buildscripts/build.py`
+
+3. 构建完成后，产物在 `_out` 目录下的 `zego_express_cocos_creator_sdk.zip`。
