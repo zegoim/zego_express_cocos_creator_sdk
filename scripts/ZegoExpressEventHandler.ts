@@ -43,7 +43,7 @@ export interface ZegoEventHandler {
   onRecvExperimentalAPI?(content: string): void
 
   /**
-   * The callback triggered when the room connection state changes.
+   * Notification of the room connection state changes.
    *
    * Available since: 1.1.0
    * Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
@@ -68,7 +68,7 @@ export interface ZegoEventHandler {
   ): void
 
   /**
-   * The callback triggered when the room connection state changes.
+   * Notification of the room connection state changes, including specific reasons for state change.
    *
    * Available since: 2.18.0
    * Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
@@ -118,7 +118,7 @@ export interface ZegoEventHandler {
    * The callback triggered every 30 seconds to report the current number of online users.
    *
    * Available since: 1.7.0
-   * Description: This method will notify the user of the current number of online users in the room..
+   * Description: This method will notify the user of the current number of online users in the room.
    * Use cases: Developers can use this callback to show the number of user online in the current room.
    * When to call /Trigger: After successfully logging in to the room.
    * Restrictions: None.
@@ -238,9 +238,9 @@ export interface ZegoEventHandler {
    * The callback triggered when the first audio frame is captured.
    *
    * Available since: 1.1.0
-   * Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data. Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
-   * Trigger: In the case of no startPublishingStream audio and video stream or preview [startPreview], the first startPublishingStream audio and video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect audio data of the local device and receive this callback.
-   * Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
+   * Description: This callback will be received when the SDK starts the microphone to capture the first frame of audio data. If this callback is not received, the audio capture device is occupied or abnormal.
+   * Trigger: When the engine of the audio/video module inside the SDK starts, the SDK will go and collect the audio data from the local device and will receive the callback at that time.
+   * Related callbacks: Determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
    */
   onPublisherCapturedAudioFirstFrame?(): void
 
@@ -248,9 +248,9 @@ export interface ZegoEventHandler {
    * The callback triggered when the first video frame is captured.
    *
    * Available since: 1.1.0
-   * Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of video data. Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
-   * Trigger: In the case of no startPublishingStream video stream or preview, the first startPublishingStream video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect video data of the local device and receive this callback.
-   * Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
+   * Description: The SDK will receive this callback when the first frame of video data is captured. If this callback is not received, the video capture device is occupied or abnormal.
+   * Trigger: When the SDK's internal audio/video module's engine starts, the SDK will collect video data from the local device and will receive this callback.
+   * Related callbacks: Determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
    * Note: This function is only available in ZegoExpressVideo SDK!
    *
    * @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
@@ -395,7 +395,7 @@ export interface ZegoEventHandler {
   onPlayerRecvAudioFirstFrame?(streamID: string): void
 
   /**
-   * The callback triggered when the first video frame is received.
+   * The callback triggered when the first video frame is received. Except for Linux systems, this callback is thrown from the ui thread by default.
    *
    * Available since: 1.1.0
    * Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
@@ -459,8 +459,12 @@ export interface ZegoEventHandler {
    * Available since: 1.1.0
    * Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
    * Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
-   * Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+   * Caution:
+   *  1. This function will switch the UI thread callback data, and the customer can directly operate the UI control in this callback function.
+   *  2. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
+   *  3. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
    *
+   * @deprecated This function will switch the UI thread callback data, which may cause SEI data exceptions. It will be deprecated in version 3.4.0 and above. Please use the [onPlayerSyncRecvSEI] function instead.
    * @param streamID Stream ID.
    * @param data SEI content.
    */
@@ -544,10 +548,9 @@ export interface ZegoEventHandler {
   /**
    * The callback triggered when there is a change of the volume for the audio devices.
    *
-   * Available since: 1.0.0
-   * Description: This callback is used to receive audio device volume change events.
-   * When to trigger: The callback triggered when there is a change of the volume fo the audio devices.
-   * Restrictions: None
+   * Available since: 1.1.0
+   * Description: Audio device volume change event callback.
+   * When to trigger: After calling the [startAudioDeviceVolumeMonitor] function to start the device volume monitor, and the volume of the monitored audio device changes.
    * Platform differences: Only supports Windows and macOS.
    *
    * @param deviceType Audio device type
@@ -563,7 +566,7 @@ export interface ZegoEventHandler {
   /**
    * The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
    *
-   * Available since: 1.0.0
+   * Available since: 1.1.0
    * Description: By listening to this callback, users can update the video capture using a specific device when necessary.
    * When to trigger: This callback is triggered when a video device is added or removed from the system.
    * Restrictions: None
@@ -576,7 +579,7 @@ export interface ZegoEventHandler {
   onVideoDeviceStateChanged?(updateType: zego.ZegoUpdateType, deviceInfo: zego.ZegoDeviceInfo): void
 
   /**
-   * The local captured audio sound level callback.
+   * The local captured audio sound level callback, supported vad.
    *
    * Available since: 2.10.0
    * Description: The local captured audio sound level callback.
@@ -591,7 +594,7 @@ export interface ZegoEventHandler {
   onCapturedSoundLevelInfoUpdate?(soundLevelInfo: zego.ZegoSoundLevelInfo): void
 
   /**
-   * The remote playing streams audio sound level callback.
+   * The remote playing streams audio sound level callback, supported vad.
    *
    * Available since: 2.10.0
    * Description: The remote playing streams audio sound level callback.

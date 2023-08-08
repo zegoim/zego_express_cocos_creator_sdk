@@ -50,6 +50,9 @@ export enum ZegoErrorCode {
   /** Description: The backend configuration of the server is incorrect. <br>Cause: 1. The domain name configuration is incorrect; 2. The media network is abnormal; 3. The media network link is empty. <br>Solutions: Please contact ZEGO technical support. */
   CommonAppFlexiableConfigError = 1000038,
 
+  /** Description: Server access denied. <br>Cause: 1.The APP has enabled the restriction of access from foreign IP addresses, and the current client is outside of the domain. <br>Solutions: Please contact ZEGO technical support. */
+  CommonAppAccessDeniedError = 1000039,
+
   /** Description: Incorrect CDN address. <br>Cause: The set CDN URL is not a standard RTMP or FLV protocol. <br>Solutions: Please check the supported protocol and format. */
   CommonCdnUrlInvalid = 1000055,
 
@@ -86,6 +89,9 @@ export enum ZegoErrorCode {
   /** Description: Authentication failed. <br>Cause: Incorrect AppSign. <br>Solutions: Please check AppSign is correct or not on ZEGO manage console. */
   EngineAppsignIncorrect = 1001005,
 
+  /** The input License is empty. */
+  EngineLicenseNull = 1001006,
+
   /** Description: No write permission to the log file. <br>Cause: App has no write permission to log file folder. <br>Solutions: Please check has grant write permission to App or not; check log folder is protected or not. */
   EngineLogNoWritePermission = 1001014,
 
@@ -94,6 +100,9 @@ export enum ZegoErrorCode {
 
   /** Description: Set room mode failed. <br>Cause: Set room mode after initialize the SDK. <br>Solutions: Please set room mode before initialize the SDK. */
   EngineSetRoomModeErrorTime = 1001020,
+
+  /** Description: Set geo fence failed. <br>Cause: Set geo fence after initialize the SDK. <br>Solutions: Please set geo fence before initialize the SDK. */
+  EngineSetGeoFenceErrorTime = 1001021,
 
   /** Description: The experimental API json parameter parsing failed. <br>Cause: Invalid json format; wrong function name or parameter. <br>Solutions: Please check json format is valid or not; check function name or parameter is correct or not, contact ZEGO technical support for specific function name and parameters. */
   EngineExperimentalJsonStrInvalid = 1001091,
@@ -185,6 +194,12 @@ export enum ZegoErrorCode {
   /** Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room. <br>Solutions: Contact the business server for processing. */
   RoomManualKickedOut = 1002055,
 
+  /** Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room because the token expired. <br>Solutions: Please update the token in time after receiving the callback notification that the token is about to expire. */
+  RoomTokenExpiredKickedOut = 1002056,
+
+  /** Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room because the internal session was abnormal. <br>Solutions: Contact the business server for processing. */
+  RoomSessionExceptionKickedOut = 1002057,
+
   /** Description: Wrong order of login rooms. <br>Cause: Log in multi room without log in the main room. <br>Solutions: Please log in to the main room with `loginRoom` before logging in to multi room. */
   RoomWrongLoginSequence = 1002061,
 
@@ -239,6 +254,18 @@ export enum ZegoErrorCode {
   /** Description: Multi-room mode required. <br>Cause: Wrong room mode been used, e.g. single-room. <br>Solutions: Please use [setRoomMode] to select multi-room mode before the engine started. */
   RoomMultiRoomRequired = 1002081,
 
+  /** Description: Update room Token has no push permission. <br>Cause: Token Does not have the push permission. <br>Solutions: Pass in the Token with the push permission. */
+  RoomRenewTokenNoPublishAuthError = 1002082,
+
+  /** Description: The length of the custom data attached during login exceeded the limit. Procedure. <br>Cause: The login custom callback data is too long. <br>Solutions: The length of user-defined login data cannot exceed 128 bytes. */
+  RoomRoomLoginCustomDataLengthError = 1002083,
+
+  /** Description: login room used license auth, but can't find the license on zego server. <br>Cause: input wrong license. <br>Solutions: used the right license. */
+  RoomRoomLoginLicenseNotFound = 1002084,
+
+  /** Description: login room used license auth, but the license is expired.  <br>Solutions:  Contact ZEGO technical support to deal with it. */
+  RoomRoomLoginLicenseExpired = 1002085,
+
   /** Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it. */
   RoomInnerError = 1002099,
 
@@ -253,6 +280,21 @@ export enum ZegoErrorCode {
 
   /** Description: Streaming failed, H.265 encoding is not supported.<br>Cause: The hardware device does not support H.265 encoding, or the SDK does not include H.265 encoding module.<br>Solutions: Contact ZEGO technical support to confirm whether the SDK contains the H.265 encoding module, if the hardware device does not support it, it is recommended to upgrade the hardware. */
   PublisherErrorH265EncoderNotSupported = 1003010,
+
+  /** Description: The performance of object segmentation device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device. */
+  PublisherObjectSegmentationPerformanceWarning = 1003011,
+
+  /** Description: This device does not support object segmentation.<br>Caution: The device is not supported, or the object segmentation of multiple channels is enabled.<br>Solutions: Please change the device or only open the object segmentation of one channel. */
+  PublisherObjectSegmentationDeviceNotSupport = 1003012,
+
+  /** Description: Object segmentation unauthorized.<br>Caution: The appid is not configured with object segmentation.<br>Solutions: Please contact ZEGO technical support to configure the object segmentation function. */
+  PublisherObjectSegmentationNoAuth = 1003013,
+
+  /** Description: Object segmentation parameter error.<br>Caution: Object segmentation is set to green screen type, background blur is not allowed.<br>Solutions: Please use the correct parameters to enable object segmentation. */
+  PublisherObjectSegmentationParamError = 1003014,
+
+  /** Description: Object segmentation background image loading error.<br>Caution: The path of the background image is incorrect, or the content of the image is incorrect.<br>Solutions: Please set the correct background image. */
+  PublisherObjectSegmentationImageLoadError = 1003015,
 
   /** Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal. */
   PublisherErrorNetworkInterrupt = 1003020,
@@ -353,11 +395,14 @@ export enum ZegoErrorCode {
   /** Description: The performance of super resolution device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device. */
   PlayerSuperResolutionDevicePerformanceError = 1004007,
 
-  /** Description: Super resolution is initializing, please try again later.<br>Caution: Super resolution is initializing, please try again later.<br>Solutions: Please try again later. */
-  PlayerSuperResolutionInitingBusyError = 1004008,
+  /** Description: Super resolution uninitialized.<br>Caution: Super resolution uninitialized.<br>Solutions: Please initialize super resolution. */
+  PlayerSuperResolutionNotInitError = 1004008,
 
   /** Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary. */
   PlayerCountExceed = 1004010,
+
+  /** Description: The stream was not played.<br>Caution: The stream was not played.<br>Solutions: Please confirm that the stream has been played through the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback. */
+  PlayerStreamWasNotPlayed = 1004011,
 
   /** Description: Stream playing is temporarily interrupted.<br>Caution: Network exception.<br>Solutions: Please wait or check whether the network is normal. */
   PlayerErrorNetworkInterrupt = 1004020,
@@ -593,11 +638,17 @@ export enum ZegoErrorCode {
   /** Description: Effects Beauty does not support the currently set video data type. <br>Cause: [enableCustomVideoProcessing] interface, Windows platform only supports raw_data, Apple device only supports cv_pixel_buffer, Android platform supports gl_texture_2d. <br>Solutions: select the correct video data type. */
   PreprocessNotSupportEffectsBufferType = 1007023,
 
+  /** Description: Failed to enable speech enhancement. <br>Cause: speech enhancement level parameter is invalid. <br>Solutions: speech enhancement level ranges from 0 to 10. Use the correct parameter value. */
+  PreprocessEnableSpeechEnhanceParamInvalid = 1007024,
+
   /** Description: The MediaPlayer failed to play the media. <br>Cause: The resource file is not loaded. <br> Solutions: Create a media player instance before using media players [createMediaPlayer]. */
   MediaPlayerNoInstance = 1008001,
 
   /** Description: The MediaPlayer failed to play the media. <br>Cause: The resource file is not loaded. <br> Solutions: The media player loads the media resource [loadResource] before starting. */
   MediaPlayerNoFilePath = 1008003,
+
+  /** Description: The specified media file path is too long. <br>Cause: The specified media file path is too long. The maximum length should be less than 1024 bytes. <br> Solutions: Please specify media file path less than 1024 bytes. */
+  MediaPlayerFilePathTooLong = 1008004,
 
   /** Description: The MediaPlayer failed to load the file. <br>Cause: File formats are not supported. <br> Solutions: Files in this format are not supported, please use files in the supporting format. */
   MediaPlayerFileFormatError = 1008005,
@@ -616,6 +667,12 @@ export enum ZegoErrorCode {
 
   /** Description: The MediaPlayer failed to load the file. <br>Cause: There was an error during file resolution. <br> Solutions: Try again or contact ZEGO technical support. */
   MediaPlayerDemuxError = 1008010,
+
+  /** Description: The copyrighted music resource has expired. <br>Cause: The copyrighted music resource has expired. <br>Solutions: Please request the copyrighted music resource again. */
+  MediaPlayerResourceExpired = 1008011,
+
+  /** Description: The copyrighted music resource ID is too long. <br>Cause: The copyrighted music resource ID is too long. The maximum length should be less than 512 bytes. <br> Solutions: Please copyrighted music resource ID less than 1024 bytes. */
+  MediaPlayerResourceIdTooLong = 1008012,
 
   /** Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo]. */
   MediaPlayerSeekError = 1008016,
@@ -800,7 +857,7 @@ export enum ZegoErrorCode {
   /** Description: RTP timeout. <br>Cause: Not connected to the network. <br> Solutions: Please check if you can access the Internet properly. */
   UtilitiesNetworkToolRtpTimeoutError = 1015003,
 
-  /** Description: The server side ends the network speed test. <br>Cause: Network speed test time is too long. <br> Solutions: Please stop network speed test in 3 minutes. */
+  /** Description: The server side ends the network speed test. <br>Cause: Network speed test time is too long. <br> Solutions: Please stop network speed test in 30 seconds. */
   UtilitiesNetworkToolEngineDenied = 1015004,
 
   /** Description: Network speed test stopped. <br>Cause: Network speed test not stopped before publishing stream. <br> Solutions: Please stop network speed test(stopNetworkSpeedTest) before publishing stream. */
@@ -842,10 +899,10 @@ export enum ZegoErrorCode {
   /** Description: The song_id invalid. <br>Cause: The song_id entered is empty. <br>Solutions: Please check the song_id entered when calling the function to make sure it is not empty. */
   CopyrightedMusicSongIdInvalid = 1017002,
 
-  /** Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [requestAccompaniment] */
+  /** Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [requestResource] */
   CopyrightedMusicShareTokenInvalid = 1017003,
 
-  /** Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [requestSong] [requestAccompaniment] [getMusicByToken] */
+  /** Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [requestResource] [getSharedResource] [getMusicByToken] */
   CopyrightedMusicResourceIdInvalid = 1017004,
 
   /** Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [loadCopyrightedMusicResourceWithPosition] is invalid. <br>Solutions: Please check the start_position entered when calling the function [loadCopyrightedMusicResourceWithPosition] to make sure it is in 0 ~ song duration. */
@@ -857,7 +914,7 @@ export enum ZegoErrorCode {
   /** Description: The volume invalid.. <br>Cause: The Volume entered by the fuction [setPlayVolume] is invalid. <br>Solutions: Please check the Volume entered when calling the function [setPlayVolume] to make sure it is in 0 ~ 200. */
   CopyrightedMusicVolumeInvalid = 1017007,
 
-  /** Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [requestAccompaniment] */
+  /** Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [requestResource] [getSharedResource] */
   CopyrightedMusicKrcTokenInvalid = 1017008,
 
   /** Description: Copyright music init authentication failed. <br>Cause: Appsign or token is not set. <br>Solutions: When using token authentication, call [loginRoom] before calling [initCopyrightedMusic] or use appsign authentication. */
@@ -881,8 +938,14 @@ export enum ZegoErrorCode {
   /** Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource. */
   CopyrightedMusicResourceFileInvalid = 1017015,
 
-  /** Description: The resource_id unauthorized. <br>Cause: When [download] is called to download resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong] [requestAccompaniment] [requestAccompanimentClip] [getMusicByToken] function before call [load] function to load resource. */
+  /** Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID. */
   CopyrightedMusicResourceIdUnauthorized = 1017018,
+
+  /** Description: The copyrighted resource has expired. <br>Cause: The copyrighted resource has expired. <br>Solutions: Please request the copyrighted resource again. */
+  CopyrightedMusicResourceExpired = 1017019,
+
+  /** Description: The resource does not support this method. <br>Cause: Wrong resource ID selection. <br>Solutions: Please pass in the correct resource ID. */
+  CopyrightedMusicResourceNotSupportFunction = 1017020,
 
   /** Description: No copyright, unable to listen to and sing songs. <br>Cause: No copyright. <br>Solutions: Please select another music. */
   CopyrightedMusicNoCopyright = 1017030,
@@ -932,8 +995,35 @@ export enum ZegoErrorCode {
   /** Description: This resource is not shared in the room. <br>Cause: No users in the room share this resource. <br>Solutions: Please any one user in the room to call the [requestresource] function to request resources and share them. */
   CopyrightedMusicNotSharedResource = 1017050,
 
-  /** Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again */
+  /** Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again. */
   CopyrightedMusicGetSharedResourceTimesOver = 1017051,
+
+  /** Description: The vendor is unavailable. <br>Cause: The corresponding copyright party has not been activated. <br>Solutions: Please pass in the correct vendor ID. */
+  CopyrightedMusicVendorIdNotAvaliable = 1017052,
+
+  /** Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID. */
+  CopyrightedMusicVendorNotSupportFunction = 1017053,
+
+  /** Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID. */
+  CopyrightedMusicVendorIdInvalid = 1017071,
+
+  /** Description: This vendor does not support this song ID. <br>Cause: This song ID does not exist in the copyright music library. <br>Solutions: Please pass in the correct song ID. */
+  CopyrightedMusicSongIdNotSupport = 1017072,
+
+  /** Description: master ID invalid. <br>Cause: When billing by owner is selected,  master ID is empty. <br>Solutions: Please pass in the correct master ID. */
+  CopyrightedMusicMasterIdInvalid = 1017073,
+
+  /** Description: The page parameter is invalid for multiple copyright searches. <br>Cause: The page parameter must be 1 when multiple rights search is called for the first time. <br>Solutions: Please pass in the correct page. */
+  CopyrightedMusicPageInvalid = 1017074,
+
+  /** Description: resource has no pitch. <br>Cause: resource has no pitch. <br>Solutions: Please pass in the correct song ID. */
+  CopyrightedMusicNoPitch = 1017075,
+
+  /** Description: scene ID invalid. <br>Cause: scene ID invalid. <br>Solutions: Please pass in the scene ID corresponding to the opened scene. */
+  CopyrightedMusicSceneIdInvalid = 1017076,
+
+  /** Description: top ID invalid. <br>Cause: An unsupported top ID was passed in when fetching chart songs. <br>Solutions: Please pass in the correct top ID. */
+  CopyrightedMusicTopIdInvalid = 1017077,
 
   /** Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it. */
   CopyrightedMusicNotSupportMethod = 1017095,

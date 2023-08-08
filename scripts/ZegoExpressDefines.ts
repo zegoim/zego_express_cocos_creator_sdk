@@ -10,9 +10,9 @@ export enum ZegoScenario {
   Live = 2,
   /** Available since: 3.0.0. Description: The default (generic) scenario. If none of the following scenarios conform to your actual application scenario, this default scenario can be used. */
   Default = 3,
-  /** Available since: 3.0.0. Description: Standard video call (or voice call) scenario, it is suitable for one-to-one video or voice call scenarios. */
+  /** Available since: 3.0.0. Description: Standard video call scenario, it is suitable for one-to-one video call scenarios. */
   StandardVideoCall = 4,
-  /** Available since: 3.0.0. Description: High quality video call (or voice call) scenario, it is similar to the standard video call scenario, but this scenario uses a higher video frame rate, bit rate, and resolution (540p) by default, which is suitable for video call scenario with high image quality requirements. */
+  /** Available since: 3.0.0. Description: High quality video call scenario, it is similar to the standard video call scenario, but this scenario uses a higher video frame rate, bit rate, and resolution (540p) by default, which is suitable for video call scenario with high image quality requirements. */
   HighQualityVideoCall = 5,
   /** Available since: 3.0.0. Description: Standard chatroom scenario, suitable for multi-person pure voice calls (low data usage). Note: On the ExpressVideo SDK, the camera is not enabled by default in this scenario. */
   StandardChatroom = 6,
@@ -788,17 +788,17 @@ export enum ZegoAudioSampleRate {
 
 /** Audio capture source type. */
 export enum ZegoAudioSourceType {
-  /** Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default) */
+  /** Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default). */
   Default = 0,
-  /** Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource] */
+  /** Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource]. */
   Custom = 1,
-  /** Use media player as audio source, only support aux channel */
+  /** Use media player as audio source, only support aux channel. */
   MediaPlayer = 2,
-  /** No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  /** No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. */
   None = 3,
-  /** Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  /** Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. */
   Microphone = 4,
-  /** Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface */
+  /** Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. */
   MainPublishChannel = 5,
 }
 
@@ -1217,7 +1217,7 @@ export class ZegoStream {
   /** User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc. */
   user: ZegoUser
 
-  /** Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', ' '. */
+  /** Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', '_'. */
   streamID: string
 
   /** Stream extra info */

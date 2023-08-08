@@ -23,7 +23,7 @@ export class ZegoExpressEngine {
    * Description: Create ZegoExpressEngine singleton object and initialize SDK.
    * When to call: The engine needs to be created before calling other functions.
    * Restrictions: None.
-   * Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+   * Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. If you need call [createEngine] multiple times, you need call [destroyEngine] before you call the next [createEngine]. Otherwise it will return the instance which created by [createEngine] you called last time.
    *
    * @param profile The basic configuration information is used to create the engine.
    * @param eventHandler Event notification callback. [null] means not receiving any callback notifications.It can also be managed later via [setEventHandler]. If [createEngine] is called repeatedly and the [destroyEngine] function is not called to destroy the engine before the second call, the eventHandler will not be updated.
@@ -150,7 +150,7 @@ export class ZegoExpressEngine {
    * Description: Set up event notification callbacks, used to monitor callbacks such as engine status changes, room status changes, etc.
    * When to call: After [createEngine].
    * Restrictions: None.
-   * Caution: Invoke this function will overwrite the handler set in [createEngine] or the handler set by the last call to this method. After calling [destroyEngine], the event handler that has been set will be invalid and need to be reset after next calling of [createEngine].
+   * Caution: After calling this function or [createEngine] setting a callback, unless this function is called to clear the callback, setting a callback again will not take effect. After calling [destroyEngine], the event handler that has been set will be invalid and need to be reset after next calling of [createEngine].
    *
    * @param eventHandler Event notification callback. If the eventHandler is set to [null], all the callbacks set previously will be cleared. Developers should monitor the corresponding callbacks according to their own business scenarios. The main callback functions of the SDK are here.
    */
@@ -179,14 +179,14 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Uploads logs to the ZEGO server.
+   * Uploads logs to the ZEGO server, with callback.
    *
    * Available since: 2.4.0
    * Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
    * Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
    * When to call: After [createEngine].
-   * Restrictions: If you call this interface repeatedly within 10 minutes, only the last call will take effect.
-   * Caution: After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback..
+   * Restrictions:  The frequency limit is once per minute.
+   * Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.If you want to call before [createEngine], use the [submitLog] interface.
    *
    * @param callback Log upload result callback.
    */
@@ -238,7 +238,6 @@ export class ZegoExpressEngine {
    *   2. SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
    *   3. It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
    *   4. After the first login failure due to network reasons or the room is disconnected, the default time of SDK reconnection is 20min.
-   *   5. After the user has successfully logged in to the room, if the application exits abnormally, after restarting the application, the developer needs to call the logoutRoom interface to log out of the room, and then call the loginRoom interface to log in to the room again.
    * Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
    * Related callbacks:
    *   1. When the user starts to log in to the room, the room is successfully logged in, or the room fails to log in, the [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback will be triggered to notify the developer of the status of the current user connected to the room.
@@ -269,7 +268,7 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Logs out of a room.
+   * Exit the room of the specified room ID with callback.
    *
    * Available since: 1.1.0
    * Description: This API will log out the room named roomID.
@@ -284,7 +283,7 @@ export class ZegoExpressEngine {
    *   Caution:
    *   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
    *   2. If you need to communicate with the Web SDK, please do not use '%'.
-   * @param callback The callback of this logout room result, if you need detailed room status, please pay attention to the [onRoomStateChanged] callback.. Required: No. Default value: null.
+   * @param callback The callback of this logout room result, if you need detailed room status, please pay attention to the [onRoomStateChanged] callback. Required: No. Default value: null.
    */
   logoutRoom(roomID?: string, callback?: zego.ZegoRoomLogoutCallback): void {
     return ZegoExpressEngineImpl.instance.logoutRoom(roomID, callback)
@@ -300,7 +299,9 @@ export class ZegoExpressEngine {
    * Restrictions: None.
    * Caution:
    *   1. When this function is called, all streams currently publishing or playing will stop (but the local preview will not stop).
-   *   2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over. 3. When the function [setRoomMode] is used to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM, this function is not available.
+   *   2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over.
+   *   3. Multi-room mode is supported in version 3.5.0 (use the function [setRoomMode] to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM).
+   *   4. If a Token is passed in for login when logging into the room [loginRoom], the [switchroom] interface must be used with the config parameter and the corresponding Token value passed in when switching rooms.
    * Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
    * Related callbacks: When the user call the [switchRoom] function, the [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback will be triggered to notify the developer of the status of the current user connected to the room.
    * Related APIs: Users can use the [logoutRoom] function to log out of the room.
@@ -376,7 +377,7 @@ export class ZegoExpressEngine {
    *   Caution:
    *   1. Stream ID is defined by you.
    *   2. needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-   *   3. Only support numbers, English characters and '-', ' '.
+   *   3. Only support numbers, English characters and '-', '_'.
    * @param config Advanced publish configuration.
    * @param channel Publish stream channel.
    */
@@ -436,7 +437,7 @@ export class ZegoExpressEngine {
    * Use cases: It can be used for local preview in real-time connecting wheat, live broadcast and other scenarios.
    * When to call: After [createEngine].
    * Restrictions: None.
-   * Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video..
+   * Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video.
    * Note: This function is only available in ZegoExpressVideo SDK!
    *
    * @param canvas The view used to display the preview image. If the view is set to null, no preview will be made.
@@ -794,7 +795,7 @@ export class ZegoExpressEngine {
    *
    * @param streamID Stream ID, a string of up to 256 characters.
    *   Caution:
-   *   1. Only support numbers, English characters and '-', ' '.
+   *   Only support numbers, English characters and '-', '_'.
    * @param canvas The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
    * @param config Advanced player configuration.
    */
@@ -953,7 +954,7 @@ export class ZegoExpressEngine {
    * Whether the pull stream can receive the specified video data.
    *
    * Available since: 1.1.0
-   * Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+   * Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the video data, the hardware and network overhead can be reduced.
    * Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
    * When to call: This function can be called after calling [createEngine].
    * Caution: This function is valid only when the [muteAllPlayStreamVideo] function is set to `false`. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
@@ -961,7 +962,7 @@ export class ZegoExpressEngine {
    * Note: This function is only available in ZegoExpressVideo SDK!
    *
    * @param streamID Stream ID.
-   * @param mute Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
+   * @param mute Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false". The default value for automatically played streams within the SDK is false.
    */
   mutePlayStreamVideo(streamID: string, mute: boolean): void {
     return ZegoExpressEngineImpl.instance.mutePlayStreamVideo(streamID, mute)
@@ -986,7 +987,7 @@ export class ZegoExpressEngine {
    * Can the pull stream receive all video data.
    *
    * Available since: 2.4.0
-   * Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+   * Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
    * Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
    * When to call: This function can be called after calling [createEngine].
    * Caution: When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
@@ -1084,7 +1085,7 @@ export class ZegoExpressEngine {
    * Mutes or unmutes the audio output speaker.
    *
    * Available since: 1.1.0
-   * Description: After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
+   * Description: After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc.
    * Default value: The default is `false`, which means no muting.
    * When to call: After creating the engine [createEngine].
    * Restrictions: None.
@@ -1137,7 +1138,7 @@ export class ZegoExpressEngine {
   /**
    * Chooses to use the specified audio device.
    *
-   * Available since: 1.0.0
+   * Available since: 1.1.0
    * Description: Chooses to use the specified audio device.
    * When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
    * Restrictions: Only supports Windows / macOS / Linux
@@ -1183,7 +1184,12 @@ export class ZegoExpressEngine {
   /**
    * Turn on audio device volume monitoring.
    *
-   * Only for Windows / macOS / Linux
+   * Available since: 1.1.0
+   * Description: Starts the audio device volume monitor. When the volume of the device changes, the changed volume will be called back via [onAudioDeviceVolumeChanged].
+   * Caution: Currently, only one audio output device and one audio input device are supported to be monitored at the same time. When this API is called multiple times and the same device type is set, the device ID set to this API during the last call will be overwritten.
+   * When to call: After creating the engine via [createEngine].
+   * Platform differences: Only supports Windows and macOS.
+   * Related APIs: When you no longer need to monitor the device volume, please call [stopAudioDeviceVolumeMonitor] to stop monitoring.
    *
    * @param deviceType Audio device type
    * @param deviceID ID of a device obtained by [getAudioDeviceList]
@@ -1195,7 +1201,10 @@ export class ZegoExpressEngine {
   /**
    * Turn off audio device volume monitoring. Only for Windows/macOS.
    *
-   * Only for Windows / macOS / Linux
+   * Available since: 1.1.0
+   * Description: Stops the audio device volume monitor.
+   * When to call: After creating the engine via [createEngine], and when you no longer need to monitor the device volume.
+   * Platform differences: Only supports Windows and macOS.
    *
    * @param deviceType Audio device type
    * @param deviceID ID of a device obtained by [getAudioDeviceList]
@@ -1211,7 +1220,7 @@ export class ZegoExpressEngine {
    *
    * @param deviceType Audio device type
    * @param deviceID ID of a device obtained by [getAudioDeviceList]
-   * @param mute Whether to mute the audio device; true means to mute the audio device; false means to unmute the audio device.
+   * @param mute Whether to mute the audio device; `true` means to mute the audio device; `false` means to unmute the audio device.
    */
   muteAudioDevice(deviceType: zego.ZegoAudioDeviceType, deviceID: string, mute: boolean): void {
     return ZegoExpressEngineImpl.instance.muteAudioDevice(deviceType, deviceID, mute)
@@ -1239,7 +1248,7 @@ export class ZegoExpressEngine {
    *
    * @param deviceType Audio device type
    * @param deviceID ID of a device obtained by [getAudioDeviceList]
-   * @return Whether the audio device is muted; true means the audio device is muted; false means the audio device is not muted.
+   * @return Whether the audio device is muted; `true` means the audio device is muted; `false` means the audio device is not muted.
    */
   isAudioDeviceMuted(deviceType: zego.ZegoAudioDeviceType, deviceID: string): boolean {
     return ZegoExpressEngineImpl.instance.isAudioDeviceMuted(deviceType, deviceID)
@@ -1414,7 +1423,7 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Set the camera exposure compensation value.
+   * Set the camera exposure compensation value and support spedifying the publish channel.
    *
    * Available since: 2.10.0
    * Description: Set the camera exposure compensation value.
@@ -1433,7 +1442,7 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Set the zoom factor of the camera. Every time the camera is restarted, the camera zoom factor will return to the initial value (1.0).
+   * Set the zoom factor of the camera and support specifying the publish channel. Every time the camera is restarted, the camera zoom factor will return to the initial value (1.0).
    *
    * Available since: 1.20.0
    * Description: Set the camera zoom factor. Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
@@ -1449,7 +1458,7 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Get the maximum zoom factor of the camera.
+   * Get the maximum zoom factor of the camera and support specifying the publish channel.
    *
    * Available since: 1.20.0
    * Description: Set the camera zoom factor. Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
@@ -1651,7 +1660,7 @@ export class ZegoExpressEngine {
   /**
    * Enable or disable mix SDK playout to stream publishing.
    *
-   * Available since: 1.0.0
+   * Available since: 1.1.0
    * Description: Enable mix SDK playout sounds into the stream publishing.
    * Use cases: Users need to mix the sound of SDK playout into stream publishing. For example, when the class scene, the teacher and student Co-hosting, and the teacher can mix the play streaming sound into the publish streaming.
    * Default value: Default is disable.
@@ -1676,7 +1685,7 @@ export class ZegoExpressEngine {
    * Related APIs: [stopAudioVADStableStateMonitor].
    *
    * @param type audio VAD monitor type.
-   * @param millisecond monitoring period
+   * @param millisecond monitoring period default 3000. value of [200, 10000]
    */
   startAudioVADStableStateMonitor(
     type: zego.ZegoAudioVADStableStateMonitorType,
@@ -1688,7 +1697,7 @@ export class ZegoExpressEngine {
   /**
    * Stop audio VAD stable state monitoring.
    *
-   * Available: since 2.14.0
+   * Available since: 2.14.0
    * Description: After calling this interface, the specified type of [onAudioVADStateUpdate] callback can no longer be received.
    * When to call: None.
    * Restrictions: None.
@@ -1927,7 +1936,6 @@ export class ZegoExpressEngine {
    * Description: Call this function to use preset voice changer effect.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine].
-   * Restrictions: Voice changer effect is only effective for SDK captured sound.
    * Related APIs:
    * If you need advanced voice changer effect, please use [setVoiceChangerParam].
    * The effect of using this function together with [setReverbPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
@@ -1947,7 +1955,6 @@ export class ZegoExpressEngine {
    * Description: Call this function to set custom voice changer effect.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine].
-   * Restrictions: Voice changer effect is only effective for SDK captured sound.
    * Related APIs:
    * [setVoiceChangerPreset] provide a set of preset voice changer effects.
    * If you need advanced reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
@@ -1965,7 +1972,6 @@ export class ZegoExpressEngine {
    * Description: Call this function to set preset reverb effect.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine]. Support call this function to change preset reverb effect during publishing stream.
-   * Restrictions: Reverb effect is only effective for SDK captured sound.
    * Related APIs:
    * If you need advanced reverb effect, please use [setReverbAdvancedParam].
    * The effect of using this function together with [setVoiceChangerPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
@@ -1984,7 +1990,6 @@ export class ZegoExpressEngine {
    * Description: Call this function to set preset reverb effect.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine].
-   * Restrictions: Reverb effect is only effective for SDK captured sound.
    * Caution: Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
    * Related APIs:
    * [setReverbPreset] provide a set of preset reverb effects.
@@ -2003,7 +2008,6 @@ export class ZegoExpressEngine {
    * Description: Call this function to set reverb echo effect. This function can be used with voice changer and reverb to achieve a variety of custom sound effects.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine].
-   * Restrictions: Reverb echo effect is only effective for SDK captured sound.
    * Related APIs: If you need advanced reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
    *
    * @param param The reverberation echo parameter.
@@ -2013,13 +2017,12 @@ export class ZegoExpressEngine {
   }
 
   /**
-   * Enable or disable the virtual stereo effect when publishing stream..
+   * Enable or disable the virtual stereo effect when publishing stream.
    *
    * Available since: 1.10.0; Note: Starting from 2.15.0, the angle parameter supports setting -1 to present a all round virtual stereo effect.
    * Description: Call this function to enable / disable the virtual stereo effect when publishing stream.
    * Use cases: Often used in live broadcasting, voice chatroom and KTV.
    * When to call: It needs to be called after [createEngine].
-   * Restrictions: Virtual stereo effect is only effective for SDK captured sound.
    * Caution: You need to set up a dual channel with [setAudioConfig] for the virtual stereo to take effect.
    *
    * @param enable true to turn on the virtual stereo, false to turn off the virtual stereo.
