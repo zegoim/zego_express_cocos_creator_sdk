@@ -20,13 +20,13 @@ exports.methods = {};
 function load() {
     console.log('[ZEGO][RTC] Extension load');
     installScripts();
-    installNativePlugins();
+    // installNativePlugins() // This operation is no longer needed since CocosCreator v3.7, now the plugin will be installed under [<proj>/extensions/zego_express_cocos_creator_sdk], but if you still using CocosCreator v3.6, you may need to un-comment this line
 }
 exports.load = load;
 function unload() {
     console.log('[ZEGO][RTC] Extension unload');
     uninstallScripts();
-    uninstallNativePlugins();
+    // uninstallNativePlugins()
 }
 exports.unload = unload;
 ///////////////////////
